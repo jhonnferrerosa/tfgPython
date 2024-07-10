@@ -1,0 +1,9 @@
+{# en este html, se va a haer una macro que permita ver los campos de los formularios un poco separados y que no queden puestos por encima   #}
+{# ademas que esta plantilla de fommulario me va a valer para presentar todos los formularios de la aplicacion.   #}
+
+
+{% macro renderizarFormulario(parametroCampos) %}
+		<dd> {{ parametroCampos.label }}
+		<dd> {{ parametroCampos(**kwargs) |safe }}
+{% endmacro %}
+

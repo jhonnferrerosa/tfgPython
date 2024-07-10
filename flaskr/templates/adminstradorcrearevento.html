@@ -1,0 +1,71 @@
+
+{% extends "baseadministrador.html" %}
+
+{% block title %}
+    {% if miParametroAccionHtml == "crear"%}
+        <title>adminstradorcreaevento</title>
+    {% else %}
+        <title>adminstradoreditardatosevento</title>
+    {% endif %}
+{% endblock %}
+
+
+
+{% block content%}
+    <nav> 
+        <ol>
+            <li> <a href="{{ url_for ('funcionAdminstradorPanelEvento') }}"> Volver a adminstrar eventos </a></li>
+            <li> <a href="{{ url_for ('funcionAdminstradorHome') }}">Volver al home </a></li>
+        </ol>
+    </nav>
+
+    {% if miParametroAccionHtml == "crear"%}
+        <p> Escriba los datos del nuevo evento: </p>
+    {% else %}
+        <p> Modifique los datos del evento: </p>
+    {% endif %}
+
+    {% from "_macroFormulario.html" import renderizarFormulario %}
+    <div>
+        <form  method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            {{ renderizarFormulario(miFormularioParametro.nombreDelEvento) }}
+            {{ renderizarFormulario(miFormularioParametro.posiblesEventosAntiguos) }}
+            {{ renderizarFormulario(miFormularioParametro.calleDelEvento) }}
+            {{ renderizarFormulario(miFormularioParametro.numeroDelEvento) }}
+            {{ renderizarFormulario(miFormularioParametro.codigoPostal) }}
+            {{ renderizarFormulario(miFormularioParametro.edificioDondeSeCelebra) }}
+        <input type="submit" value="miEnviar">
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('posiblesEventosAntiguos').addEventListener('change', function() {
+            var calleDelEventoInput = document.getElementById('calleDelEvento');
+            var numeroDelEventoInput = document.getElementById('numeroDelEvento');
+            var codigoPostalInput = document.getElementById('codigoPostal');
+            var edificioDondeSeCelebraInput = document.getElementById('edificioDondeSeCelebra');
+            if (this.value !== '-1') {
+                console.log ("ahora no se puede editar. ");
+                calleDelEventoInput.value = "";
+                numeroDelEventoInput.value = "";
+                codigoPostalInput.value = null;
+                edificioDondeSeCelebraInput.value = "";
+
+                calleDelEventoInput.disabled = true;
+                numeroDelEventoInput.disabled = true;
+                codigoPostalInput.disabled = true;
+                edificioDondeSeCelebraInput.disabled = true;
+            } else {
+                console.log ("SI se puede editar. ");
+                calleDelEventoInput.disabled = false;
+                numeroDelEventoInput.disabled = false;
+                codigoPostalInput.disabled = false;
+                edificioDondeSeCelebraInput.disabled = false;
+            }
+        });
+    </script>
+
+
+
+{% endblock %}

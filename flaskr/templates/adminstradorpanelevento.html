@@ -1,0 +1,50 @@
+
+{% extends "baseadministrador.html" %}
+
+{% block title %}
+    <title>adminstradorpanelevento</title>
+{% endblock %}
+
+
+{% block content %}
+<nav> 
+    <ol>
+        <li> <a href="{{ url_for ('funcionAdminstradorCrearEvento') }}"> nuevo evento </a></li>
+        <li> <a href="{{ url_for ('funcionAdminstradorHome') }}">Volver al home </a></li>
+    </ol>
+</nav>
+<section> 
+
+    {% if seHaIntentadoBorrarParametro == True %}
+        <p> Ese evento no se puede borrar ya que contiene robots. </p>
+    {% endif %}
+
+    <h1> Eventos: </h1>
+
+    {% for iteracion in miListaEventosParametro %}
+        <p> {{ iteracion.idEvento }}</p>
+        <p> {{ iteracion.nombreDelEvento }}</p>
+        <p> {{ iteracion.lugarDelEvento_idLugarDelEvento_relacionEvento.calle }}</p>
+        <form action="{{ url_for('funcionAdminstradorModificarDatosEvento', idEvento=iteracion.idEvento) }}" method="get">
+            <button type="submit">Modificar evento</button>
+        </form>
+        
+        <form action="{{ url_for('funcionAdminstradorPanelEventoBorrar', idEvento=iteracion.idEvento) }}" method="get">
+            <button type="submit">Borrar evento</button>
+        </form>
+
+        <br>
+        <br>
+    {% else %}
+        <p> Actualmente no hay eventos activos. </p>
+    {% endfor %}
+ </section>
+{% endblock %}
+
+
+
+
+
+
+
+

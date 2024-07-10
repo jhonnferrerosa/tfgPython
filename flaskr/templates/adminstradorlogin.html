@@ -1,0 +1,22 @@
+
+
+{% extends "baseadministrador.html" %}
+
+{% block title %}
+    <title> adminstradorlogin</title>
+{% endblock %}
+
+
+
+{% block content %}
+<p> Ingrese sus credenciales.  </p>
+{% from "_macroFormulario.html" import renderizarFormulario %}
+<div>
+    <form  method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        {{ renderizarFormulario(miFormularioParametro.correoElectronico) }}
+        {{ renderizarFormulario(miFormularioParametro.contrasena) }}
+        <input type="submit" value="miEnviar">
+    </form>
+</div>
+{% endblock %}

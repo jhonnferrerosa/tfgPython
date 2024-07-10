@@ -1,0 +1,23 @@
+
+{% extends "baseadministrador.html" %}
+
+{% block title %}
+    <title>adminstradorhome</title>
+{% endblock %}
+
+{% block content %}
+<nav> 
+    <ol>
+        <li>Adminstrar robots</li>
+        <li>Adminstrar cuentas</li>
+        <li><a href="{{ url_for ('funcionAdminstradorPanelEvento') }}">Adminstrar eventos</a></li>
+    </ol>
+</nav>
+<section>
+    <p> Cantidad de eventos actualmente: </p>
+    <p> Cantidad de robots totales: </p>
+    <p> Cantidad de personas esperando: </p>
+    <p> Cantidad de asistentes: </p>
+</section>
+{% endblock %}
+
