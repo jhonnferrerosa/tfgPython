@@ -57,8 +57,8 @@ def miFuncionAntesDeLaPeticion ():
 def funcionIndex():
 	#  TO DO: seria buena idea poner que en el momento en el que se ingrese un asistente nuevo, que se compruebe que todos llevan activos desdde hace menos de 12 horas. 
 	if (('token' in session) == False):
-		session['token'] = os.urandom(24).hex()  # Genera un token de sesión único
-		miAsistente = Asistente (tokenDeSesion=session.get('token'), apodo="elChavo", evento_idEvento=1, fechaDeAccesoAlSistema=datetime.now());
+		session['token'] = os.urandom(24).hex();  # Genera un token de sesión único
+		miAsistente = Asistente (tokenDeSesion=session.get('token'), apodo="elChavo", evento_idEvento=5, fechaDeAccesoAlSistema=datetime.now());
 		db.session.add (miAsistente);
 		db.session.commit();
 		print ("funcionIndex()--- se ha crado el token.");
@@ -68,7 +68,7 @@ def funcionIndex():
 		# abrir con el navegador la pagina web y le de el mismo token que el navegador recordaba antes, de manera que si 
 		# no esta en la BBDD, lo que va a hacer es insertarlo otra vez. 
 		if (Asistente.query.filter_by (tokenDeSesion=session.get('token')).first() == None):
-			miAsistente = Asistente (tokenDeSesion=session.get('token'), apodo="elChavo", evento_idEvento=1, fechaDeAccesoAlSistema=datetime.now());
+			miAsistente = Asistente (tokenDeSesion=session.get('token'), apodo="elChavo", evento_idEvento=5, fechaDeAccesoAlSistema=datetime.now());
 			db.session.add (miAsistente);
 			db.session.commit();
 			print ("funcionIndex()--- ya existia una sesion y lo he vuelto a meter en la BBDD");

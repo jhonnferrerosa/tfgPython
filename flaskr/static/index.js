@@ -10,3 +10,4 @@ function ejecuta() {
 window.addEventListener('beforeunload', function(event) {
     ejecuta();
 });
+
