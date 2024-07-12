@@ -1,0 +1,66 @@
+
+{% extends "baseadministrador.html" %}
+
+
+{% block title %}
+    <title>administradorpanelrobot</title>
+{% endblock %}
+
+
+{% block content %}
+<nav> 
+    <ol>
+        <li> <a href="{{ url_for ('funcionAdministradorCrearRobot') }}"> nuevo robot </a></li>
+        <li> <a href="{{ url_for ('funcionAdministradorHome') }}">Volver al home </a></li>
+    </ol>
+</nav>
+
+{% if seHaIntentadoBorrarParametro == True %}
+    <p> Ese robor no se puede borrar ya que está en servicio, quítelo del servicio para que se pueda borrar.  </p>
+{% endif %}
+
+{% if seHaIntentadoModificarParametro == True %}
+    <p> Ese robor no se puede modificar ya que está en servicio, quítelo del servicio para que se pueda modificar.  </p>
+{% endif %}
+
+<h1> Robots: </h1>
+{% for iteracion in miListaRobotsParametro %}
+    <p> {{ iteracion.idRobot }}</p>
+    <p> {{ iteracion.MACaddressDelRobot }}</p>
+    <p> {{ iteracion.nombreDelRobot }}</p>
+    <p> {{ iteracion.evento_idEvento }}</p>
+    <p> {{ iteracion.robotEnServicio }}</p>
+
+
+
+    <form action="{{ url_for('funcionAdministradorPanelRobotModificar', idRobot=iteracion.idRobot) }}" method="get">
+        <button type="submit">Modificar robot</button>
+    </form>
+
+    {% if iteracion.robotEnServicio == True %}
+    <form action="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=iteracion.idRobot, robotEnServicio=0) }}" method="get">
+        <button type="submit">Desactivar robot</button>
+    </form>
+    {% else %}
+    <form action="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=iteracion.idRobot, robotEnServicio=1) }}" method="get">
+        <button type="submit">Activar robot</button>
+    </form>
+    {% endif %}
+
+
+    <form action="{{ url_for('funcionAdministradorPanelRobotBorrar', idRobot=iteracion.idRobot) }}" method="get">
+        <button type="submit">Borrar robot</button>
+    </form>
+    
+
+
+
+{% else %}
+    <p> Actualmente no hay robots en el sistema. </p>
+{% endfor %}
+
+{% endblock %}
+
+
+
+

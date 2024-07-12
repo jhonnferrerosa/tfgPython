@@ -2,15 +2,15 @@
 {% extends "baseadministrador.html" %}
 
 {% block title %}
-    <title>adminstradorhome</title>
+    <title>administradorhome</title>
 {% endblock %}
 
 {% block content %}
 <nav> 
     <ol>
-        <li>Adminstrar robots</li>
+        <li><a href="{{ url_for ('funcionAdministradorPanelRobot') }}">Administrar robots</a></li>
         <li>Adminstrar cuentas</li>
-        <li><a href="{{ url_for ('funcionAdminstradorPanelEvento') }}">Adminstrar eventos</a></li>
+        <li><a href="{{ url_for ('funcionAdministradorPanelEvento') }}">Administrar eventos</a></li>
     </ol>
 </nav>
 <section>

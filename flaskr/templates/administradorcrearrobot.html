@@ -1,0 +1,42 @@
+{% extends "baseadministrador.html" %}
+
+
+{% block title %}
+    {% if miParametroAccionHtml == "crear"%}
+        <title>administradorcrearobot</title>
+    {% else %}
+        <title>administradoreditardatosrobot</title>
+    {% endif %}
+{% endblock %}
+
+
+{% block content%}
+<nav> 
+    <ol>
+        <li> <a href="{{ url_for ('funcionAdministradorPanelRobot') }}"> Volver a administrar robots </a></li>
+        <li> <a href="{{ url_for ('funcionAdministradorHome') }}">Volver al home </a></li>
+    </ol>
+</nav>
+
+{% if miParametroAccionHtml == "crear"%}
+<p> Escriba los datos del nuevo robot: </p>
+{% else %}
+<p> Modifique los datos del robot: </p>
+{% endif %}
+
+{% from "_macroFormulario.html" import renderizarFormulario %}
+
+<div>
+    <form  method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        {{ renderizarFormulario(miFormularioParametro.MACaddressDelRobot) }}
+        {{ renderizarFormulario(miFormularioParametro.nombreDelRobot) }}
+        {{ renderizarFormulario(miFormularioParametro.evento_idEvento) }}
+        {{ renderizarFormulario(miFormularioParametro.robotEnServicio) }}
+        {{ renderizarFormulario(miFormularioParametro.descripcionDelRobot) }}
+    <input type="submit" value="miEnviar">
+    </form>
+</div>
+
+
+{% endblock %}

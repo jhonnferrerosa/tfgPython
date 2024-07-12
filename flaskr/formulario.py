@@ -7,21 +7,28 @@ from wtforms.fields import EmailField
 from wtforms import IntegerField
 from wtforms import DateField
 from wtforms import SelectField
+from wtforms import BooleanField
 
-from wtforms import validators
+from wtforms.validators import Length, InputRequired
 
 class FormularioAcceder (Form):
-	correoElectronico = EmailField('Introduzca su correo electronico:  (max. 50 caracteres): ', [validators.length(min=1, max=50, message="tiene que se un corrreo. ")]); 
-	contrasena  = StringField('Introduzca su contrasena (max. 50 caracteres): ', [validators.length(min=1, max=50, message="maximo 50 caracteres.")]);
+	correoElectronico = EmailField('Introduzca su correo electronico:  (max. 50 caracteres): ', validators= [InputRequired("Esta campo es requerido"), Length(min=3, max=50, message="esciba entre 3 y 50 caracteres.")]); 
+	contrasena  = StringField('Introduzca su contrasena (max. 50 caracteres): ', validators= [InputRequired("Esta campo es requerido"), Length(min=3, max=50, message="esciba entre 3 y 50 caracteres.")]);
 
 class FormularioCrearEvento (Form):
-	nombreDelEvento = StringField ('Introdzca el nombre del evento (max. 50 caracteres): ', [validators.length(min=1, max=50, message="maximo 50 caracteres.")]);
+	nombreDelEvento = StringField ('Introdzca el nombre del evento (max. 50 caracteres): ', validators= [InputRequired("Esta campo es requerido"), Length(min=3, max=50, message="esciba entre 3 y 50 caracteres.")]);
 	posiblesEventosAntiguos = SelectField ('Seleccione un lugar que esté actualemnte en el sistema: ', choices=[])
-	calleDelEvento = StringField ('Introdzca la calle del evento (max. 50 caracteres): ', [validators.length(min=1, max=50, message="maximo 50 caracteres.")]);
-	numeroDelEvento = StringField ('Introdzca el número de la calle del evento (max. 50 caracteres): ', [validators.length(min=1, max=50, message="maximo 50 caracteres.")]);
+	calleDelEvento = StringField ('Introdzca la calle del evento (max. 50 caracteres): ', validators= [InputRequired("Esta campo es requerido"), Length(min=3, max=50, message="esciba entre 3 y 50 caracteres.")]);
+	numeroDelEvento = StringField ('Introdzca el número de la calle del evento (max. 50 caracteres): ', validators= [InputRequired("Esta campo es requerido"), Length(min=3, max=50, message="esciba entre 3 y 50 caracteres.")]);
 	codigoPostal = IntegerField ('Introdzca el código postal: ');
-	edificioDondeSeCelebra = StringField ('Introdzca el edicifio donde se celebra el evento (max. 50 caracteres): ', [validators.length(min=1, max=50, message="maximo 50 caracteres.")]);
+	edificioDondeSeCelebra = StringField ('Introdzca el edicifio donde se celebra el evento (max. 50 caracteres): ', validators= [InputRequired("Esta campo es requerido"), Length(min=3, max=50, message="esciba entre 3 y 50 caracteres.")]);
 	
+class FormularioCreaRobot (Form):
+	MACaddressDelRobot = StringField ("Introoduzca la MAC del robot:  ", validators= [InputRequired("Esta campo es requerido"), Length(min=12, max=12, message="esciba entre 3 y 50 caracteres.")]);
+	nombreDelRobot = StringField ("Introduzca el nombre del robot: ", validators= [InputRequired("Esta campo es requerido"), Length(min=3, max=50, message="esciba entre 3 y 50 caracteres.")]);
+	evento_idEvento = SelectField ("Seleccione el evento en el que va a estar este robot: ", choices=[]);
+	robotEnServicio = BooleanField ("Establezca si el robot esta listo para usarse: ");
+	descripcionDelRobot = StringField ("Introduzca la descripcion del robot. ");
 
 
 

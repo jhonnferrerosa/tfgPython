@@ -8,7 +8,7 @@ class LugarDelEvento (db.Model):
     calle = db.Column (db.String (50), nullable=False);
     numero = db.Column (db.String (50), nullable=False);
     codigoPostal = db.Column (db.Integer);
-    edificioDondeSeCelebra = db.Column (db.String (50));
+    edificioDondeSeCelebra = db.Column (db.String (50), nullable=False);
     # esto no es un atributo, sino una relacion. 
     lugarDelEvento_idLugarDelEvento_relacionEvento = db.relationship ('Evento', backref='lugarDelEvento_idLugarDelEvento_relacionEvento');
 
@@ -30,6 +30,8 @@ class Asistente (db.Model):
     posicionDeColaConFecha = db.Column (db.DateTime);   
     evento_idEvento = db.Column (db.Integer, db.ForeignKey('miTablaEvento.idEvento'), nullable=False);
     asistente_tokenDeSesion_relacionRobot = db.relationship ('Robot');
+    fechaDeAccesoAlSistema = db.Column (db.DateTime, nullable=False);   
+
 
 class Robot (db.Model):
     __tablename__ = "miTablaRobot";
