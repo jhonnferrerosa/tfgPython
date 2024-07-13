@@ -20,6 +20,10 @@ from datetime import datetime
 
 import os
 
+import threading  # esta libreria (1/3) es para los hilos. 
+from flask import copy_current_request_context  # esta libreria (2/3) es para los hilos. 
+import time  # esta libreria (3/3) es para los hilos. 
+
 # https://www.demosroboticas.com primera pagina para los asistentes. 
 # https://www.demosroboticas.com/robotlisto
 #  https://www.demosroboticas.com/esperando 
@@ -38,26 +42,46 @@ app.config.from_object (DevelopmentConfig);
 
 csrf = CSRFProtect ();
 
+
+miDiccionarioGloalTokensEnteros = None;
+
+def funcionEliminaAsistenteDeLaBaseDeDatos (tokenDeSesion):
+	time.sleep (10);
+	print ("funcionEliminaAsistenteDeLaBaseDeDatos()--- en ese token, esta es la cantidad de intentos: ", miDiccionarioGloalTokensEnteros[tokenDeSesion]);
+	if (miDiccionarioGloalTokensEnteros[tokenDeSesion] == 0):  # en este caso si que puedo borrar de la BBDD. 
+		miAsistente = Asistente.query.filter_by (tokenDeSesion=tokenDeSesion).first();
+		if (miAsistente != None): # esto lo hago para ahorrarme el problema de que si por algun casual se intenta borrar varias veces, que la web no de error de integridad. 
+			db.session.delete(miAsistente);
+			db.session.commit();	
+	else:
+		print ("funcionEliminaAsistenteDeLaBaseDeDatos()---  No se borra de la BBDD");
+		print ("funcionEliminaAsistenteDeLaBaseDeDatos()---  ", miDiccionarioGloalTokensEnteros[tokenDeSesion]);
+		miDiccionarioGloalTokensEnteros[tokenDeSesion] -= 1;
+
 @app.before_request 
 def miFuncionAntesDeLaPeticion (): 
 	print  ("miFuncionAntesDeLaPeticion() --- este es el endpoint: ", request.endpoint); 
 
 	if (request.endpoint == "funcionCierraNavegador"):
 		print  ("miFuncionAntesDeLaPeticion() --- se va a eliminar en la BBDD: ", session.get('token'));
-		if (session.get('token') != None):
+		if (session.get('token') != None):  # esto puede venir bien porque este endpoint se ejecuta antes tambien para los adminstradores. 
 			miToken = session.get('token');
-			miAsistente = Asistente.query.filter_by (tokenDeSesion=miToken).first();
-			if (miAsistente != None):   # ya que el endpoint de cerrar se llama varias veces, con el mismo token, lo que hago es que 
-				# cuando ya no exista ese token, que no se borre otra vez porque sino no existe.  
-				db.session.delete(miAsistente);
-				db.session.commit();	
+
+			@copy_current_request_context
+			def sendHiloFuncionEliminaAsistenteDeLaBaseDeDatos (miToken):
+				funcionEliminaAsistenteDeLaBaseDeDatos (miToken);
+
+			hiloFuncionEliminaAsistenteDeLaBaseDeDatos = threading.Thread (name="hiloFuncionEliminaAsistenteDeLaBaseDeDatos", target=sendHiloFuncionEliminaAsistenteDeLaBaseDeDatos, args=(miToken,));
+			hiloFuncionEliminaAsistenteDeLaBaseDeDatos.start();
 
 
 @app.route('/')   
 def funcionIndex():
 	#  TO DO: seria buena idea poner que en el momento en el que se ingrese un asistente nuevo, que se compruebe que todos llevan activos desdde hace menos de 12 horas. 
+	global miDiccionarioGloalTokensEnteros; 
 	if (('token' in session) == False):
 		session['token'] = os.urandom(24).hex();  # Genera un token de sesión único
+		miDiccionarioGloalTokensEnteros = {session.get('token'): 0}  # establezco que ese token tien cero intentos de poder ser borrado por la funcionCierraNavegador en @app.before_request
 		miAsistente = Asistente (tokenDeSesion=session.get('token'), apodo="elChavo", evento_idEvento=5, fechaDeAccesoAlSistema=datetime.now());
 		db.session.add (miAsistente);
 		db.session.commit();
@@ -68,10 +92,15 @@ def funcionIndex():
 		# abrir con el navegador la pagina web y le de el mismo token que el navegador recordaba antes, de manera que si 
 		# no esta en la BBDD, lo que va a hacer es insertarlo otra vez. 
 		if (Asistente.query.filter_by (tokenDeSesion=session.get('token')).first() == None):
+			miDiccionarioGloalTokensEnteros = {session.get('token'): 0}  # establezco que ese token tien cero intentos de poder ser borrado por la funcionCierraNavegador en @app.before_request
 			miAsistente = Asistente (tokenDeSesion=session.get('token'), apodo="elChavo", evento_idEvento=5, fechaDeAccesoAlSistema=datetime.now());
 			db.session.add (miAsistente);
 			db.session.commit();
 			print ("funcionIndex()--- ya existia una sesion y lo he vuelto a meter en la BBDD");
+		else:
+			print ("funcionIndex()---", miDiccionarioGloalTokensEnteros[session.get('token')] );
+			print ("funcionIndex()--- este es el tamaño del diccionario: ", len (miDiccionarioGloalTokensEnteros));
+			miDiccionarioGloalTokensEnteros[session.get('token')] += 1;
 			
 	return (render_template("index.html"));
 
