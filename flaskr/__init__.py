@@ -43,19 +43,17 @@ app.config.from_object (DevelopmentConfig);
 csrf = CSRFProtect ();
 
 
-miDiccionarioGloalTokensEnteros = None;
+miDiccionarioGloalTokensEnteros = {};
 
 def funcionEliminaAsistenteDeLaBaseDeDatos (tokenDeSesion):
 	time.sleep (10);
-	print ("funcionEliminaAsistenteDeLaBaseDeDatos()--- en ese token, esta es la cantidad de intentos: ", miDiccionarioGloalTokensEnteros[tokenDeSesion]);
+	print ("funcionEliminaAsistenteDeLaBaseDeDatos()--- ese token: ", tokenDeSesion, " tiene estos intentos: ", miDiccionarioGloalTokensEnteros[tokenDeSesion]);
 	if (miDiccionarioGloalTokensEnteros[tokenDeSesion] == 0):  # en este caso si que puedo borrar de la BBDD. 
 		miAsistente = Asistente.query.filter_by (tokenDeSesion=tokenDeSesion).first();
 		if (miAsistente != None): # esto lo hago para ahorrarme el problema de que si por algun casual se intenta borrar varias veces, que la web no de error de integridad. 
 			db.session.delete(miAsistente);
 			db.session.commit();	
 	else:
-		print ("funcionEliminaAsistenteDeLaBaseDeDatos()---  No se borra de la BBDD");
-		print ("funcionEliminaAsistenteDeLaBaseDeDatos()---  ", miDiccionarioGloalTokensEnteros[tokenDeSesion]);
 		miDiccionarioGloalTokensEnteros[tokenDeSesion] -= 1;
 
 @app.before_request 
@@ -81,7 +79,7 @@ def funcionIndex():
 	global miDiccionarioGloalTokensEnteros; 
 	if (('token' in session) == False):
 		session['token'] = os.urandom(24).hex();  # Genera un token de sesión único
-		miDiccionarioGloalTokensEnteros = {session.get('token'): 0}  # establezco que ese token tien cero intentos de poder ser borrado por la funcionCierraNavegador en @app.before_request
+		miDiccionarioGloalTokensEnteros[session.get('token')] = 0;  # establezco que ese token tien cero intentos de poder ser borrado por la funcionCierraNavegador en @app.before_request
 		miAsistente = Asistente (tokenDeSesion=session.get('token'), apodo="elChavo", evento_idEvento=5, fechaDeAccesoAlSistema=datetime.now());
 		db.session.add (miAsistente);
 		db.session.commit();
@@ -92,16 +90,21 @@ def funcionIndex():
 		# abrir con el navegador la pagina web y le de el mismo token que el navegador recordaba antes, de manera que si 
 		# no esta en la BBDD, lo que va a hacer es insertarlo otra vez. 
 		if (Asistente.query.filter_by (tokenDeSesion=session.get('token')).first() == None):
-			miDiccionarioGloalTokensEnteros = {session.get('token'): 0}  # establezco que ese token tien cero intentos de poder ser borrado por la funcionCierraNavegador en @app.before_request
+			miDiccionarioGloalTokensEnteros[session.get('token')] = 0;  # establezco que ese token tien cero intentos de poder ser borrado por la funcionCierraNavegador en @app.before_request
 			miAsistente = Asistente (tokenDeSesion=session.get('token'), apodo="elChavo", evento_idEvento=5, fechaDeAccesoAlSistema=datetime.now());
 			db.session.add (miAsistente);
 			db.session.commit();
 			print ("funcionIndex()--- ya existia una sesion y lo he vuelto a meter en la BBDD");
 		else:
-			print ("funcionIndex()---", miDiccionarioGloalTokensEnteros[session.get('token')] );
-			print ("funcionIndex()--- este es el tamaño del diccionario: ", len (miDiccionarioGloalTokensEnteros));
-			miDiccionarioGloalTokensEnteros[session.get('token')] += 1;
-			
+			print ("funcionIndex()--- este es el tamaño del diccionario, es decir cantidad de navegadores: ", len (miDiccionarioGloalTokensEnteros));
+			# esto es para el caso de que se cierre la aplciacion y se borre el diccionario con los tokens activos. De esta manera que no caiga en error en el caso de 
+			# que hay un token que si que existe (segun lo que dice el navegador) pero que luego en mi lista de diccionario no esta. 
+			if ((session.get('token') in miDiccionarioGloalTokensEnteros) == False):
+				print ("funcionIndex()--- ese token puede ser qeu xista en la BBDD, pero no en el diccionario");
+				miDiccionarioGloalTokensEnteros[session.get('token')] = 0;
+			else: 
+				print ("funcionIndex()--- ese token esta en el diccionario. ");
+				miDiccionarioGloalTokensEnteros[session.get('token')] += 1;
 	return (render_template("index.html"));
 
 @app.route ('/ponerseAlaColaDeControlarUnRobot')
