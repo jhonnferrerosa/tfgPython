@@ -3,22 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
     <title>robotlisto</title>
 </head>
 <body>
     <h1> esta es la pagina de robot listo. </h1>
-    <header> </header>
+    <header> eurobot 2025.</header>
 
     <nav>
+        <a href="www.google.es"> Aceptar robot para controlarlo. </a>
+        <p> su robot esta listo. </p>
+        <a href="www.google.es"> Rechazar uso del robot </a>
     </nav>
 
+    <section>
+        <p> Robot asignado: </p>
 
-    <aside></aside>
+        <p> ++++++++++ </p>
+        <p> Este es el ID:  {{ miRobotParametro.idRobot }}</p>
+        <p> Esta es la MAC: {{ miRobotParametro.MACaddressDelRobot }}</p>
+        <p> Este es el nombre:  {{ miRobotParametro.nombreDelRobot }}</p>
+        <p> ---------</p>
 
 
-    <section></section>
+    </section>
 
-    <footer>
-    </footer>
+    <footer>Los derechos del TFG son de Jhon James FERREROSA TRUQUE. </footer>
 </body>
 </html>

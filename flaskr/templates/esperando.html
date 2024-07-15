@@ -3,22 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
     <title>esperando. </title>
 </head>
 <body>
     <h1> esta es la pagina de esperando.  </h1>
-    <header> </header>
+    <header> eurobot 2025. </header>
 
     <nav>
+        <p> actualiza el navegador para comprobar que tiene algun robot disponible. </p>
     </nav>
 
 
-    <aside></aside>
 
 
-    <section></section>
+    <section>
+        <h1> Tabla de los robts en el evento:  </h1>
 
-    <footer>
-    </footer>
+{% for iteracion in miListaRobotsParametro %}
+        <p> +++++++++++</p>
+        <p> {{ iteracion.idRobot }}</p>
+        <p> {{ iteracion.MACaddressDelRobot }}</p>
+        <p> {{ iteracion.nombreDelRobot }}</p>
+        <p> {{ iteracion.evento_idEvento }}</p>
+        <p>Robot en servicio:  {{ iteracion.robotEnServicio }}</p>
+        <p> ------------</p>
+
+
+{% else %}
+    <p> Actualmente no hay robots en el sistema. </p>
+{% endfor %}
+
+    </section>
+
+    <footer>Los derechos del TFG son de Jhon James FERREROSA TRUQUE. </footer>
 </body>
 </html>

@@ -44,6 +44,8 @@ csrf = CSRFProtect ();
 
 
 miDiccionarioGloalTokensEnteros = {};
+miDiccionarioGloalTokensBoolPorPrimerAcceso = {};
+miDiccionarioGlobalTokensListaDeRobotsRechazados = {};
 
 def funcionEliminaAsistenteDeLaBaseDeDatos (tokenDeSesion):
 	time.sleep (10);
@@ -53,6 +55,7 @@ def funcionEliminaAsistenteDeLaBaseDeDatos (tokenDeSesion):
 		if (miAsistente != None): # esto lo hago para ahorrarme el problema de que si por algun casual se intenta borrar varias veces, que la web no de error de integridad. 
 			db.session.delete(miAsistente);
 			db.session.commit();	
+			# to do: aqui deberia de poner otro if mas que diga que en el caso dee que se borre de BBDD, que tambien se borre del diccionario. 
 	else:
 		miDiccionarioGloalTokensEnteros[tokenDeSesion] -= 1;
 
@@ -71,7 +74,6 @@ def miFuncionAntesDeLaPeticion ():
 
 			hiloFuncionEliminaAsistenteDeLaBaseDeDatos = threading.Thread (name="hiloFuncionEliminaAsistenteDeLaBaseDeDatos", target=sendHiloFuncionEliminaAsistenteDeLaBaseDeDatos, args=(miToken,));
 			hiloFuncionEliminaAsistenteDeLaBaseDeDatos.start();
-
 
 @app.route('/')   
 def funcionIndex():
@@ -96,11 +98,11 @@ def funcionIndex():
 			db.session.commit();
 			print ("funcionIndex()--- ya existia una sesion y lo he vuelto a meter en la BBDD");
 		else:
-			print ("funcionIndex()--- este es el tamaño del diccionario, es decir cantidad de navegadores: ", len (miDiccionarioGloalTokensEnteros));
+			print ("funcionIndex()---Si esta en BBDD y este es el tamaño del diccionario, es decir cantidad de navegadores: ", len (miDiccionarioGloalTokensEnteros));
 			# esto es para el caso de que se cierre la aplciacion y se borre el diccionario con los tokens activos. De esta manera que no caiga en error en el caso de 
 			# que hay un token que si que existe (segun lo que dice el navegador) pero que luego en mi lista de diccionario no esta. 
 			if ((session.get('token') in miDiccionarioGloalTokensEnteros) == False):
-				print ("funcionIndex()--- ese token puede ser qeu xista en la BBDD, pero no en el diccionario");
+				print ("funcionIndex()--- ese token existe en la BBDD, pero no en el diccionario");
 				miDiccionarioGloalTokensEnteros[session.get('token')] = 0;
 			else: 
 				print ("funcionIndex()--- ese token esta en el diccionario. ");
@@ -109,24 +111,68 @@ def funcionIndex():
 
 @app.route ('/ponerseAlaColaDeControlarUnRobot')
 def functionPonerseAlaColaDeControlarUnRobot ():
-	miRobot = Robot.query.filter(Robot.robotEnServicio==True, Robot.asistente_tokenDeSesion==None).first();
+	global miDiccionarioGloalTokensEnteros;
+	global miDiccionarioGloalTokensBoolPorPrimerAcceso;
 
-	if (miRobot == None): #ene se momento no hay robots disponibles. 
-		print ("functionPonerseAlaColaDeControlarUnRobot()---  No hay robots. ");
+	if (session.get('token') == None) or (Asistente.query.filter_by (tokenDeSesion=session.get('token')).first() == None) or ((session.get('token') in miDiccionarioGloalTokensEnteros) == False): 
+		return redirect (url_for ('funcionIndex'));
+	else:
+		miDiccionarioGloalTokensBoolPorPrimerAcceso[session.get('token')] = True;
+		miRobot = Robot.query.filter(Robot.robotEnServicio==True, Robot.asistente_tokenDeSesion==None).first();
+		if (miRobot): #si hay robots. 
+			print ("functionPonerseAlaColaDeControlarUnRobot()--- si hay robot, este es su ID: ", miRobot.idRobot);
+			print ("functionPonerseAlaColaDeControlarUnRobot()--- se va a hacer la redireccion. ");
+			return redirect (url_for ("functionRobotListo", idRobot=miRobot.idRobot));
+		else: 	
+			print ("functionPonerseAlaColaDeControlarUnRobot()---  No hay robots. ");
+			return redirect (url_for ("funcionEsperando"));
 
-	else: 	
-		print ("functionPonerseAlaColaDeControlarUnRobot()--- ", miRobot.idRobot);
-	return (render_template("index.html"));
 
-
-
-@app.route('/robotlisto')
-def functionRobotListo ():
-	return (render_template("robotlisto.html"));
+@app.route('/robotlisto/<int:idRobot>')
+def functionRobotListo (idRobot):
+	global miDiccionarioGloalTokensEnteros; 
+	global miDiccionarioGloalTokensBoolPorPrimerAcceso;
+	if (session.get('token') == None) or (Asistente.query.filter_by (tokenDeSesion=session.get('token')).first() == None) or ((session.get('token') in miDiccionarioGloalTokensEnteros) == False): 
+		return redirect (url_for ('funcionIndex'));
+	else:
+		if (miDiccionarioGloalTokensBoolPorPrimerAcceso[session.get('token')] == True): 
+			print ("functionRobotListo()--- se abre la pagina debido a un redirect. ");
+			miDiccionarioGloalTokensBoolPorPrimerAcceso[session.get('token')] = False;
+		else:
+			print ("functionRobotListo()--- se abre la pagina debido a una recarga. ");
+			miDiccionarioGloalTokensEnteros[session.get('token')] += 1;
+		miRobot = Robot.query.filter_by (idRobot=idRobot).first();
+		return (render_template("robotlisto.html", miRobotParametro=miRobot));
 
 @app.route ('/esperando')
 def funcionEsperando ():
-	return render_template ("esperando.html");
+	global miDiccionarioGloalTokensEnteros; 
+	global miDiccionarioGloalTokensBoolPorPrimerAcceso;
+	global miDiccionarioGlobalTokensListaDeRobotsRechazados
+	 # en el caso de que no tenga token de sesion que se vuelva al index a obtenerlo. o en el caso de que la sesion no este en la base
+	 # de datos tambien mandarlo al index para que la ponga en la BBDD. O en el caso de que ese token no este en el diccionario mandarlo
+	 # al index. 
+	if (session.get('token') == None) or (Asistente.query.filter_by (tokenDeSesion=session.get('token')).first() == None) or ((session.get('token') in miDiccionarioGloalTokensEnteros) == False): 
+		print ("funcionEsperando()--- no existe el token O no esta en la BBDD O no esta en el diccionario. ");
+		return redirect (url_for ('funcionIndex'));
+	else:
+		if (miDiccionarioGloalTokensBoolPorPrimerAcceso[session.get('token')] == True): 
+			print ("funcionEsperando()--- se abre la pagina debido a un redirect. ");
+			miDiccionarioGloalTokensBoolPorPrimerAcceso[session.get('token')] = False;
+		else: 
+			print ("funcionEsperando()--- se abre la pagina debido a una recarga. ");
+			miDiccionarioGloalTokensEnteros[session.get('token')] += 1;
+			miRobot = Robot.query.filter(Robot.robotEnServicio==True, Robot.asistente_tokenDeSesion==None).first();
+			if (miRobot): #si hay robots. 
+				print ("funcionEsperando()---  si hay robot, este es su ID: ", miRobot.idRobot);
+				print ("funcionEsperando()--- se va a hacer la redireccion. ");
+				miDiccionarioGloalTokensBoolPorPrimerAcceso[session.get('token')] = True;
+				return redirect (url_for ("functionRobotListo", idRobot=miRobot.idRobot));
+
+	
+	miListaRobots = Robot.query.all();
+
+	return render_template ("esperando.html", miListaRobotsParametro=miListaRobots);
 
 # este endpoint no se ejecuta nunca, lo unico que neccesito que exista para que por lo menos 
 # se ejecuta el codigo del @app.before_request para que de esta manera se borre la sesion 
