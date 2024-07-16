@@ -10,11 +10,17 @@
     <h1> esta es la pagina de robot listo. </h1>
     <header> eurobot 2025.</header>
 
+    {% if miParametroRobotaceptado == False %}
     <nav>
-        <a href="www.google.es"> Aceptar robot para controlarlo. </a>
+        <a href="{{ url_for('funcionAceptarRobot', idRobot=miRobotParametro.idRobot) }}"> Aceptar robot para controlarlo. </a>
         <p> su robot esta listo. </p>
-        <a href="www.google.es"> Rechazar uso del robot </a>
+        <a href="{{ url_for('funcionRechazarRobot', idRobot=miRobotParametro.idRobot) }}"> Rechazar uso del robot </a>
     </nav>
+    {% else %}
+    <nav> 
+        <p> Ya esta controlando el robot </p>
+    </nav>
+    {% endif %}
 
     <section>
         <p> Robot asignado: </p>
