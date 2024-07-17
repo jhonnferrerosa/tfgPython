@@ -26,11 +26,11 @@
 <h1> Robots: </h1>
 {% for iteracion in miListaRobotsParametro %}
 <p> +++++++++++</p>
-    <p> {{ iteracion.idRobot }}</p>
-    <p> {{ iteracion.MACaddressDelRobot }}</p>
+    <p>Id del robot: {{ iteracion.idRobot }}</p>
+    <p>MAC: {{ iteracion.MACaddressDelRobot }}</p>
     <p> {{ iteracion.nombreDelRobot }}</p>
-    <p> {{ iteracion.evento_idEvento }}</p>
-    <p>Robot en servicio:  {{ iteracion.robotEnServicio }}</p>
+    <p>Evento al que pertentece: {{ iteracion.evento_idEvento }}</p>
+    <p>Robot en servicio: {{ iteracion.robotEnServicio }}</p>
 
 
 

@@ -30,7 +30,7 @@ class Asistente (db.Model):
     posicionDeColaConFecha = db.Column (db.DateTime);   
     evento_idEvento = db.Column (db.Integer, db.ForeignKey('miTablaEvento.idEvento'), nullable=False);
     asistente_tokenDeSesion_relacionRobot = db.relationship ('Robot');
-    fechaDeAccesoAlSistema = db.Column (db.DateTime, nullable=False);   
+    fechaDeAccesoAlSistema = db.Column (db.DateTime, nullable=False);   # esto es para borrar todos cada 12h. 
 
 
 class Robot (db.Model):

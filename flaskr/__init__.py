@@ -135,21 +135,32 @@ def functionPonerseAlaColaDeControlarUnRobot ():
 	if (session.get('token') == None) or (Asistente.query.filter_by (tokenDeSesion=session.get('token')).first() == None) or ((session.get('token') in miDiccionarioGloalTokensEnteros) == False): 
 		return redirect (url_for ('funcionIndex'));
 	else:
+		miAsistente = Asistente.query.filter_by (tokenDeSesion=session.get('token')).first();  # aqui se establece el turno. 
+		miAsistente.posicionDeColaConFecha=datetime.now();
+		db.session.commit();
+		# aqui averiguo cuantas personas hay delante mio. 
+		miListaAsistentes = Asistente.query.filter (Asistente.posicionDeColaConFecha < miAsistente.posicionDeColaConFecha).all();
+		cantidadDePersonaDelante = len (miListaAsistentes);
+
 		miDiccionarioGloalTokensBoolPorPrimerAcceso[session.get('token')] = True;
-		# esto se cambiar por un blucle for y devolver lo mismi, miRobot, en el caso de que haya alguno. 
-		misRobots = Robot.query.filter (Robot.robotEnServicio==True, Robot.asistente_tokenDeSesion==None).all();
+		misRobots = Robot.query.filter (Robot.robotEnServicio==True, Robot.asistente_tokenDeSesion==None).order_by(Robot.idRobot).all();
 		miRobot = None;
+
 		for indiceRobot in misRobots:
 			if ((indiceRobot.idRobot in miDiccionarioGlobalTokensListaDeRobotsRechazados[session.get('token')]) == False):  # en el caso de que el robot de indice i no este en la lista. 
-				miRobot = indiceRobot;
-				break;
+				if (cantidadDePersonaDelante == 0):
+					miRobot = indiceRobot;
+					break;
+				cantidadDePersonaDelante = cantidadDePersonaDelante -1;
+
+					
+
 		if (miRobot): #si hay robots. 
 			print ("functionPonerseAlaColaDeControlarUnRobot()--- si hay robot, este es su ID: ", miRobot.idRobot);
 			return redirect (url_for ("functionRobotListo", idRobot=miRobot.idRobot));
 		else: 	
 			print ("functionPonerseAlaColaDeControlarUnRobot()---  No hay robots. ");
 			return redirect (url_for ("funcionEsperando"));
-
 
 @app.route('/robotlisto/<int:idRobot>')
 @app.route('/robotlisto/<int:idRobot>/<int:robotaceptado>')
@@ -165,13 +176,13 @@ def functionRobotListo (idRobot, robotaceptado = False):
 		else:
 			print ("functionRobotListo()--- se abre la pagina debido a una recarga. ");
 			miDiccionarioGloalTokensEnteros[session.get('token')] += 1;
+		
 		if (robotaceptado == False):
 			miRobot = Robot.query.filter_by (idRobot=idRobot).first();
 			return (render_template("robotlisto.html", miRobotParametro=miRobot, miParametroRobotaceptado=robotaceptado));
 		else:
 			miRobot = Robot.query.filter_by (idRobot=idRobot).first();
 			return (render_template("robotlisto.html", miRobotParametro=miRobot, miParametroRobotaceptado=robotaceptado));
-
 
 @app.route ('/esperando')
 def funcionEsperando ():
@@ -191,15 +202,18 @@ def funcionEsperando ():
 		else: 
 			print ("funcionEsperando()--- se abre la pagina debido a una recarga. ");
 			miDiccionarioGloalTokensEnteros[session.get('token')] += 1;
-		misRobots = Robot.query.filter (Robot.robotEnServicio==True, Robot.asistente_tokenDeSesion==None).all();
+		
+		miAsistente = Asistente.query.filter_by (tokenDeSesion=session.get('token')).first(); 
+		miListaAsistentes = Asistente.query.filter (Asistente.posicionDeColaConFecha < miAsistente.posicionDeColaConFecha).all();
+		cantidadDePersonaDelante = len (miListaAsistentes);
+		misRobots = Robot.query.filter (Robot.robotEnServicio==True, Robot.asistente_tokenDeSesion==None).order_by(Robot.idRobot).all();
 		miRobot = None;
 		for indiceRobot in misRobots:
 			if ((indiceRobot.idRobot in miDiccionarioGlobalTokensListaDeRobotsRechazados[session.get('token')]) == False): 
-				print ("funcionEsperando()--- ese robot no esta en la lista de recahzados");
-				miRobot = indiceRobot;
-				break;
-			else:
-				print ("funcionEsperando()--- ese robot SI esta en la lista de recahzados");
+				if (cantidadDePersonaDelante == 0):
+					miRobot = indiceRobot;
+					break;
+				cantidadDePersonaDelante = cantidadDePersonaDelante -1;
 
 		if (miRobot): #si hay robots. 
 			print ("funcionEsperando()---  si hay robot, este es su ID: ", miRobot.idRobot);
@@ -220,9 +234,11 @@ def funcionRechazarRobot (idRobot):
 		return redirect (url_for ('funcionIndex'));
 	else:
 		miDiccionarioGloalTokensBoolPorPrimerAcceso[session.get('token')] = True;
+
+
 		miDiccionarioGlobalTokensListaDeRobotsRechazados[session.get('token')].append (idRobot);
 		print ("funcionRechazarRobot()--- este es el robot rechazado:  ",idRobot);
-		misRobots = Robot.query.filter (Robot.robotEnServicio==True).all();
+		misRobots = Robot.query.filter (Robot.robotEnServicio==True, Robot.asistente_tokenDeSesion==None).all();
 		miVariableTodaviaHayRobotsNoRechazadosEnLaBBDD = False;
 		for indiceRobot in misRobots: 
 			if ((indiceRobot.idRobot in miDiccionarioGlobalTokensListaDeRobotsRechazados[session.get('token')]) == False): # esto es que todavia hay algun robot que no se ha rechazado. 
@@ -246,6 +262,9 @@ def funcionAceptarRobot (idRobot):
 	else:
 		miDiccionarioGloalTokensBoolPorPrimerAcceso[session.get('token')] = True;
 		miDiccionarioGlobalTokensListaDeRobotsRechazados[session.get('token')] = [];
+		miAsistente = Asistente.query.filter_by (tokenDeSesion=session.get('token')).first();  # aqui se establece el turno. 
+		miAsistente.posicionDeColaConFecha=None;
+		db.session.commit();
 		miRobot = Robot.query.filter_by (idRobot=idRobot).first();
 		miRobot.asistente_tokenDeSesion = session.get('token');
 		db.session.commit();
