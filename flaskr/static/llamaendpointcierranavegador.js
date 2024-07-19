@@ -19,11 +19,6 @@ window.addEventListener('click', function(event) {
     }
 });
 
-function funcionComenzar (){
-    console.log ("funcionComenzar()--- se hizo clic: ", seHizoClicEnUnEnlace);
-
-}
-
 // el evento es el momento justo de cerrar la pestaña. 
 window.addEventListener('beforeunload', function() {
     //console.log ("beforeunload()--- se hizo clic: ", seHizoClicEnUnEnlace);

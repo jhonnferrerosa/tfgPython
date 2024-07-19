@@ -27,7 +27,6 @@ import time  # esta libreria (3/3) es para los hilos.
 from flask import send_file  #esto es para que el HTML pida la foto y con esto se la envie. 
 from io import BytesIO  # esto lo que hace es convertir la lista da bits de la foto en algo entendible para el navegador. 
 
-from PIL import Image
 
 # https://www.demosroboticas.com primera pagina para los asistentes. 
 # https://www.demosroboticas.com/robotlisto
