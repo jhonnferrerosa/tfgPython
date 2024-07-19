@@ -3,7 +3,13 @@
 
 
 {% macro renderizarFormulario(parametroCampos) %}
+	<div style="margin-bottom: 10px;">
 		<dd> {{ parametroCampos.label }}
 		<dd> {{ parametroCampos(**kwargs) |safe }}
+	</div>
+{% endmacro %}
+
+{% macro renderizarBoton() %}
+	<input  style="margin-bottom: 10px;margin-left: 20px;"  type="submit" value="Enviar">
 {% endmacro %}
 

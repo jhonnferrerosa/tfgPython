@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='llamaendpointcierranavegador.js') }}"></script>
     <title>index</title>
 </head>
 <body>
-	<h1>  este es el index. </h1>
-	
-	<header> eurobot 2025. </header>
+	<header> 
+		<div> Demostraciones robóticas: {{ miParametroMiEventoNombreDelEvento }}</div>
+	</header>
 	<nav> 
 		<a href="{{ url_for ('functionPonerseAlaColaDeControlarUnRobot') }}"> Ponerse a la cola de controlar un robot. </a>
 	</nav>
@@ -17,6 +17,20 @@
 	
 	<section>
 		<P> Tabla de los robts en el evento:  </p>
+{% for iteracion in miListaRobotsParametro %}
+        <p> +++++++++++</p>
+        <p>Id del robot: {{ iteracion.idRobot }}</p>
+        <p> {{ iteracion.MACaddressDelRobot }}</p>
+        <p> {{ iteracion.nombreDelRobot }}</p>
+        <p> {{ iteracion.evento_idEvento }}</p>
+        <p>Robot en servicio:  {{ iteracion.robotEnServicio }}</p>
+        <p>Ocupando robot: {{ iteracion.asistente_tokenDeSesion }}</p>
+        <p> ------------</p>
+
+
+{% else %}
+    <p> Actualmente no hay robots en el sistema. </p>
+{% endfor %}
 		
 	</section>
 	

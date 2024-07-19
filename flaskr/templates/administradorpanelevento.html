@@ -26,18 +26,19 @@
 
 
     <h1> Eventos: </h1>
-
     {% for iteracion in miListaEventosParametro %}
-        <p> {{ iteracion.idEvento }}</p>
-        <p> {{ iteracion.nombreDelEvento }}</p>
-        <p> {{ iteracion.lugarDelEvento_idLugarDelEvento_relacionEvento.calle }}</p>
-        <form action="{{ url_for('funcionAdministradorModificarDatosEvento', idEvento=iteracion.idEvento) }}" method="get">
-            <button type="submit">Modificar evento</button>
-        </form>
-        
-        <form action="{{ url_for('funcionAdministradorPanelEventoBorrar', idEvento=iteracion.idEvento) }}" method="get">
-            <button type="submit">Borrar evento</button>
-        </form>
+        <p>Id del evento:  {{ iteracion.idEvento }}</p>
+        <p>Nombre del evento: {{ iteracion.nombreDelEvento }}</p>
+        <p>Fecha de creación del evento: {{ iteracion.fechaDeCreacionDelEvento.strftime("%Y-%m-%d-%H:%M") }}</p>
+        <p>Edificio del evento: {{ iteracion.lugarDelEvento_idLugarDelEvento_relacionEvento.edificioDondeSeCelebra }}</p>
+        <p>Calle: {{ iteracion.lugarDelEvento_idLugarDelEvento_relacionEvento.calle }}</p>
+        <p>Numero: {{ iteracion.lugarDelEvento_idLugarDelEvento_relacionEvento.numero }}</p>
+        <p>Código postal:  {{ iteracion.lugarDelEvento_idLugarDelEvento_relacionEvento.codigoPostal }}</p>
+
+        <ol>
+            <li> <a href="{{ url_for('funcionAdministradorModificarDatosEvento', idEvento=iteracion.idEvento) }}">Modificar evento</a></li>
+            <li> <a href="{{ url_for('funcionAdministradorPanelEventoBorrar', idEvento=iteracion.idEvento) }}">Borrar evento</a></li>
+        </ol>
 
         <br>
         <br>

@@ -20,7 +20,7 @@ class Evento (db.Model):
     lugarDelEvento_idLugarDelEvento = db.Column (db.Integer, db.ForeignKey ('miTablaLugarDelEvento.idLugarDelEvento'), nullable=False);
     # esto no es un atributo, sino una relacion. 
     evento_idEvento_relacionAsistente = db.relationship('Asistente');
-    evento_idEvento_relacionRobot = db.relationship ('Robot');
+    evento_idEvento_relacionRobot = db.relationship ('Robot', backref='evento_idEvento_relacionRobot');
 
 class Asistente (db.Model):
     __tablename__ = "miTablaAsistente";

@@ -24,17 +24,18 @@
 <p> Modifique los datos del robot: </p>
 {% endif %}
 
-{% from "_macroFormulario.html" import renderizarFormulario %}
+{% from "_macroFormulario.html" import renderizarFormulario, renderizarBoton %}
 
 <div>
-    <form  method="POST">
+    <form  method="POST" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         {{ renderizarFormulario(miFormularioParametro.MACaddressDelRobot) }}
         {{ renderizarFormulario(miFormularioParametro.nombreDelRobot) }}
         {{ renderizarFormulario(miFormularioParametro.evento_idEvento) }}
         {{ renderizarFormulario(miFormularioParametro.robotEnServicio) }}
         {{ renderizarFormulario(miFormularioParametro.descripcionDelRobot) }}
-    <input type="submit" value="miEnviar">
+        {{ renderizarFormulario(miFormularioParametro.fotoDelRobot) }}
+    {{ renderizarBoton() }}
     </form>
 </div>
 

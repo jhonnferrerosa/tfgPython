@@ -23,38 +23,40 @@
     <p> Ese robor no se puede modificar ya que está en servicio, quítelo del servicio para que se pueda modificar.  </p>
 {% endif %}
 
+<h3> Filtar por evento: </h3>
+{% for iteracion in miListaDeEventosEnLosQueHayRobotsParametro %}
+    <p> {{ iteracion }}</p>
+    <button> {{ iteracion.nombreDelEvento }}</button>
+{% endfor %}
+
+
 <h1> Robots: </h1>
 {% for iteracion in miListaRobotsParametro %}
 <p> +++++++++++</p>
     <p>Id del robot: {{ iteracion.idRobot }}</p>
     <p>MAC: {{ iteracion.MACaddressDelRobot }}</p>
-    <p> {{ iteracion.nombreDelRobot }}</p>
+    <p>Nombre del robot: {{ iteracion.nombreDelRobot }}</p>
     <p>Evento al que pertentece: {{ iteracion.evento_idEvento }}</p>
     <p>Robot en servicio: {{ iteracion.robotEnServicio }}</p>
-
-
-
-    <form action="{{ url_for('funcionAdministradorPanelRobotModificar', idRobot=iteracion.idRobot) }}" method="get">
-        <button type="submit">Modificar robot</button>
-    </form>
-
-    {% if iteracion.robotEnServicio == True %}
-    <form action="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=iteracion.idRobot, robotEnServicio=0) }}" method="get">
-        <button type="submit">Desactivar robot</button>
-    </form>
-    {% else %}
-    <form action="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=iteracion.idRobot, robotEnServicio=1) }}" method="get">
-        <button type="submit">Activar robot</button>
-    </form>
-    {% endif %}
-
-
-    <form action="{{ url_for('funcionAdministradorPanelRobotBorrar', idRobot=iteracion.idRobot) }}" method="get">
-        <button type="submit">Borrar robot</button>
-    </form>
+    <p>Descripcion del robot: {{ iteracion.descripcionDelRobot }}</p>
+    <p>lugar del robot: {{ iteracion.evento_idEvento_relacionRobot.nombreDelEvento }}</p>
+    
+        {% if iteracion.fotoDelRobot!= None %}
+            <p> Si hay fotos del robot. </p>
+            <img src="{{ url_for('funcionCapturarImagenRobot', idRobot=iteracion.idRobot) }}" style="max-width: 300px; max-height: 300px; width: auto; height: auto;">
+        {% else %}
+            <p> No hay fotos del robot. </p>
+        {% endif %}
+    <ol>
+        <li> <a href="{{ url_for('funcionAdministradorPanelRobotModificar', idRobot=iteracion.idRobot) }}">Modificar robot</a></li>
+        {% if iteracion.robotEnServicio == True %}
+            <li> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=iteracion.idRobot, robotEnServicio=0) }}">Desactivar robot</a></li>
+        {% else %}
+            <li> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=iteracion.idRobot, robotEnServicio=1) }}">Activar robot</a></li>
+        {% endif %}
+        <li> <a href="{{ url_for('funcionAdministradorPanelRobotBorrar', idRobot=iteracion.idRobot) }}">Borrar robot</a></li>
+    </ol>
     <p> ------------</p>
-
-
 
 {% else %}
     <p> Actualmente no hay robots en el sistema. </p>
