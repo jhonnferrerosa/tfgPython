@@ -346,9 +346,9 @@ def funcionAdministradorLogin():
 def funcionAdministradorHome():
     return (render_template ("administradorhome.html"));
 
-
+@app.route ('/administradorpanelrobot/<int:idEvento>')
 @app.route ('/administradorpanelrobot')
-def funcionAdministradorPanelRobot ():
+def funcionAdministradorPanelRobot (idEvento = 0):
 	seHaIntentadoBorrar = request.args.get('seHaIntentadoBorrar', 'False') == 'True';
 	seHaIntentadoModificar = request.args.get('seHaIntentadoModificar', 'False') == 'True';
 	miListaRobots = Robot.query.all();
@@ -359,6 +359,9 @@ def funcionAdministradorPanelRobot ():
 			miEvento = Evento.query.filter_by (idEvento=iteracionRobot.evento_idEvento).first();
 			if ((miEvento in miListaDeEventosEnLosQueHayRobots) == False):
 				miListaDeEventosEnLosQueHayRobots.append(miEvento);
+	
+	if (idEvento > 0):
+		miListaRobots = Robot.query.filter_by (evento_idEvento=idEvento).all();
 		
 	return render_template ("administradorpanelrobot.html", miListaRobotsParametro=miListaRobots, seHaIntentadoBorrarParametro=seHaIntentadoBorrar, seHaIntentadoModificarParametro=seHaIntentadoModificar, miListaDeEventosEnLosQueHayRobotsParametro=miListaDeEventosEnLosQueHayRobots);
 

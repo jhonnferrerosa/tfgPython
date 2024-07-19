@@ -24,9 +24,9 @@
 {% endif %}
 
 <h3> Filtar por evento: </h3>
+<a href="{{ url_for('funcionAdministradorPanelRobot', idEvento=0) }}">Todos los robots</a>
 {% for iteracion in miListaDeEventosEnLosQueHayRobotsParametro %}
-    <p> {{ iteracion }}</p>
-    <button> {{ iteracion.nombreDelEvento }}</button>
+    <a href="{{ url_for('funcionAdministradorPanelRobot', idEvento=iteracion.idEvento) }}">{{ iteracion.nombreDelEvento }}</a>
 {% endfor %}
 
 
