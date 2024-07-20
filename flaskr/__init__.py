@@ -61,6 +61,7 @@ def funcionEliminaAsistenteDeLaBaseDeDatos (tokenDeSesion):
 			if (miRobot != None):
 				print ("funcionEliminaAsistenteDeLaBaseDeDatos()--- ese asistente esta en un robot, lo quito del robot. ");
 				miRobot.asistente_tokenDeSesion = None;
+				db.session.commit();
 			# to do: aqui deberia de poner otro if mas que diga que en el caso dee que se borre de BBDD, que tambien se borre del diccionario. 
 	else:
 		miDiccionarioGloalTokensEnteros[tokenDeSesion] -= 1;
@@ -95,6 +96,7 @@ def miFuncionAntesDeLaPeticion ():
 
 			hiloFuncionEliminaAsistenteDeLaBaseDeDatos = threading.Thread (name="hiloFuncionEliminaAsistenteDeLaBaseDeDatos", target=sendHiloFuncionEliminaAsistenteDeLaBaseDeDatos, args=(miToken,));
 			hiloFuncionEliminaAsistenteDeLaBaseDeDatos.start();
+
  
 @app.route('/<int:idEvento>')   
 @app.route('/')   
