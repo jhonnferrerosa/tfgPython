@@ -20,7 +20,7 @@ from datetime import datetime
 
 import os
 
-import threading  # esta libreria (1/3) es para los hilos. 
+import threading  # esta libreria (1/3) es para los hilos. s
 from flask import copy_current_request_context  # esta libreria (2/3) es para los hilos. 
 import time  # esta libreria (3/3) es para los hilos. 
 
