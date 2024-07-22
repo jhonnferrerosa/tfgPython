@@ -97,6 +97,7 @@ def miFuncionAntesDeLaPeticion ():
 			hiloFuncionEliminaAsistenteDeLaBaseDeDatos = threading.Thread (name="hiloFuncionEliminaAsistenteDeLaBaseDeDatos", target=sendHiloFuncionEliminaAsistenteDeLaBaseDeDatos, args=(miToken,));
 			hiloFuncionEliminaAsistenteDeLaBaseDeDatos.start();
 
+
  
 @app.route('/<int:idEvento>')   
 @app.route('/')   
@@ -173,29 +174,8 @@ def functionPonerseAlaColaDeControlarUnRobot ():
 		miAsistente = Asistente.query.filter_by (tokenDeSesion=session.get('token')).first();  # aqui se establece el turno. 
 		miAsistente.posicionDeColaConFecha=datetime.now();
 		db.session.commit();
-		# aqui averiguo cuantas personas hay delante mio. 
-		miListaAsistentes = Asistente.query.filter (Asistente.posicionDeColaConFecha < miAsistente.posicionDeColaConFecha, Asistente.evento_idEvento==miAsistente.evento_idEvento).all();
-		cantidadDePersonaDelante = len (miListaAsistentes);
-
 		miDiccionarioGloalTokensBoolPorPrimerAcceso[session.get('token')] = True;
-		misRobots = Robot.query.filter (Robot.robotEnServicio==True, Robot.asistente_tokenDeSesion==None, Robot.evento_idEvento==miAsistente.evento_idEvento).order_by(Robot.idRobot).all();
-		miRobot = None;
-
-		for indiceRobot in misRobots:
-			if ((indiceRobot.idRobot in miDiccionarioGlobalTokensListaDeRobotsRechazados[session.get('token')]) == False):  # en el caso de que el robot de indice i no este en la lista. 
-				if (cantidadDePersonaDelante == 0):
-					miRobot = indiceRobot;
-					break;
-				cantidadDePersonaDelante = cantidadDePersonaDelante -1;
-
-					
-
-		if (miRobot): #si hay robots. 
-			print ("functionPonerseAlaColaDeControlarUnRobot()--- si hay robot, este es su ID: ", miRobot.idRobot);
-			return redirect (url_for ("functionRobotListo", idRobot=miRobot.idRobot));
-		else: 	
-			print ("functionPonerseAlaColaDeControlarUnRobot()---  No hay robots. ");
-			return redirect (url_for ("funcionEsperando"));
+		return redirect (url_for ("funcionEsperando"));
 
 @app.route('/robotlisto/<int:idRobot>')
 @app.route('/robotlisto/<int:idRobot>/<int:robotaceptado>')
@@ -248,7 +228,7 @@ def funcionEsperando ():
 		misRobots = Robot.query.filter (Robot.robotEnServicio==True, Robot.asistente_tokenDeSesion==None, Robot.evento_idEvento==miAsistente.evento_idEvento).order_by(Robot.idRobot).all();
 		miRobot = None;
 		for indiceRobot in misRobots:
-			if ((indiceRobot.idRobot in miDiccionarioGlobalTokensListaDeRobotsRechazados[session.get('token')]) == False): 
+			if ((indiceRobot.idRobot in miDiccionarioGlobalTokensListaDeRobotsRechazados[session.get('token')]) == False):  # en el caso de que el robot de indice i no este en la lista. 
 				if (cantidadDePersonaDelante == 0):
 					miRobot = indiceRobot;
 					break;
@@ -259,7 +239,10 @@ def funcionEsperando ():
 			print ("funcionEsperando()--- se va a hacer la redireccion. ");
 			miDiccionarioGloalTokensBoolPorPrimerAcceso[session.get('token')] = True;
 			return redirect (url_for ("functionRobotListo", idRobot=miRobot.idRobot));
-	
+		else:
+			print ("funcionEsperando()---  no hay robots para este asistente");
+
+
 		miListaRobots = Robot.query.filter(Robot.evento_idEvento==miAsistente.evento_idEvento).all();
 		miEvento = Evento.query.filter_by (idEvento=miAsistente.evento_idEvento).first();
 		return render_template ("esperando.html", miListaRobotsParametro=miListaRobots,  miParametroMiEventoNombreDelEvento=miEvento.nombreDelEvento);
@@ -281,8 +264,8 @@ def funcionRechazarRobot (idRobot):
 		if (miRobot.asistente_tokenDeSesion == None):  # sí lo podre rechazar en el caso de que no este siendo usado. Evidentemente no lo voy a rechazar si se esta usando ya, es decir el robot tiene Asistente. 
 			#antes de manejar los datos del robot, voy a averiguar en que posicion de cola esta el asistente,  recordar que en el caso de que sea el primero, su indice es cero. 
 			miAsistente = Asistente.query.filter_by (tokenDeSesion=session.get('token')).first();
-			miListaDeAsistentes = Asistente.query.order_by (Asistente.posicionDeColaConFecha).filter(Asistente.evento_idEvento == miAsistente.evento_idEvento).all();
-			indiceEnLaColaDeAsistentes = miListaDeAsistentes.index(miAsistente);
+			miListaAsistentes = Asistente.query.order_by (Asistente.posicionDeColaConFecha).filter(Asistente.evento_idEvento == miAsistente.evento_idEvento).all();
+			indiceEnLaColaDeAsistentes = miListaAsistentes.index(miAsistente);
 
 			miDiccionarioGlobalTokensListaDeRobotsRechazados[session.get('token')].append (idRobot);
 			print ("funcionRechazarRobot()--- este es el robot rechazado:  ",idRobot);
@@ -427,12 +410,15 @@ def funcionAdministradorPanelRobotModificar (idRobot):
 
 @app.route ('/adminstradorpanelrobotponerservicio/<int:idRobot>/<int:robotEnServicio>')
 def funcionAdministradorPanelRobotPonerServicio (idRobot, robotEnServicio): 
+	global miDiccionarioGloalTokensBoolPorPrimerAcceso;
 	miRobot = Robot.query.filter_by (idRobot=idRobot).first();
 	# en el caso de que el robot este en servicio y ademas tenga a un asistente dentro, lo que hago es eliminar ese asistente. 
 	if (miRobot.robotEnServicio == True) and (miRobot.asistente_tokenDeSesion != None):  
 		print ("funcionAdministradorPanelRobotPonerServicio()--- hay un asistente, lo borro de la tabla robot.");
 		miAsistente = Asistente.query.filter_by (tokenDeSesion=miRobot.asistente_tokenDeSesion).first();
 		miRobot.asistente_tokenDeSesion = None;
+		if (miDiccionarioGloalTokensBoolPorPrimerAcceso[session.get('token')] != None):  #primero compruebo que ese token esta en el diccionario ya que puede ser que de error de aplicacion en el caso de que no este.
+			miDiccionarioGloalTokensBoolPorPrimerAcceso[session.get('token')] = True;		
 		if (miAsistente != None):
 			# TO DO: poner una lista privilegiados para que vayan los asistentes que han sido expulsados, para que estos no tengan que ir al final de la cola, sino que se les muestre los robots disponibles
 			# y que incluso puedan quitar un robot disponible a los que ya estan en la cola. Todo esto ver que es lo que piensan los profesores, quizas no hace falta.
