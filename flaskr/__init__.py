@@ -16,7 +16,7 @@ from models import Evento
 from models import LugarDelEvento
 from models import Robot
 
-from datetime import datetime 
+from datetime import datetime, timedelta   # esto vale para definir trozos de tiempo, de esta manera puedo medir diferencias de tiempo. 
 
 import os
 
@@ -48,13 +48,18 @@ csrf = CSRFProtect ();
 miDiccionarioGloalTokensEnteros = {};
 miDiccionarioGloalTokensBoolPorPrimerAcceso = {};
 miDiccionarioGlobalTokensListaDeRobotsRechazados = {};
+miDiccionarioGloalEventosControlDeTiempo = {}
+miListaAsistentesPrivilegiados = [];
 
 def funcionEliminaAsistenteDeLaBaseDeDatos (tokenDeSesion):
+	global miListaAsistentesPrivilegiados;
 	time.sleep (10);
 	print ("funcionEliminaAsistenteDeLaBaseDeDatos()--- ese token: ", tokenDeSesion, " tiene estos intentos: ", miDiccionarioGloalTokensEnteros[tokenDeSesion]);
 	if (miDiccionarioGloalTokensEnteros[tokenDeSesion] == 0):  # en este caso si que puedo borrar de la BBDD. 
 		miAsistente = Asistente.query.filter_by (tokenDeSesion=tokenDeSesion).first();
 		if (miAsistente != None): # esto lo hago para ahorrarme el problema de que si por algun casual se intenta borrar varias veces, que la web no de error de integridad. 
+			if (miAsistente.tokenDeSesion in miListaAsistentesPrivilegiados):
+				miListaAsistentesPrivilegiados.remove (miAsistente.tokenDeSesion);
 			db.session.delete(miAsistente);
 			db.session.commit();	
 			miRobot = Robot.query.filter_by (asistente_tokenDeSesion=tokenDeSesion).first();
@@ -83,6 +88,7 @@ def miPaginaNoEncontrada (e):
 @app.before_request 
 def miFuncionAntesDeLaPeticion (): 
 	global miDiccionarioGloalTokensBoolPorPrimerAcceso;
+	global miListaAsistentesPrivilegiados;
 	print  ("miFuncionAntesDeLaPeticion() --- este es el endpoint: ", request.endpoint); 
 		
 	if (request.endpoint == "funcionCierraNavegador"):
@@ -96,9 +102,30 @@ def miFuncionAntesDeLaPeticion ():
 
 			hiloFuncionEliminaAsistenteDeLaBaseDeDatos = threading.Thread (name="hiloFuncionEliminaAsistenteDeLaBaseDeDatos", target=sendHiloFuncionEliminaAsistenteDeLaBaseDeDatos, args=(miToken,));
 			hiloFuncionEliminaAsistenteDeLaBaseDeDatos.start();
+	else:
+		if (session.get('token') != None):	
+			print  ("miFuncionAntesDeLaPeticion() --- 1hay token de sesion");
+			miAsistente = Asistente.query.filter_by (tokenDeSesion=session.get('token')).first();
+			if (miAsistente != None):   # Tener en cuenta que no siempre hay asistente ya que el asistente que accede prorimmera vez no se ha metido ni si quiera en la BBDD. 
+				print  ("miFuncionAntesDeLaPeticion() --- 2si que hay un asistente con ese token. ");
+				if ((miAsistente.evento_idEvento in  miDiccionarioGloalEventosControlDeTiempo) == False):  # este if lo he puesto como que no siempre se ejecuta, ver sangria. 
+					miDiccionarioGloalEventosControlDeTiempo[miAsistente.evento_idEvento] = datetime.now();
+				miAsistentePrimero = Asistente.query.filter (Asistente.evento_idEvento==miAsistente.evento_idEvento).order_by(Asistente.posicionDeColaConFecha).first();   
+				if (miAsistentePrimero.posicionDeColaConFecha):
+					print  ("miFuncionAntesDeLaPeticion() --- 3si que hay un asistente que esta primero en la cola. ");
+					miListaRobot = Robot.query.filter_by (evento_idEvento=miAsistente.evento_idEvento, robotEnServicio=True).all();
+					if (len(miListaRobot) > 0):  # en el caso de que haya por lo menos un robot. 
+						print  ("miFuncionAntesDeLaPeticion() --- 4si que hay robots en ese evento.");
+						if (datetime.now() - miAsistentePrimero.posicionDeColaConFecha) > timedelta(minutes=1):
+							print  ("miFuncionAntesDeLaPeticion() --- 5a ese asisntetne se le ha pasado el tiempo");
+							if (datetime.now() - miDiccionarioGloalEventosControlDeTiempo[miAsistente.evento_idEvento] > timedelta (seconds=30)):
+								print  ("miFuncionAntesDeLaPeticion() --- 6hace mas de 30 seg que se ha metido a un asistente, procedo a meter en la cola de privilegiados. . ");
+								miAsistentePrimero.posicionDeColaConFecha = None;
+								db.session.commit ();
+								miListaAsistentesPrivilegiados.append (miAsistentePrimero.tokenDeSesion);
+								miDiccionarioGloalEventosControlDeTiempo[miAsistente.evento_idEvento] = datetime.now();
+		print ("miFuncionAntesDeLaPeticion() --- esta es la lista de privilagiados: ", miListaAsistentesPrivilegiados);
 
-
- 
 @app.route('/<int:idEvento>')   
 @app.route('/')   
 def funcionIndex(idEvento = None):
@@ -208,6 +235,8 @@ def funcionEsperando ():
 	global miDiccionarioGloalTokensEnteros; 
 	global miDiccionarioGloalTokensBoolPorPrimerAcceso;
 	global miDiccionarioGlobalTokensListaDeRobotsRechazados;
+	global miListaAsistentesPrivilegiados;
+
 	 # en el caso de que no tenga token de sesion que se vuelva al index a obtenerlo. o en el caso de que la sesion no este en la base
 	 # de datos tambien mandarlo al index para que la ponga en la BBDD. O en el caso de que ese token no este en el diccionario mandarlo
 	 # al index. 
@@ -223,8 +252,14 @@ def funcionEsperando ():
 			miDiccionarioGloalTokensEnteros[session.get('token')] += 1;
 		
 		miAsistente = Asistente.query.filter_by (tokenDeSesion=session.get('token')).first(); 
-		miListaAsistentes = Asistente.query.filter (Asistente.posicionDeColaConFecha < miAsistente.posicionDeColaConFecha, Asistente.evento_idEvento == miAsistente.evento_idEvento).all();
-		cantidadDePersonaDelante = len (miListaAsistentes);
+
+		print ("funcionEsperando()--- se va a establacer la cantidad de personas delante ");
+		if (miAsistente.tokenDeSesion in miListaAsistentesPrivilegiados):
+			cantidadDePersonaDelante = 0;
+		else:
+			miListaAsistentes = Asistente.query.filter (Asistente.posicionDeColaConFecha < miAsistente.posicionDeColaConFecha, Asistente.evento_idEvento == miAsistente.evento_idEvento).all();
+			cantidadDePersonaDelante = len (miListaAsistentes);
+		print ("funcionEsperando()--- se ha determinado  la cantidad de personas delante ");
 		misRobots = Robot.query.filter (Robot.robotEnServicio==True, Robot.asistente_tokenDeSesion==None, Robot.evento_idEvento==miAsistente.evento_idEvento).order_by(Robot.idRobot).all();
 		miRobot = None;
 		for indiceRobot in misRobots:
@@ -417,8 +452,7 @@ def funcionAdministradorPanelRobotPonerServicio (idRobot, robotEnServicio):
 		print ("funcionAdministradorPanelRobotPonerServicio()--- hay un asistente, lo borro de la tabla robot.");
 		miAsistente = Asistente.query.filter_by (tokenDeSesion=miRobot.asistente_tokenDeSesion).first();
 		miRobot.asistente_tokenDeSesion = None;
-		if (miDiccionarioGloalTokensBoolPorPrimerAcceso[session.get('token')] != None):  #primero compruebo que ese token esta en el diccionario ya que puede ser que de error de aplicacion en el caso de que no este.
-			miDiccionarioGloalTokensBoolPorPrimerAcceso[session.get('token')] = True;		
+		miDiccionarioGloalTokensBoolPorPrimerAcceso[session.get('token')] = True;		
 		if (miAsistente != None):
 			# TO DO: poner una lista privilegiados para que vayan los asistentes que han sido expulsados, para que estos no tengan que ir al final de la cola, sino que se les muestre los robots disponibles
 			# y que incluso puedan quitar un robot disponible a los que ya estan en la cola. Todo esto ver que es lo que piensan los profesores, quizas no hace falta.
@@ -435,7 +469,10 @@ def funcionAdministradorPanelRobotPonerServicio (idRobot, robotEnServicio):
 def funcionAdministradorPanelEvento ():
 	seHaIntentadoBorrar = request.args.get('seHaIntentadoBorrar', 'False') == 'True';  # esto es para el mensaje en de si ese evento que se ha pulsado en borrar se puede borrar o no. 
 	seHaIntentadoModificar = request.args.get('seHaIntentadoModificar', 'False') == 'True';
-	#print ("funcionAdministradorPanelEvento()---", seHaIntentadoBorrar);
+
+	print ("funcionAdministradorPanelEvento()---saluda1");
+	print ("funcionAdministradorPanelEvento()---saluda2");
+	print ("funcionAdministradorPanelEvento()---saluda3");
 	miLugarDelEventoNoEspecificado =  LugarDelEvento.query.filter_by (idLugarDelEvento=0).first();  # con esto lo que hago es crear una opcion en la que no se quiere especificar la calle del evento. Lo dejo aqui ara que se ejecute la primera vez.  
 	if (miLugarDelEventoNoEspecificado == None):
 		miLugarDelEvento = LugarDelEvento (idLugarDelEvento=0, calle="No se espeficica la calle.", numero="No se especifica el número. ", codigoPostal=28001, edificioDondeSeCelebra="No se especificca el edificio donde se celebra.");
@@ -475,7 +512,7 @@ def funcionAdministradorPanelEventoBorrar (idEvento):
 @app.route ('/administradorcrearevento', methods = ['GET', 'POST'])
 def funcionAdministradorCrearEvento ():
 	miFormulario = formulario.FormularioCrearEvento (request.form);
-	miFormulario.posiblesEventosAntiguos.choices = [('-1', 'No se va a seleccionar, tendrá que escribirlo')]+ [(miLugarSeleccionado.idLugarDelEvento, str(miLugarSeleccionado.idLugarDelEvento)+ "- "+ miLugarSeleccionado.calle+ " / "+ miLugarSeleccionado.numero+ " / "+ miLugarSeleccionado.edificioDondeSeCelebra) for miLugarSeleccionado in LugarDelEvento.query.all()]; 
+	miFormulario.posiblesEventosAntiguos.choices = [('-1', 'No se va a seleccionar, tendrá que escribirlo')]+ [(-2, '-2NoCalle NoNumemero NoEdificio')]+ [(miLugarSeleccionado.idLugarDelEvento, str(miLugarSeleccionado.idLugarDelEvento)+ "- "+ miLugarSeleccionado.calle+ " / "+ miLugarSeleccionado.numero+ " / "+ miLugarSeleccionado.edificioDondeSeCelebra) for miLugarSeleccionado in LugarDelEvento.query.all()]; 
 
 	if (request.method == 'POST'):
 		if (int(miFormulario.posiblesEventosAntiguos.data) >= 0): # en el caso de que se haya seleccionado un lugar del desplegable. De manera que la opcion "No se selecciona nada vale -1".
