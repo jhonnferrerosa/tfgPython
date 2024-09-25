@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="{{ url_for('static', filename='llamaendpointcierranavegador.js') }}"></script>
+    <title>robotlisto</title>
+</head>
+
+
+
+<body>
+    <header> 
+        <div> Demostraciones robóticas: {{ miParametroMiEventoNombreDelEvento }}</div>
+    </header>
+
+    <nav>
+        <p> Ya esta controlando el robot </p>
+    </nav>
+
+
+    <section>
+        <p> Robot asignado: </p>
+
+        <p> ++++++++++ </p>
+        <p> Este es el ID:  {{ miRobotParametro.idRobot }}</p>
+        <p> Esta es la MAC: {{ miRobotParametro.macAddressDelRobot }}</p>
+        <p> Este es el nombre:  {{ miRobotParametro.nombreDelRobot }}</p>
+        <p> ---------</p>
+
+
+    </section>
+
+
+
+    <footer>Los derechos del TFG son de Jhon James FERREROSA TRUQUE. </footer>
+</body>

@@ -1,0 +1,79 @@
+{% extends "baseadministrador.html" %}
+
+{% block title %}
+    <script type="text/javascript" src="{{ url_for('static', filename='administradorcreaevento.js') }}"></script>
+    {% if miParametroAccionHtml == "crear"%}
+        <title>administradorcreaevento</title>
+    {% else %}
+        <title>administradoreditardatosevento</title>
+    {% endif %}
+
+{% endblock %}
+
+
+
+{% block content%}
+    <nav> 
+        <ol class="list-unstyled">
+            <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorPanelEvento') }}" class="btn btn-primary btn-block"> Volver a adminstrar eventos </a></li>
+            <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorHome') }}" class="btn btn-primary btn-block">Volver al home </a></li>
+        </ol>
+    </nav>
+
+    {% if miParametroVariableNoSeHaRellenadoFormularioCorrectamente == False%}
+        <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">No se ha rellenada ningún robot, debe rellenar alguno para poder crear el evento.</nav>
+    {% endif %}
+
+
+<div class="container">
+    
+
+<div class="card card-primary mt-5">
+ <!--begin::Header-->
+<div class="card-header">
+<div class="card-title">
+    {% if miParametroAccionHtml == "crear"%}
+        <p> Escriba los datos del nuevo evento: </p>
+    {% else %}
+        <p> Modifique los datos del evento: </p>
+    {% endif %}
+ </div>
+</div> <!--end::Header--> <!--begin::Form-->
+<form  method="POST"> <!--begin::Body-->
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+<div class="card-body">
+<div class="mb-3"> <label class="form-label">Introduzca el id del evento (recordar que es con lo que se crea el QR)*</label> {{ miFormularioParametro.idEvento }}
+</div>
+<div class="mb-3"> <label  class="form-label">Introdzca el nombre del evento (max. 50 caracteres)*:</label> {{ miFormularioParametro.nombreDelEvento }} </div>
+<div class="mb-3"> <label  class="form-label">Introdzca la calle del evento (max. 50 caracteres):</label> {{ miFormularioParametro.calle }} </div>
+<div class="mb-3"> <label  class="form-label">Introdzca el número de la calle del evento (max. 50 caracteres):</label> {{ miFormularioParametro.numero }}   </div>
+<div class="mb-3"> <label  class="form-label">Introdzca el código postal:</label> {{ miFormularioParametro.codigoPostal }}  </div>
+<div class="mb-3"> <label  class="form-label">Introdzca el edicifio donde se celebra el evento (max. 50 caracteres):</label> {{ miFormularioParametro.edificioDondeSeCelebra }} </div>
+
+
+
+</div>
+
+            {% if miParametroAccionHtml == "crear"%}
+<!---  loop.index con esto consigo en cada una de las iteraciones el número de iteración -->
+            {% for iteracion in miListaRobotsParametro %}
+                <p>MAC: {{ iteracion.macAddressDelRobot }} - - - Id del robot: {{ iteracion.idRobot }}</p> 
+                <label for="idFechaComienzoEnEvento">Fecha de comienzo en el evento: </label>
+                <input type="datetime-local" id="idFechaComienzoEnEvento" name="p_fechaComienzoEnEvento{{ loop.index }}">
+                <label for="idFechaFinEnEvento">Fecha de fin en el evento: </label>
+                <input type="datetime-local" id="idFechaFinEnEvento" name="p_fechaFinEnEvento{{ loop.index }}">
+            {% endfor %}
+            {% endif %}
+            <div class="card-footer"> <button type="submit" class="btn btn-primary">Aceptar</button> </div> 
+        </form>
+    </div>
+
+
+</div> <!--end::Body--> <!--begin::Footer-->
+ <!--end::Form-->
+</div>                           
+
+    
+
+{% endblock %}
+

@@ -1,0 +1,150 @@
+
+{% extends "baseadministrador.html" %}
+
+{% block title %}
+    <script type="text/javascript" src="{{ url_for('static', filename='administradorcreaevento.js') }}"></script>
+{% endblock %}
+
+{% block content%}
+    <nav> 
+        <ol class="list-unstyled">
+            <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorPanelEvento') }}" class="btn btn-primary btn-block"> Volver a adminstrar eventos </a></li>
+            <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorHome') }}" class="btn btn-primary btn-block">Volver al home </a></li>
+        </ol>
+    </nav>
+
+
+    <section>
+	<h4> Robots programados para el evento: </h4>
+
+{% for clave, valor in miDiccionarioRobotsParametro.items() %}
+<div class="card mb-4" style="clear: both;">
+    <div class="card-header">
+        <h3 class="card-title">Id del robot: {{ clave.idRobot }} - Mac: {{ clave.macAddressDelRobot }} - Nombre del robot: {{ clave.nombreDelRobot }}</h3>
+        <h3 class="card-title">
+            <ol class="list-unstyled" style="margin-left: 30px;">
+                {% if valor["subclavePuedoModificar"] == True %}
+                <li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotModificar', idRobot=clave.idRobot, idEvento=miParametroIdEvento) }}" class="btn btn-danger btn-block">Modificar robot </a></li>
+                    {% if valor["subclaveQueBotonEnServicioEs"] == True %}
+<li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=clave.idRobot, robotEnServicio=1, idEvento=miParametroIdEvento) }}" class="btn btn-danger btn-block">Activar robot</a></li>
+                    {% else %}
+<li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=clave.idRobot, robotEnServicio=0, idEvento=miParametroIdEvento) }}" class="btn btn-danger btn-block">Desactivar robot</a></li>
+                    {% endif %}
+                {% endif %}
+                {% if valor["subclavePuedoeliminar"] == True %}
+                    <li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotBorrar', idRobot=clave.idRobot, idEvento=miParametroIdEvento) }}" class="btn btn-danger btn-block">Borrar robot</a></li> 
+                {% endif %}
+            </ol>
+        </h3>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th style="width: 350px">fecha de comienzo en el evento: </th>
+                    <th>fecha de fin en el evento: </th>
+                    <th>Accion:</th>
+                </tr>
+            </thead>
+            {% for iteracion in valor["subclaveListas"] %}
+            <tbody>
+                <form  method="POST" >
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <tr class="align-middle">
+                        <td>{{ iteracion.fechaComienzoEnEvento }}</td>
+                        <td>{{ iteracion.fechaFinEnEvento }} {{ iteracion.robot_idRobot }} {{ iteracion.fechaComienzoEnEventoAntigua }} {{ iteracion.fechaFinEnEventoAntigua }}</td>
+                        <td>
+                            <button type="submit" name="nameformulariomodificar"  class="btn btn-success">Modificar</button>
+                            <button type="submit" name="nameformularioeliminar"  class="btn btn-success">Eliminar fecha</button> 
+                        </td>
+                    </tr>
+                </form>
+            </tbody>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endfor %}
+
+
+
+
+
+
+
+
+<h4> Apartado para sumar robots al evento: </h4>
+    {% for iteracion in miListaDeFormularioSumarRobotParametro %}
+    <form  method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <p> Id del robot: {{ iteracion[0] }}.    MAC: {{ iteracion[1] }} </p>
+        <label>Fecha de comienzo en el evento: </label>
+        {{ iteracion[2].fechaComienzoEnEvento }}
+        <label >Fecha de fin en el evento: </label>
+        {{ iteracion[2].fechaFinEnEvento }}
+        {{ iteracion[2].robot_idRobot }}
+        <input  type="submit" name="nameformulariosumarrobot" value="Sumar robot">
+    </form>
+    {% endfor %}
+
+
+
+
+
+
+
+<div class="card mb-4" style="clear: both; margin-top: 50px;">
+    <div class="card-header">
+        <h3 class="card-title">Apartado para sumar robots al evento:</h3>
+    </div> <!-- /.card-header -->
+    <div class="card-body p-0">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th style="width: 200px">Id del robot: </th>
+                    <th>MAC: </th>
+                    <th>fecha de comienzo en el evento: </th>
+                    <th>fecha de fin en el evento: </th>
+                    <th>Accion:</th>
+                </tr>
+            </thead>
+{% for iteracion in miListaDeSumarRobotParametro %}
+            <tbody>
+                <form  method="POST" >
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <input type="hidden" value="{{ iteracion[0] }}" name="p_idRobot"/>
+                    <tr class="align-middle">
+                        <td>{{ iteracion[0] }}</td>
+                        <td>{{ iteracion[1] }}</td>
+                        <td>
+                            <input type="datetime-local" id="idFechaComienzoEnEvento" name="p_fechaComienzoEnEvento">
+                        </td>
+                        <td>
+                            <input type="datetime-local" id="idFechaFinEnEvento" name="p_fechaFinEnEvento">
+                        </td>
+
+                        <td><button type="submit" name="nameformulariosumarrobot"  class="btn btn-primary">Sumar robot</button></td>
+                </form>
+            </tbody>
+{% endfor %}
+        </table>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </section>
+{% endblock %}
+
+

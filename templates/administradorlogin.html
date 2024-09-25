@@ -1,0 +1,56 @@
+
+
+{% extends "baseadministrador.html" %}
+{% block title %}
+    <title> administradorlogin</title>
+<!---    <script type="text/javascript" src="{{ url_for('static', filename='administradorcreaevento.js') }}"></script>   -->
+
+
+{% endblock %}
+
+
+{% block content %}
+{% if miParametroUsuarioIncorrecto == True %}
+    <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">Usuario incorrecto</nav>
+{% else %}
+    {% if miParametroContrasenaIncorrecta == True %}
+        <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">Contraseña incorrecta </nav>
+    {% endif %}
+{% endif %}
+
+
+<div class="container">
+    
+
+<div class="card card-primary mt-5">
+ <!--begin::Header-->
+<div class="card-header">
+<div class="card-title">Ingrese sus credenciales. </div>
+</div> <!--end::Header--> <!--begin::Form-->
+<form  method="POST"> <!--begin::Body-->
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+<div class="card-body">
+<div class="mb-3"> <label for="exampleInputEmail1" class="form-label">Introduzca su correo electronico:  (max. 50 caracteres)</label> {{ miFormularioParametro.correoElectronico }}
+
+</div>
+<div class="mb-3"> <label for="exampleInputPassword1" class="form-label">Introduzca su contrasena: </label> {{ miFormularioParametro.contrasena }} </div>
+
+</div> <!--end::Body--> <!--begin::Footer-->
+<div class="card-footer"> <button type="submit" class="btn btn-primary">Acceder</button> </div> <!--end::Footer-->
+</form> <!--end::Form-->
+</div>                           
+
+
+
+
+
+    
+</div>
+{% endblock %}
+
+
+
+
+
+
+                            

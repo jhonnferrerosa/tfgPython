@@ -1,0 +1,73 @@
+{% extends "baseadministrador.html" %}
+
+
+{% block title %}
+    {% if miParametroAccionHtml == "crear"%}
+        <title>administradorcrearobot</title>
+    {% else %}
+        <title>administradoreditardatosrobot</title>
+    {% endif %}
+{% endblock %}
+
+{% block content%}
+<nav> 
+    <ol class="list-unstyled">
+        {% if miParametroIdEvento > 0 %}
+            <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorModificarRobotsEvento', idEvento=miParametroIdEvento) }}" class="btn btn-primary btn-block"> Volver a adminstrar robots del evento</a></li>
+            <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorPanelEvento') }}" class="btn btn-primary btn-block"> Volver a adminstrar eventos</a></li>
+        {% else %}
+            <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorPanelRobot') }}" class="btn btn-primary btn-block"> Volver a administrar robots</a></li>
+        {% endif%}
+        <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorHome') }}" class="btn btn-primary btn-block">Volver al home</a></li>
+    </ol>
+</nav>
+
+
+
+<div class="container">
+    
+
+<div class="card card-primary mt-5">
+ <!--begin::Header-->
+<div class="card-header">
+<div class="card-title">
+    {% if miParametroAccionHtml == "crear"%}
+        <p> Escriba los datos del nuevo robot: </p>
+    {% else %}
+        <p> Modifique los datos del robot: </p>
+    {% endif %}
+ </div>
+</div> <!--end::Header--> <!--begin::Form-->
+<form  method="POST" enctype="multipart/form-data"> <!--begin::Body-->
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+<div class="card-body">
+<div class="mb-3"> <label class="form-label">Introduzca la MAC del robot:</label> {{ miFormularioParametro.macAddressDelRobot }}
+</div>
+
+<div class="mb-3"> <label  class="form-label">Introduzca el nombre del robot: </label> {{ miFormularioParametro.nombreDelRobot }} </div>
+<div class="mb-3"> <label  class="form-label">Introduzca el una descripcion del robot: </label> {{ miFormularioParametro.descripcionDelRobot }} </div>
+<div class="mb-3"> <label  class="form-label">Suba una foto del robot:</label> {{ miFormularioParametro.fotoDelRobot }}   </div>
+
+</div> <!--end::Body--> <!--begin::Footer-->
+<div class="card-footer"> <button type="submit" class="btn btn-primary">Aceptar</button> </div> <!--end::Footer-->
+</form> <!--end::Form-->
+</div>                           
+
+
+
+
+
+    
+</div>
+
+
+
+
+
+{% endblock %}
+
+
+
+
+
+

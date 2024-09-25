@@ -1,0 +1,87 @@
+
+{% extends "baseadministrador.html" %}
+
+{% block title %}
+    <title>adminstradorpanelevento</title>
+{% endblock %}
+
+
+{% block content %}
+<nav> 
+    <ol class="list-unstyled">
+        <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorCrearEvento') }}" class="btn btn-primary btn-block"> nuevo evento </a></li>
+       <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorHome') }}" class="btn btn-primary btn-block">Volver al home </a></li> 
+    </ol>
+</nav>
+<section> 
+
+
+<div class="card mb-4" style="clear: both;">
+                                <div class="card-header">
+                                    <h3 class="card-title">Eventos:</h3>
+                                </div> <!-- /.card-header -->
+                                <div class="card-body p-0">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 140px">Id del evento: </th>
+                                                <th>Nombre del evento:</th>
+                                                <th>Fecha creación del evento:</th>
+                                                <th>Calle:</th>
+                                                <th>Numero: </th>
+                                                <th>Edificio donde se celebra: </th>
+                                                <th>Codigo postal:</th>
+                                                <th>Acciones: </th>
+                                            </tr>
+                                        </thead>
+                                        {% for iteracion in miListaEventosParametro %}
+                                        <tbody>
+                                            <tr class="align-middle">
+                                                <td>{{ iteracion.idEvento }}</td>
+                                                <td>{{ iteracion.nombreDelEvento }}</td>
+                                                <td>
+                                                    {{ iteracion.fechaDeCreacionDelEvento.strftime("%Y-%m-%d-%H:%M") }}
+                                                </td>
+                                                <td>{{ iteracion.calle }}</td>
+                                                <td>{{ iteracion.numero }}</td>
+                                                <td>{{ iteracion.edificioDondeSeCelebra }}</td>
+                                                <td> {{ iteracion.codigoPostal }}</td>
+                                                <td>
+                                                    <ol class="list-unstyled">
+                                                    <li class="mb-2"> <a href="{{ url_for('funcionAdministradorModificarDatosEvento', idEvento=iteracion.idEvento) }}" class="btn btn-primary btn-block">Modificar datos del evento</a></li>
+                                                    <li class="mb-2"> <a href="{{ url_for('funcionAdministradorModificarRobotsEvento', idEvento=iteracion.idEvento) }}" class="btn btn-primary btn-block">Modificar robots del evento</a></li>
+                                                    <li class="mb-2"> <a href="{{ url_for('funcionAdministradorPanelEventoBorrar', idEvento=iteracion.idEvento) }}" class="btn btn-primary btn-block">Borrar evento</a></li>
+                                                    </ol>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                        {% endfor %}
+                                    </table>
+                                </div> <!-- /.card-body -->
+                            </div>
+
+
+
+{% if miListaEventosParametro|length == 0 %}
+    <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">No tienes ningún evento</nav>
+{% endif %}
+
+
+
+
+
+ </section>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,103 @@
+
+{% extends "baseadministrador.html" %}
+
+
+{% block title %}
+    <title>administradorpanelrobot</title>
+{% endblock %}
+
+
+{% block content %}
+<nav>
+    <ol class="list-unstyled">
+        <li class="mb-2">
+            <a href="{{ url_for('funcionAdministradorCrearRobot') }}" class="btn btn-primary btn-block">Dar de alta un robot en el sistema. </a>
+        </li>
+        <li class="mb-2">
+            <a href="{{ url_for('funcionAdministradorHome') }}" class="btn btn-primary btn-block">Volver al home </a>
+        </li>
+    </ol>
+</nav>
+
+
+
+<nav>
+    <ol class="list-unstyled">
+        <li class="mb-2" style="float:left; margin-left: 20px;">
+            <a href="{{ url_for('funcionAdministradorPanelRobot', idEvento=-1) }}" class="btn btn-danger btn-block">Robots que no están en ningún evento</a>
+        </li>
+        <li class="mb-2" style="float:left; margin-left: 20px;">
+            <a href="{{ url_for('funcionAdministradorPanelRobot', idEvento=0) }}" class="btn btn-danger btn-block">Todos los robots </a>
+        </li>
+
+        {% for iteracion in miListaDeEventosEnLosQueHayRobotsParametro %}
+        <li class="mb-2" style="float:left; margin-left: 20px;">
+            <a href="{{ url_for('funcionAdministradorPanelRobot', idEvento=iteracion.idEvento) }}" class="btn btn-danger btn-block">{{ iteracion.nombreDelEvento }}</a>
+        {% endfor %}
+        </li>
+    </ol>
+</nav>
+
+
+<div class="card mb-4" style="clear: both;">
+                                <div class="card-header">
+                                    <h3 class="card-title">Robots:</h3>
+                                </div> <!-- /.card-header -->
+                                <div class="card-body p-0">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 130px">Id del robot: </th>
+                                                <th>MAC:</th>
+                                                <th>Nobre del robot:</th>
+                                                <th>Descripción del robot: </th>
+                                                <th>Foto: </th>
+                                                {% if miParametroMostrarRobotsNingunEvento == True %}
+                                                <th>Acciones: </th>
+                                                {% endif %}
+                                            </tr>
+                                        </thead>
+                                        {% for iteracion in miListaRobotsParametro %}
+                                        <tbody>
+                                            <tr class="align-middle">
+                                                <td>{{ iteracion.idRobot }}</td>
+                                                <td>{{ iteracion.macAddressDelRobot }}</td>
+                                                <td>{{ iteracion.nombreDelRobot }} </td>
+                                                <td>{{ iteracion.descripcionDelRobot }}</td>
+                                                <td>
+                                                    {% if iteracion.fotoDelRobot!= None %}
+                                                        <img src="{{ url_for('funcionCapturarImagenRobot', idRobot=iteracion.idRobot) }}" style="max-width: 200px; max-height: 200px; width: auto; height: auto;">
+                                                    {% else %}
+                                                        <p> No hay fotos del robot. </p>
+                                                    {% endif %}
+                                                </td>
+                                                {% if miParametroMostrarRobotsNingunEvento == True %}
+                                                <td> 
+                                                    <ol class="list-unstyled">
+                                                        <li class="mb-2"> <a href="{{ url_for('funcionAdministradorPanelRobotModificar', idRobot=iteracion.idRobot) }}" class="btn btn-primary btn-block">Modificar robot </a></li>
+                                                        <li class="mb-2"> <a href="{{ url_for('funcionAdministradorPanelRobotBorrar', idRobot=iteracion.idRobot) }}" class="btn btn-primary btn-block">Borrar robot</a></li>
+                                                    </ol>
+                                                </td>
+                                                {% endif %}
+                                            </tr>
+                                        </tbody>
+                                        {% endfor %}
+                                    </table>
+                                </div> <!-- /.card-body -->
+                            </div>
+
+
+{% if miListaRobotsParametro|length == 0 %}
+    <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">No hay robots en el sistema</nav>
+{% endif %}
+
+
+
+    
+
+
+{% endblock %}
+
+
+
+

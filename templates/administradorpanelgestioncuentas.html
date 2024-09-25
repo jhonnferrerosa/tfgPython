@@ -1,0 +1,58 @@
+
+{% extends "baseadministrador.html" %}
+
+
+{% block title %}
+    <title>administradorpanelgestioncuentas</title>
+{% endblock %}
+
+
+{% block content %}
+<nav> 
+    <ol class="list-unstyled">
+        <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorHome') }}" class="btn btn-primary btn-block">Volver al home </a></li>
+    </ol>
+</nav>
+
+<h4> Administradores: </h4>
+
+
+
+{% for clave, valor in miParametroDiccionarioAdministradores.items() %}
+<div class="card mb-4" style="clear: both;">
+    <div class="card-header">
+        <h3 class="card-title">Correo electrónico:  {{ clave }}</h3>
+        <h3 class="card-title" style="margin-left: 30px;">
+            <a href="{{ url_for('funcionAdministradorBorrarCuentaAdministrador', correoelectronico=clave) }}" class="btn btn-primary btn-block">Eliminar cuenta</a>
+        </h3>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th style="width: 350px">IdEvento:</th>
+                    <th>Nombre del evento:</th>
+                    <th>Fecha de creación del evento:</th>
+                </tr>
+            </thead>
+{% for iteracion in valor %}
+            <tbody>
+                <tr class="align-middle">
+                    <td>{{ iteracion.idEvento }}</td>
+                    <td>{{ iteracion.nombreDelEvento }}</td>
+                    <td>{{ iteracion.fechaDeCreacionDelEvento.strftime('%Y-%m-%d %H:%M') }}</td>
+                </tr>
+            </tbody>
+{% endfor %}
+        </table>
+    </div>
+</div>
+{% endfor %}
+
+{% if miParametroDiccionarioAdministradores|length == 0 %}
+    <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">Actualmente usted es el único administrador en el sistema.</nav>
+{% endif %} 
+{% endblock %}
+
+
+
