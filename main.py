@@ -142,22 +142,23 @@ def index2 ():
 
 @app.before_request
 def miFuncionAntesDeLaPeticion ():
-    print  ("miFuncionAntesDeLaPeticion() --- este es el endpoint: ", request.endpoint); 
+    #print  ("miFuncionAntesDeLaPeticion() --- este es el endpoint: ", request.endpoint); 
     miVariablePermitirAccesoSinCorreoElectronico = True;
     if (request.endpoint == 'index2') or (request.endpoint == 'funcionAdministradorsignup') or (request.endpoint == 'funcion_aceptarRobot') or (request.endpoint == 'funcion_rechazarRobot') or (request.endpoint == 'funcion_registrarAsistente') or (request.endpoint == 'static') or (request.endpoint == 'funcionAdministradorLogin'):
         miVariablePermitirAccesoSinCorreoElectronico = False
     
     if ('correoElectronico' not in session) and (miVariablePermitirAccesoSinCorreoElectronico == True):
-        print ("miFuncionAntesDeLaPeticion() --- en la sesion no esta el correo electronico, y el endpoint no es uno permitido, se va a redirigir al login. ");
+        #print ("miFuncionAntesDeLaPeticion() --- en la sesion no esta el correo electronico, y el endpoint no es uno permitido, se va a redirigir al login. ");
         if (request.endpoint != 'funcionAdministradorLogin'):
-            print ("miFuncionAntesDeLaPeticion() --- el endpoint es el login o el sign up, finalmente no redirijo. ");
+            #print ("miFuncionAntesDeLaPeticion() --- el endpoint es el login o el sign up, finalmente no redirijo. ");
             return redirect (url_for ('funcionAdministradorLogin'));
     else: 
-        print ("miFuncionAntesDeLaPeticion() --- es un endpoint permitido o en la sesion si esta el correo, se continua la ejecución ");
-        print ("miFuncionAntesDeLaPeticion() ---", miDiccionarioEventoYasistentesDatos);
+        #print ("miFuncionAntesDeLaPeticion() --- es un endpoint permitido o en la sesion si esta el correo, se continua la ejecución ");
+        #print ("miFuncionAntesDeLaPeticion() ---", miDiccionarioEventoYasistentesDatos);
+        pass;
 
 
-    print("miFuncionAntesDeLaPeticion() --- request.view_args", request.view_args);
+    #print("miFuncionAntesDeLaPeticion() --- request.view_args", request.view_args);
      # en caso de que el argumento del request  sea (entre otros) el idEvento, entonces en ese evento, voy a verificar el primero de la cola. Y lo que voy a ver es si su posicionDeColaConFecha tien na antiguedad mayor a 3 minuto, y si esto es cierto
      # lo que hago es que a ese primero lo pongo como privilegiado, pero claro viendo si ha pasado como minimo un minutos de que ya se haya pasad como privilegiado a otro asistente de ese mismo evento. 
     if (request.view_args != None):  
@@ -169,7 +170,7 @@ def miFuncionAntesDeLaPeticion ():
                 miDiccionarioFechasPasoAEsPrivilegiado[idEvento] = datetime.now();  
             else:
                 if (datetime.now() - miDiccionarioFechasPasoAEsPrivilegiado[idEvento] >= timedelta(minutes=1)):  # de esta manera me aseguro que como maximo se va a pasar un asistente a la cola de privilegiados cada minuto, de esta manera no los meto a todos de golpe en esta nueva cola. 
-                    print  ("miFuncionAntesDeLaPeticion() --- desde que se ha pasado un asistente a la cola de privilegiado hasta la fecha actual del sistema,  ha sido  más de un minuto");
+                    #print  ("miFuncionAntesDeLaPeticion() --- desde que se ha pasado un asistente a la cola de privilegiado hasta la fecha actual del sistema,  ha sido  más de un minuto");
                     if (len (miDiccionarioEventoYasistentesDatos[idEvento]) > 0):  #en el caso de que tenga al menos un asistente ya en el evento. 
                         miVariableFechaMasAntigua = datetime.now ();
                         miVariablePosicionDondeHeEncontradoAlAsistentenMasAntiguo = None;
@@ -210,7 +211,7 @@ def miFuncionAntesDeLaPeticion ():
 @app.route ('/capturarimagenrobot/<int:idRobot>')
 def funcionCapturarImagenRobot (idRobot):
     miRobot = Robot.query.filter_by (_Robot__idRobot=idRobot).first();
-    print ("funcionCapturarImagenRobot()--- ese es el robot:", miRobot);
+    #print ("funcionCapturarImagenRobot()--- ese es el robot:", miRobot);
     return send_file (BytesIO(miRobot.fotoDelRobot), mimetype='image/jpeg');
     
 ######## endpoints Asistente. ############################################################################################################################################################################################################
@@ -222,14 +223,15 @@ def funcion_registrarAsistente (idEvento):
     else:
         if (('token' in session) == False):
             session['token'] = os.urandom(24).hex(); 
-            print ("funcion_registrarAsistente()--- se ha creado el token.");
+            #print ("funcion_registrarAsistente()--- se ha creado el token.");
         else:
-            print ("funcion_registrarAsistente()--- ya habia una sesion, no se ha creado el token.");
+            #print ("funcion_registrarAsistente()--- ya habia una sesion, no se ha creado el token.");
+            pass;
             
         #aqui averiguo si ese token ya existe en el diccionario miDiccionarioEventoYasistentesDatos, para que de esta manera, no lo vuelva a meter.  
         miFilaDeDatosAsistente = [session['token'], datetime.now(), False];
         miMatrizComprobarAsistenteRegistrado = miDiccionarioEventoYasistentesDatos[idEvento];
-        print ("funcion_registrarAsistente() ---", miMatrizComprobarAsistenteRegistrado);
+        #print ("funcion_registrarAsistente() ---", miMatrizComprobarAsistenteRegistrado);
         miVerdadComprobarAsistenteRegistrado = False;
         for miAsistenteDatos in miMatrizComprobarAsistenteRegistrado:
             if session['token'] == miAsistenteDatos[0]:  # en el caso de quel asistente ya este registrado, lo que hago es quedarme con sus datos, no lo vuelvo a meter en el diccionario, por tanto por el lado del codigo un asistente puede estar unicamente 1 vez en un evento.
@@ -247,16 +249,16 @@ def funcion_registrarAsistente (idEvento):
         cantidadDePersonaDelante = 0;
         if (miFilaDeDatosAsistente[2] == False): # en el caso de que ese asistente, no sea privilegiado, tengo que averiguar la cantidad de personas que tiiene delante.
             fechaDeSolicitudDelRobot = miFilaDeDatosAsistente[1];
-            print ("funcion_registrarAsistente()---  el asistenten, no es privilegiado. "); 
+            #print ("funcion_registrarAsistente()---  el asistenten, no es privilegiado. "); 
             for miAsistenteDatos in miDiccionarioEventoYasistentesDatos[idEvento]:
                 if (miAsistenteDatos[1] != None):  # esto es para no tener en cuenta a las personas que ya estan controlando un robot, ya que si pasan a controlarlo, esta feche (posicionDeColaConFecha) se les borra. 
                     if (miAsistenteDatos[1] < fechaDeSolicitudDelRobot):
-                        print ("funcion_registrarAsistente()--- una pserona mas delante");
+                        #print ("funcion_registrarAsistente()--- una pserona mas delante");
                         cantidadDePersonaDelante = cantidadDePersonaDelante + 1;
                 #else:
                 #    print ("funcion_registrarAsistente()--- esa persona no se me cuela. la fecha a comprobar de los demas: ", miAsistenteDatos[1], " la fecha de ese asistente:  ", fechaDeSolicitudDelRobot);
             
-        print ("funcion_registrarAsistente()--- cantidad de personas delanrte: ", cantidadDePersonaDelante);
+        #print ("funcion_registrarAsistente()--- cantidad de personas delanrte: ", cantidadDePersonaDelante);
         # ahora consigo los robots y ver que cantidad de robots rechazados ese token en ese evento tiene, para de esta manera no mostrarle los robot que no están rechazados. 
         miListaDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.evento_idEvento==idEvento, DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now()).all();
             
@@ -278,13 +280,13 @@ def funcion_registrarAsistente (idEvento):
             if (miListaDisponibleRobot):
                 miListaDisponibleRobot.pop(0);
             
-        print ("funcion_registrarAsistente()--- ", miListaDisponibleRobot);
+        #print ("funcion_registrarAsistente()--- ", miListaDisponibleRobot);
         # sigo con la logica de los robots rechazados, deberia de coprobar prinero que todo si ese token en ese evento existe, en el caso que no, simplemente cojo el primer robot. 
         miVariabletokenDeSesionYevento = session ['token'] +"-" +str(idEvento);
         miRobot = None;
             
         if (not miListaDisponibleRobot):  # en el caso de que la lista este vacia. 
-            print ("funcion_registrarAsistente()--- No se ha conseguido un robot. ");
+            #print ("funcion_registrarAsistente()--- No se ha conseguido un robot. ");
             miListaRobots = [];
             # esta linea la hago para ver todos los robots del evento. Aunqque despeus esto lo borrare. 
             miListaDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.evento_idEvento==idEvento, DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now()).all();
@@ -295,7 +297,7 @@ def funcion_registrarAsistente (idEvento):
             return (render_template("registrarasistente.html", miParametroMiEventoNombreDelEvento=miEvento.nombreDelEvento, miListaRobotsParametro=miListaRobots));
         else:
             if (miVariabletokenDeSesionYevento in miDiccionarioGlobalTokensListaDeRobotsRechazados):# si he rechazado algun robot, voy a ver que otro robot le puedo ofrecer al asistente. 
-                print ("funcion_registrarAsistente()--- ese token y evento, ya ha rechazado algun robot. : ", miDiccionarioGlobalTokensListaDeRobotsRechazados);
+                #print ("funcion_registrarAsistente()--- ese token y evento, ya ha rechazado algun robot. : ", miDiccionarioGlobalTokensListaDeRobotsRechazados);
                 for miDisponibleRobotObjeto in miListaDisponibleRobot:
                     if (miDisponibleRobotObjeto.robot_idRobot not in miDiccionarioGlobalTokensListaDeRobotsRechazados[miVariabletokenDeSesionYevento]):
                         miRobot = Robot.query.filter_by (_Robot__idRobot=miDisponibleRobotObjeto.robot_idRobot).first();
@@ -317,17 +319,17 @@ def funcion_aceptarRobot (idRobot, idEvento):
         
     miAsistente = Asistente.query.filter (Asistente._Asistente__tokenDeSesion==session['token'], Asistente._Asistente__fechaTomaDelRobot <= datetime.now(), Asistente._Asistente__fechaAbandonoDelRobot >= datetime.now()).first ();
     if (miAsistente):   # en este momento el asistente esta controlando un robot
-        print ("funcion_aceptarRobot() --- en este momento el asistente esta controlando un robot");
+        #print ("funcion_aceptarRobot() --- en este momento el asistente esta controlando un robot");
         miRobot = miAsistente.funcion_consultaRobot (idRobot);
         miEvento = miAsistente.funcion_consultaEvento (miAsistente.evento_idEvento);
         #mirespuestaJson = {'idRobot': miRobot.idRobot, 'macAddressDelRobot': miRobot.macAddressDelRobot};
         #return jsonify(mirespuestaJson), 200;
         return render_template ("robotmanejando.html", miRobotParametro=miRobot, miParametroMiEventoNombreDelEvento=miEvento.nombreDelEvento);
     else:
-        print ("funcion_aceptarRobot() --- el aistenten no esta controlando un robot. ");
+        #print ("funcion_aceptarRobot() --- el aistenten no esta controlando un robot. ");
         miPosicionDeColaConFecha = None;# esta variable la uso pra extraer la posicionDeColaConFecha de del token en ese evento, que es lo que hago en el siguiente for. 
         miEsPrivilegiado = False;  # esta variable la uso para extraer el valor de si el asistente es o no privilegiado.  algo parecido a la variable: miPosicionDeColaConFecha
-        print ("funcion_aceptarRobot() --- esta es la matriz:  ", miDiccionarioEventoYasistentesDatos[idEvento]);
+        #print ("funcion_aceptarRobot() --- esta es la matriz:  ", miDiccionarioEventoYasistentesDatos[idEvento]);
         for indiceNumerico, i in enumerate(miDiccionarioEventoYasistentesDatos[idEvento]):
             if (session['token'] == i[0]):  # en el caso de que encuentre el token de sesion dentro del indice cero de la lista que tiene [tokenDeSesion, posicionDeColaConFecha, esPrivilegiado], entonce me quedo con la posicionDeColaConFecha, para posteriormente ver si es null.
                 miPosicionDeColaConFecha = i[1];
@@ -336,10 +338,10 @@ def funcion_aceptarRobot (idRobot, idEvento):
         # en el caso de que no tenga posicion de cola con fecha y no sea privilegiado, eso significa que en algun momento se le ha borrado, por lo tanto como no esta controlando un robot y tampoco tiene posicionDeColaConFecha, tengo que volver a 
         #funcion_registrarse, para que obtenga aqui  una nueva hora de solicitud de un robot. 
         if (miPosicionDeColaConFecha == None) and (miEsPrivilegiado == False):
-            print ("funcion_aceptarRobot() --- la posicion de cola con fecha al parecer es NULL. ");
+            #print ("funcion_aceptarRobot() --- la posicion de cola con fecha al parecer es NULL. ");
             return redirect (url_for ('funcion_registrarAsistente', idEvento=idEvento));            
         else: # en el caso de que tenga posicionDeColaConFecha, entonces me voy a meter dentro de un robot, y borrare la posicionDeColaConFecha. 
-            print ("funcion_aceptarRobot() --- si que hay posicionDeColaConFecha.  ");
+            #print ("funcion_aceptarRobot() --- si que hay posicionDeColaConFecha.  ");
             miAsistente = Asistente.query.filter (Asistente._Asistente__robot_idRobot==idRobot, Asistente._Asistente__fechaTomaDelRobot <= datetime.now(), Asistente._Asistente__fechaAbandonoDelRobot >= datetime.now()).first ();
             if (miAsistente):  # en el caso de que alguien se haya colado, y se ponga a controlar ese robot, lo que tengo que hacer es volver a funcion_registrarAsistente para conseguir otro robot. 
                 return redirect (url_for ('funcion_registrarAsistente', idEvento=idEvento));  
@@ -374,7 +376,7 @@ def funcion_rechazarRobot (idRobot, idEvento):
     if ('token' not in session):
         return "<p>  no se puede entrar a esta URL, utiliza el QR para acceder. ";
 
-    print ("funcion_rechazarRobot --- ");
+    #print ("funcion_rechazarRobot --- ");
     # aqui lo que hago es dejar preparada la calve del diccionario miDiccionarioGlobalTokensListaDeRobotsRechazados para que su clave  sea el token y el idEvento, para que este elemento sea unico, lo que voy a dejar en el valor va a ser una lista de
     #idRobot para saber que estos son los que se han rechazado. 
     miVariabletokenDeSesionYevento = session ['token'] +"-" +str(idEvento);
@@ -384,7 +386,7 @@ def funcion_rechazarRobot (idRobot, idEvento):
         miDiccionarioGlobalTokensListaDeRobotsRechazados[miVariabletokenDeSesionYevento]  = [];
     
     miDiccionarioGlobalTokensListaDeRobotsRechazados[miVariabletokenDeSesionYevento].append (idRobot);
-    print ("funcion_rechazarRobot --- ", miDiccionarioGlobalTokensListaDeRobotsRechazados[miVariabletokenDeSesionYevento]);
+    #print ("funcion_rechazarRobot --- ", miDiccionarioGlobalTokensListaDeRobotsRechazados[miVariabletokenDeSesionYevento]);
     
     return redirect (url_for ("funcion_registrarAsistente", idEvento=idEvento));
     
@@ -405,22 +407,22 @@ def funcionAdministradorsignup ():
 
 @app.route ("/administradorlogin", methods = ['GET', 'POST'])
 def funcionAdministradorLogin ():
-    print ("funcionAdministradorLogin --- se ejecuta");
+    #print ("funcionAdministradorLogin --- se ejecuta");
     miFormulario = formulario.FormularioAcceder (request.form);
     miVariableUsuarioIncorrecto = False;
     miVariableContrasenaIncorrecta = False;
     if (request.method == 'POST'):
         miAdministrador = Administrador.query.filter_by (_Administrador__correoElectronico=miFormulario.correoElectronico.data).first ();
         if (miAdministrador != None):
-            print ("funcionAdministradorLogin()---  esta es la contrasena:", miFormulario.contrasena.data);
+            #print ("funcionAdministradorLogin()---  esta es la contrasena:", miFormulario.contrasena.data);
             if (miAdministrador.validarContrasena (miFormulario.contrasena.data)):
                 session['correoElectronico'] = miAdministrador.correoElectronico;
                 return redirect (url_for ('funcionAdministradorHome'));
             else:
-                 print ("funcionPanelAdministrador ---  contrasena incoreecta.  ");
-                 miVariableContrasenaIncorrecta = True;
+                #print ("funcionPanelAdministrador ---  contrasena incoreecta.  ");
+                miVariableContrasenaIncorrecta = True;
         else:
-            print ("funcionPanelAdministrador ---  usuario incoreecto.  ");
+            #print ("funcionPanelAdministrador ---  usuario incoreecto.  ");
             miVariableUsuarioIncorrecto = True;
             
     return (render_template("administradorlogin.html", miFormularioParametro = miFormulario, miParametroUsuarioIncorrecto = miVariableUsuarioIncorrecto, miParametroContrasenaIncorrecta = miVariableContrasenaIncorrecta));
@@ -428,7 +430,7 @@ def funcionAdministradorLogin ():
 
 @app.route ("/administradorcerrarsesion")
 def funcionAdministradorCerrarSesion ():
-    print ("funcionAdministradorCerrarSesion --- se ejecuta.");
+    #print ("funcionAdministradorCerrarSesion --- se ejecuta.");
     session.pop ('correoElectronico');
     return redirect (url_for ('funcionAdministradorLogin'));
   
@@ -436,7 +438,7 @@ def funcionAdministradorCerrarSesion ():
 @app.route('/administradorhome')   
 def funcionAdministradorHome(parametroVerdadHayEventos=1):
     miAdministrador = Administrador.query.filter_by (_Administrador__correoElectronico=session['correoElectronico']).first ();
-    print ("parametroVerdadHayEventos()---", parametroVerdadHayEventos);
+    #print ("parametroVerdadHayEventos()---", parametroVerdadHayEventos);
     
     miVariableCantidadDeEventosTotales = len (miAdministrador.funcion_conseguirTodosLosEventos());
     miVariableCantidadRobotsTotales = len (miAdministrador.funcion_conseguirTodosLosRobots ());
@@ -503,13 +505,14 @@ def funcionAdministradorCrearRobot ():
     # ver que elementos HTML son los que se van a mostrar, por lo tanto en esta linea voy a poner un idEvento que nunca se puedar en el sistema, el evento 0. 
     idEvento = 0;
     
-    if (request.method == 'POST'): 
+    if (request.method == 'POST') and (miFormulario.validate ()): 
         fotoRecibidaDelFormulario = request.files['fotoDelRobot'];
         binarioDeFoto = None;
         if (fotoRecibidaDelFormulario == None):
-            print ("funcionAdministradorCrearRobot()--- No hay foto");
+            #print ("funcionAdministradorCrearRobot()--- No hay foto");
+            pass;
         else:
-            print ("funcionAdministradorCrearRobot()--- si hay foto ");
+            #print ("funcionAdministradorCrearRobot()--- si hay foto ");
             binarioDeFoto = fotoRecibidaDelFormulario.read();
             
         miAdministrador.funcion_crearRobot (miFormulario.macAddressDelRobot.data, miFormulario.nombreDelRobot.data, binarioDeFoto, miFormulario.descripcionDelRobot.data);
@@ -523,34 +526,36 @@ def funcionAdministradorCrearRobot ():
 @app.route ('/adminstradorpanelrobotmodificar/<int:idRobot>/<int:idEvento>', methods = ['GET', 'POST'])
 def funcionAdministradorPanelRobotModificar (idRobot, idEvento=0):
     miAdministrador = Administrador.query.filter_by (_Administrador__correoElectronico=session['correoElectronico']).first ();
-    print ("funcionAdministradorPanelRobotModificar()--- ", idEvento);
+    #print ("funcionAdministradorPanelRobotModificar()--- ", idEvento);
+    miFormulario = formulario.FormularioCreaRobot (request.form);
     
     if (request.method == 'POST'):
-        miRobot = miAdministrador.funcion_conseguirRobotPorIdRobot (idRobot);
-        miFormulario = formulario.FormularioCreaRobot (request.form);
-        fotoRecibidaDelFormulario = request.files['fotoDelRobot'];
-        binarioDeFoto = None;
-        if (fotoRecibidaDelFormulario == None):
-            print ("funcionAdministradorModificaRobot()--- No hay foto, se utilizara la anterior. ");
-            binarioDeFoto = miRobot.fotoDelRobot;
+        if (miFormulario.validate()):
+            miFormulario = formulario.FormularioCreaRobot (request.form);
+            fotoRecibidaDelFormulario = request.files['fotoDelRobot'];
+            binarioDeFoto = None;
+            if (fotoRecibidaDelFormulario == None):
+                #print ("funcionAdministradorModificaRobot()--- No hay foto, se utilizara la anterior. ");
+                binarioDeFoto = miRobot.fotoDelRobot;
+            else:
+                #print ("funcionAdministradorModificaRobot()--- SI hay foto ");
+                binarioDeFoto = fotoRecibidaDelFormulario.read();
+            miAdministrador.funcion_modificarRobot (idRobot, miFormulario.macAddressDelRobot.data, miFormulario.nombreDelRobot.data, binarioDeFoto, miFormulario.descripcionDelRobot.data);
+            if (idEvento > 0):
+                return redirect (url_for ('funcionAdministradorModificarRobotsEvento', idEvento=idEvento));
+            else:
+                return redirect(url_for('funcionAdministradorPanelRobot')); 
         else:
-            print ("funcionAdministradorModificaRobot()--- SI hay foto ");
-            binarioDeFoto = fotoRecibidaDelFormulario.read();
-            
-        miAdministrador.funcion_modificarRobot (idRobot, miFormulario.macAddressDelRobot.data, miFormulario.nombreDelRobot.data, binarioDeFoto, miFormulario.descripcionDelRobot.data);
-        
-        if (idEvento > 0):
-            return redirect (url_for ('funcionAdministradorModificarRobotsEvento', idEvento=idEvento));
-        else:
-            return redirect(url_for('funcionAdministradorPanelRobot')); 
+            # en el caso de que no se valide el formulario, lo que hago es que devuelvo el formulario con los datos que se acaban de rellenar por el request.form y en este ya está almacenado el error. 
+            return render_template ("administradorcrearrobot.html", miFormularioParametro=miFormulario, miParametroAccionHtml="modificar", miParametroIdEvento=idEvento);
     else:
         miRobot = miAdministrador.funcion_conseguirRobotPorIdRobot (idRobot);
         miFormulario = formulario.FormularioCreaRobot(obj=miRobot);
         return render_template ("administradorcrearrobot.html", miFormularioParametro=miFormulario, miParametroAccionHtml="modificar", miParametroIdEvento=idEvento);
-        
+
 @app.route ('/administradorpanelevento')
 def funcionAdministradorPanelEvento ():
-    print ("funcionAdministradorPanelEvento()---");
+    #print ("funcionAdministradorPanelEvento()---");
     miAdministrador = Administrador.query.filter_by (_Administrador__correoElectronico=session['correoElectronico']).first ();
 
     miListaDeRobots = miAdministrador.funcion_conseguirTodosLosRobots ();
@@ -581,7 +586,7 @@ def funcionAdministradorCrearEvento ():
     if (request.method == 'POST'):
         miVerdadSePuedeCrearEvento = False;
         miListaDisponibleRobot = [];
-        print ("funcionAdministradorCrearEvento ()--- ", miFormulario.idEvento.data);
+        #print ("funcionAdministradorCrearEvento ()--- ", miFormulario.idEvento.data);
         
         for i, robot in enumerate(miListaRobots, start=1): # en esta linea el star es neceasrio que esté, ya que si el indice comienza en cero me devuelve un valor nulo. 
             miFechaComienzoEnEventoRecibido = request.form.get(f'p_fechaComienzoEnEvento{i}');
@@ -632,14 +637,14 @@ def funcionAdministradorModificarRobotsEvento (idEvento):
     
     if (request.method == 'POST'):
         if ('nameformulariomodificar' in request.form):
-            print ("funcionAdministradorModificarRobotsEvento() ---nameformulariomodificar");
+            #print ("funcionAdministradorModificarRobotsEvento() ---nameformulariomodificar");
             miAdministrador.funcion_modificarRobotDelEvento (idEvento, miFormularioModificarFechasRobot.robot_idRobot.data, miFormularioModificarFechasRobot.fechaComienzoEnEventoAntigua.data, miFormularioModificarFechasRobot.fechaFinEnEventoAntigua.data,
             miFormularioModificarFechasRobot.fechaComienzoEnEvento.data, miFormularioModificarFechasRobot.fechaFinEnEvento.data);
             return redirect (url_for ('funcionAdministradorModificarRobotsEvento', idEvento=idEvento));
 
         else:
             if ("nameformulariosumarrobot" in request.form):
-                print ("funcionAdministradorModificarRobotsEvento() ---nameformulariosumarrobot: ", request.form.get(f'p_idRobot'), request.form.get (f'p_fechaComienzoEnEvento'));
+                #print ("funcionAdministradorModificarRobotsEvento() ---nameformulariosumarrobot: ", request.form.get(f'p_idRobot'), request.form.get (f'p_fechaComienzoEnEvento'));
                 miIdRobotRecibido = request.form.get(f'p_idRobot');
                 miFechaComienzoEnEventoRecibido = request.form.get (f'p_fechaComienzoEnEvento');
                 miFechaFinEnEventoRecibido = request.form.get (f'p_fechaFinEnEvento');
@@ -649,7 +654,7 @@ def funcionAdministradorModificarRobotsEvento (idEvento):
                 
             else:
                 if ("nameformularioeliminar" in request.form):
-                    print ("funcionAdministradorModificarRobotsEvento() ---nameformularioeliminar");
+                    #print ("funcionAdministradorModificarRobotsEvento() ---nameformularioeliminar");
                     miAdministrador.funcion_eliminarRobotDelEvento (idEvento, miFormularioModificarFechasRobot.robot_idRobot.data, miFormularioModificarFechasRobot.fechaComienzoEnEvento.data, miFormularioModificarFechasRobot.fechaFinEnEvento.data);
                     return redirect (url_for ('funcionAdministradorModificarRobotsEvento', idEvento=idEvento));
                 else:
@@ -679,7 +684,7 @@ def funcionAdministradorModificarRobotsEvento (idEvento):
             miVariableQueBotonEnServicioEs = clave.idRobot in miListaRobotsQueNoEstanEnServicio;  # aqui lo que hago es ver si ese robot_idRobot esta en la lista, en el caso de que no esté me devuelve false. 
             #print ("funcionAdministradorModificarRobotsEvento()--- miVariableQueBotonEnServicioEs", miVariableQueBotonEnServicioEs);
             miDiccionarioRobots[clave] = {"subclaveListas":miDiccionarioRobots[clave], "subclavePuedoModificar": miVariablePuedoModificar, "subclavePuedoeliminar": miVariablePuedoeliminar, "subclaveQueBotonEnServicioEs": miVariableQueBotonEnServicioEs};
-        print ("funcionAdministradorModificarRobotsEvento()--- ", miDiccionarioRobots);
+        #print ("funcionAdministradorModificarRobotsEvento()--- ", miDiccionarioRobots);
             
         miListaDeSumarRobot = [];
         for miRobotObjeto in miAdministrador.funcion_conseguirTodosLosRobotsQueNoSonDelAdministradorDeEseEvento (idEvento): # este for me vale para rellenar los formularios de los robots que no estan en ese evento. formulario2. (el de abajo del todo).  
@@ -692,7 +697,7 @@ def funcionAdministradorModificarRobotsEvento (idEvento):
 @app.route ('/adminstradorpanelrobotponerservicio/<int:idRobot>/<int:robotEnServicio>')
 @app.route ('/adminstradorpanelrobotponerservicio/<int:idRobot>/<int:robotEnServicio>/<int:idEvento>')
 def funcionAdministradorPanelRobotPonerServicio (idRobot, robotEnServicio, idEvento=0): 
-    print ("funcionAdministradorPanelRobotPonerServicio()--- ");
+    #print ("funcionAdministradorPanelRobotPonerServicio()--- ");
     miAdministrador = Administrador.query.filter_by (_Administrador__correoElectronico=session['correoElectronico']).first(); 
     miAdministrador.funcion_activarOdesactivarRobot (idRobot, robotEnServicio);
     if (idEvento > 0):

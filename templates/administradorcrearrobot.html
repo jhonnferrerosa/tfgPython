@@ -2,6 +2,7 @@
 
 
 {% block title %}
+    <script type="text/javascript" src="{{ url_for('static', filename='administradorcrearobot.js') }}"></script>
     {% if miParametroAccionHtml == "crear"%}
         <title>administradorcrearobot</title>
     {% else %}
@@ -22,7 +23,11 @@
     </ol>
 </nav>
 
-
+{% if miFormularioParametro.macAddressDelRobot.errors %}
+    {% for error in miFormularioParametro.macAddressDelRobot.errors %}
+        <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">Error: {{ error }} </nav>
+    {% endfor %}
+{% endif%}
 
 <div class="container">
     
@@ -48,7 +53,7 @@
 <div class="mb-3"> <label  class="form-label">Suba una foto del robot:</label> {{ miFormularioParametro.fotoDelRobot }}   </div>
 
 </div> <!--end::Body--> <!--begin::Footer-->
-<div class="card-footer"> <button type="submit" class="btn btn-primary">Aceptar</button> </div> <!--end::Footer-->
+<div class="card-footer"> <button id="botonEnviarId" type="submit" class="btn btn-primary">Aceptar</button> </div> <!--end::Footer-->
 </form> <!--end::Form-->
 </div>                           
 

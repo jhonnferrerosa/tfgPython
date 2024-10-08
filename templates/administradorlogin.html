@@ -3,8 +3,7 @@
 {% extends "baseadministrador.html" %}
 {% block title %}
     <title> administradorlogin</title>
-<!---    <script type="text/javascript" src="{{ url_for('static', filename='administradorcreaevento.js') }}"></script>   -->
-
+    <script type="text/javascript" src="{{ url_for('static', filename='administradorloggin.js') }}"></script>
 
 {% endblock %}
 
@@ -33,6 +32,7 @@
 
 </div>
 <div class="mb-3"> <label for="exampleInputPassword1" class="form-label">Introduzca su contrasena: </label> {{ miFormularioParametro.contrasena }} </div>
+<div class="mb-3"> {{ miFormularioParametro.opcionMostrarContrasena }} <label for="opcionMostrarContrasena">Mostrar contrseña</label></div>
 
 </div> <!--end::Body--> <!--begin::Footer-->
 <div class="card-footer"> <button type="submit" class="btn btn-primary">Acceder</button> </div> <!--end::Footer-->

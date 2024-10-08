@@ -21,7 +21,6 @@ from sqlalchemy import event, DDL, func, CheckConstraint, and_, or_
 # esto es para poder hacer el join: aliased, y que de esta manea pueda poner una tabla dentro del join. (inner join SQL).  
 from sqlalchemy.orm import validates, aliased
 
-from werkzeug.security import generate_password_hash 
 from werkzeug.security import check_password_hash
 
 
@@ -61,17 +60,13 @@ class Administrador(db.Model):
             return False;
         
     def funcion_crearRobot (self, parametroMacAddressDelRobot, parametroNombreDelRobot, parametroFotoDelRobot=None, parametroDescripcionDelRobot=None):
-        if (parametroFotoDelRobot == None):
-            print ("funcion_crearRobot()---No se esta creando con la foto. ");    
-        else: 
-            print ("funcion_crearRobot()--- SI  esta creando con la foto. ");   
         miRobot = Robot (macAddressDelRobot=parametroMacAddressDelRobot, nombreDelRobot=parametroNombreDelRobot, fotoDelRobot=parametroFotoDelRobot, descripcionDelRobot=parametroDescripcionDelRobot);
         db.session.add (miRobot);
         db.session.commit ();
         
         
     def funcion_modificarRobot (self, parametroIdRobot, parametroMacAddressDelRobot=None, parametroNombreDelRobot=None, parametroFotoDelRobot=None, parametroDescripcionDelRobot=None):
-        print ("funcion_modificarRobot ()---",  parametroIdRobot, "+", parametroMacAddressDelRobot);
+        #print ("funcion_modificarRobot ()---",  parametroIdRobot, "+", parametroMacAddressDelRobot);
         miRobot = Robot.query.filter_by (_Robot__idRobot = parametroIdRobot).first();
         if (miRobot == None):
             raise Exception ("exception. No se puede modificar el robot, ya que el robot que has puesto no existe en la BBDD ");
@@ -81,7 +76,7 @@ class Administrador(db.Model):
             else:
                 if (miRobot.macAddressDelRobot != parametroMacAddressDelRobot):  #este es para que en el caso de que un robot este siendo controlado, y justo en ese momento, se le cambiia la mac, entonces a ese asistente se le va a declarar como esProvilegiado y le expulsara del robot.
                     miListaRobotsQueNoEstanEnServicio.append (parametroIdRobot);  # cuidado,porque esto signica que en el caso de que yo cambie la MAC de un robot, significa que ese robot deja de estar en servicio. 
-                    print ("funcion_modificarRobot ()---las MAC son distintas, antigua: ", miRobot.macAddressDelRobot +" la nueva: " +parametroMacAddressDelRobot);  
+                    #print ("funcion_modificarRobot ()---las MAC son distintas, antigua: ", miRobot.macAddressDelRobot +" la nueva: " +parametroMacAddressDelRobot);  
                     miAsistente = Asistente.query.filter (Asistente._Asistente__robot_idRobot == parametroIdRobot, Asistente._Asistente__fechaTomaDelRobot <= datetime.now(), Asistente._Asistente__fechaAbandonoDelRobot >= datetime.now()).first (); 
                     if (miAsistente):  # en el caso de que lo encuentre, a ese lo pongo como es privilegiado. 
                         # ahora voy hacer los modificaciones en el asistenten por parte de la aplicacion, es decir en el diccionario de eventos. 
@@ -126,12 +121,12 @@ class Administrador(db.Model):
             db.session.commit();
             
     def funcion_activarOdesactivarRobot (self, parametroIdRobot, parametroEnServicio):
-        print ("funcion_activarOdesactivarRobot ()--- esta es la la lista: ");
+        #print ("funcion_activarOdesactivarRobot ()--- esta es la la lista: ");
         miRobot = Robot.query.filter_by (_Robot__idRobot=parametroIdRobot).first();
         if (miRobot):
             if (parametroEnServicio <= 0):  
                 miListaRobotsQueNoEstanEnServicio.append (parametroIdRobot);
-                print ("funcion_activarOdesactivarRobot ()--- se va a meter un robot en la lsita de los que no estan en servicio ");
+                #print ("funcion_activarOdesactivarRobot ()--- se va a meter un robot en la lsita de los que no estan en servicio ");
                 # acabo de quitar del servicio a un robot, por lo tanto aqui lo que voy a hacer es ver si hay un asistente que tenga ese robot en ese momento. 
                 miAsistente = Asistente.query.filter (Asistente._Asistente__robot_idRobot == parametroIdRobot, Asistente._Asistente__fechaTomaDelRobot <= datetime.now(), Asistente._Asistente__fechaAbandonoDelRobot >= datetime.now()).first (); 
                 if (miAsistente):  # en el caso de que lo encuentre, a ese lo pongo como es privilegiado. 
@@ -144,8 +139,8 @@ class Administrador(db.Model):
                     #print ("funcion_activarOdesactivarRobot ()--- en la BBDD en la tabla Asistente, se ha establecido la feha de abandono ");
             else:
                 miListaRobotsQueNoEstanEnServicio.remove (parametroIdRobot);
-                print ("funcion_activarOdesactivarRobot ()--- se ha eliminado un robot de la lista de los que no estan en servicio. ");
-        print (miListaRobotsQueNoEstanEnServicio);
+                #print ("funcion_activarOdesactivarRobot ()--- se ha eliminado un robot de la lista de los que no estan en servicio. ");
+        #print (miListaRobotsQueNoEstanEnServicio);
         
     def funcion_conseguirTodosLosRobots (self):
         return Robot.query.all();
@@ -223,12 +218,12 @@ class Administrador(db.Model):
         
     def funcion_crearEvento (self, miParametroListaDisponibleRobot, parametroIdEvento, parametroNombreDelEvento, parametroCalle=None, parametroNumero=None, parametroEdificioDondeSeCelebra=None, parametroCodigoPostal=None):
         if (len (miParametroListaDisponibleRobot) == 0):
-            print ("crearEvento()---la pila esta vacia: ", miParametroListaDisponibleRobot);
-            print ("crearEvento()---No voy a crear el evento ya que no tengo ningun robot para asociar ese evento a un robot. ");
+            #print ("crearEvento()---la pila esta vacia: ", miParametroListaDisponibleRobot);
+            #print ("crearEvento()---No voy a crear el evento ya que no tengo ningun robot para asociar ese evento a un robot. ");
             raise Exception ("exception. No se puede crear el evento, ya que no ha asignado ningún robot a este (recordar evento necesita al menos un robot)");
         else:
-            print ("crearEvento()--- la pila tiene eementos, aqui estan: ");
-            print (miParametroListaDisponibleRobot);
+            #print ("crearEvento()--- la pila tiene eementos, aqui estan: ");
+            #print (miParametroListaDisponibleRobot);
             #print ("crearEvento()--- esta es la cima:  ", miParametroListaDisponibleRobot[-1]);
             # en este evento que acabo de crear 
             miEvento = Evento (idEvento=parametroIdEvento, nombreDelEvento=parametroNombreDelEvento, calle=parametroCalle, fechaDeCreacionDelEvento=datetime.now(), numero=parametroNumero, edificioDondeSeCelebra=parametroEdificioDondeSeCelebra, 
@@ -237,12 +232,12 @@ class Administrador(db.Model):
             db.session.add (miEvento);
             
             for miDisponibleRobotValores in miParametroListaDisponibleRobot:
-                print ("crearEvento()---");
+                #print ("crearEvento()---");
                 miDisponibleRobot = DisponibleRobot (evento_idEvento=miDisponibleRobotValores[0],robot_idRobot=miDisponibleRobotValores[1], fechaComienzoEnEvento=miDisponibleRobotValores[2], fechaFinEnEvento=miDisponibleRobotValores[3]);
                 db.session.add (miDisponibleRobot);
                 db.session.commit ();
             miParametroListaDisponibleRobot.clear();
-            print (miParametroListaDisponibleRobot);
+            #print (miParametroListaDisponibleRobot);
         
     def funcion_conseguirTodosLosEventos (self):
         return Evento.query.all();
@@ -281,17 +276,17 @@ class Administrador(db.Model):
                 
     # esta la dejo junto con las funciones que manejan el evento, ya que lo que se esta modificando es el evento debido a que un robot es una parte del evento. 
     def funcion_modificarRobotDelEvento (self, parametroEvento_idEvento, parametroRobot_idRobot, parametroFechaComienzoEnEvento, parametroFechaFinEnEvento, parametroNuevaFechaComienzoEnEvento, parametroNuevaFechaFinEnEvento):
-        print ("funcion_modificarRobotDelEvento()---");
-        print ("funcion_modificarRobotDelEvento()---", parametroEvento_idEvento);
-        print ("funcion_modificarRobotDelEvento()---", parametroRobot_idRobot);
-        print ("funcion_modificarRobotDelEvento()---", parametroFechaComienzoEnEvento);
-        print ("funcion_modificarRobotDelEvento()---", parametroFechaFinEnEvento);
+        #print ("funcion_modificarRobotDelEvento()---");
+        #print ("funcion_modificarRobotDelEvento()---", parametroEvento_idEvento);
+        #print ("funcion_modificarRobotDelEvento()---", parametroRobot_idRobot);
+        #print ("funcion_modificarRobotDelEvento()---", parametroFechaComienzoEnEvento);
+        #print ("funcion_modificarRobotDelEvento()---", parametroFechaFinEnEvento);
         
         miDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.evento_idEvento==parametroEvento_idEvento, DisponibleRobot.robot_idRobot==parametroRobot_idRobot, DisponibleRobot.fechaComienzoEnEvento==parametroFechaComienzoEnEvento,DisponibleRobot.fechaFinEnEvento==parametroFechaFinEnEvento).first();
         if (miDisponibleRobot == None):
             raise Exception ("exception. No se puede modificar el horario de ese robot, ese horario no existe. ");
         else:
-            print ("modificarRobotsDelEvento()--- si se va a modificar DisponibleRobot. ");
+            #print ("modificarRobotsDelEvento()--- si se va a modificar DisponibleRobot. ");
             miDisponibleRobot.fechaComienzoEnEvento = parametroNuevaFechaComienzoEnEvento;
             miDisponibleRobot.fechaFinEnEvento = parametroNuevaFechaFinEnEvento;
             db.session.commit ();
@@ -309,15 +304,15 @@ class Administrador(db.Model):
         
         miDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.evento_idEvento==parametroEvento_idEvento, DisponibleRobot.robot_idRobot==parametroRobot_idRobot).first ();
         if (miDisponibleRobot == None):
-            print ("funcion_eliminarRobotDelEvento()--- ese horario ha sido el ultimo asociado al robot, se va a cambair la clave foranea en Evento o se va a eliminar el robot. ");
+            #print ("funcion_eliminarRobotDelEvento()--- ese horario ha sido el ultimo asociado al robot, se va a cambair la clave foranea en Evento o se va a eliminar el robot. ");
             miDisponibleRobot = DisponibleRobot.query.filter_by (evento_idEvento=parametroEvento_idEvento).first ();
             miEvento = Evento.query.filter_by (_Evento__idEvento = parametroEvento_idEvento).first ();  #lo dejo aqui, porque aqui ya se que o se borra o se modifica la clave foranea. 
             if (miDisponibleRobot == None): 
-                 print ("funcion_eliminarRobotDelEvento()--- ya que no el robot no esta asociado a ningun evento, lo que voy a hacer va ser eliminarlo. ");
-                 db.session.delete (miEvento);
-                 db.session.commit ();
+                #print ("funcion_eliminarRobotDelEvento()--- ya que no el robot no esta asociado a ningun evento, lo que voy a hacer va ser eliminarlo. ");
+                db.session.delete (miEvento);
+                db.session.commit ();
             else:   # aqui lo que hago es actuliza la clave foranea hacia la entidad Robot para que esta sea un robot de la tabla de disponible, no es necesario, pero da sentido a la BBDD. 
-                print ("funcion_eliminarRobotDelEvento()--- ese horario ha sido el ultimo asociado al robot, se va a cambair la clave foranea en Evento");
+                #print ("funcion_eliminarRobotDelEvento()--- ese horario ha sido el ultimo asociado al robot, se va a cambair la clave foranea en Evento");
                 miEvento.robot_idRobot = miDisponibleRobot.robot_idRobot;
                 db.session.commit ();
                     
@@ -333,7 +328,7 @@ class Administrador(db.Model):
                 db.session.commit ();
                 
     def funcion_borrarRobotDelEvento (self, parametroEvento_idEvento, parametroRobot_idRobot, parametroFechaComienzoEnEvento, parametroFechaFinEnEvento):
-        print ("funcion_borrarRobotDelEvento()--- ");
+        #print ("funcion_borrarRobotDelEvento()--- ");
         
         miEvento = Evento.query.filter_by (_Evento__idEvento = parametroEvento_idEvento).first();
         if (miEvento.administrador_correoElectronico != self.__correoElectronico):
@@ -359,11 +354,11 @@ class Administrador(db.Model):
 ##### funciones que menejan las cuentas de los administradores  ##############################################################################################################################################
 
     def funcion_conseguirTodasLasCuentasMenosLaInstanciada (self):
-        print ("funcion_conseguirTodasLasCuentasMenosLaInstanciada()---");
+        #print ("funcion_conseguirTodasLasCuentasMenosLaInstanciada()---");
         return Administrador.query.filter (Administrador._Administrador__correoElectronico != self.__correoElectronico).all ();
         
     def funcion_borrarCuaentaAdministrador (self, parametroCorreoElectronico):
-        print ("funcion_borrarCuaentaAdministrador()----");
+        #print ("funcion_borrarCuaentaAdministrador()----");
         miAdministrador = Administrador.query.filter_by (_Administrador__correoElectronico = parametroCorreoElectronico).first ();
         db.session.delete (miAdministrador);
         db.session.commit ();

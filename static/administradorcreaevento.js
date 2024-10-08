@@ -1,6 +1,7 @@
 
 
 
+// esta funcuon lo que hace, es que 
 function validarFechas() {
 	//alert ("validarFechas()---");
 	//console.log ("validarFechas()----");

@@ -1,27 +1,21 @@
 
-
 from flask_wtf import Form
-
-
-
 
 # SelectField, es para esto: evento_idEvento = SelectField ("Seleccione el evento en el que va a estar este robot: ", choices=[]);
 
-from wtforms import StringField, IntegerField, SelectField, BooleanField, FileField, DateTimeField, HiddenField
+from wtforms import StringField, IntegerField, SelectField, BooleanField, FileField, DateTimeField, HiddenField, PasswordField, BooleanField
 from wtforms.fields import EmailField
 
-
-
-from wtforms.validators import Length, InputRequired, NumberRange
+from wtforms.validators import Length, InputRequired, NumberRange, MacAddress
 
 
 class FormularioAcceder (Form):
 	correoElectronico = EmailField(validators= [InputRequired("Esta campo es requerido"), Length(min=3, max=50, message="esciba entre 3 y 50 caracteres.")]); 
-	contrasena  = StringField(validators= [InputRequired("Esta campo es requerido"), Length(min=3, max=50, message="esciba entre 3 y 50 caracteres.")]);
-
+	contrasena  = PasswordField(validators= [InputRequired("Esta campo es requerido"), Length(min=3, max=50, message="esciba entre 3 y 50 caracteres.")]);
+	opcionMostrarContrasena = BooleanField('Mostrar contraseña');
 
 class FormularioCreaRobot (Form):
-	macAddressDelRobot = StringField (validators= [InputRequired("Esta campo es requerido"), Length(min=12, max=12, message="esciba entre 3 y 50 caracteres.")]);
+	macAddressDelRobot = StringField (validators= [InputRequired("Esta campo es requerido"), Length(min=17, max=17), MacAddress("Debe de introducir una MAC correcta, los caracteres deben ser hexagesimal, y el formato debe ser XX:XX:XX:XX:XX:XX")]);
 	nombreDelRobot = StringField (validators= [InputRequired("Esta campo es requerido"), Length(min=3, max=50, message="esciba entre 3 y 50 caracteres.")]);
 	descripcionDelRobot = StringField ();
 	fotoDelRobot = FileField ();

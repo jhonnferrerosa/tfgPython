@@ -24,10 +24,10 @@
 <nav>
     <ol class="list-unstyled">
         <li class="mb-2" style="float:left; margin-left: 20px;">
-            <a href="{{ url_for('funcionAdministradorPanelRobot', idEvento=-1) }}" class="btn btn-danger btn-block">Robots que no están en ningún evento</a>
+            <a href="{{ url_for('funcionAdministradorPanelRobot', idEvento=-1) }}" class="btn btn-success btn-block">Robots que no están en ningún evento</a>
         </li>
         <li class="mb-2" style="float:left; margin-left: 20px;">
-            <a href="{{ url_for('funcionAdministradorPanelRobot', idEvento=0) }}" class="btn btn-danger btn-block">Todos los robots </a>
+            <a href="{{ url_for('funcionAdministradorPanelRobot', idEvento=0) }}" class="btn btn-success btn-block">Todos los robots </a>
         </li>
 
         {% for iteracion in miListaDeEventosEnLosQueHayRobotsParametro %}
