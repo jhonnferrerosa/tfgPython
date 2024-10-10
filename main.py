@@ -718,6 +718,8 @@ def funcionAdministradorModificarRobotsEvento (idEvento):
 @app.route ('/adminstradorpanelrobotponerservicio/<int:idRobot>/<int:robotEnServicio>/<int:idEvento>')
 def funcionAdministradorPanelRobotPonerServicio (idRobot, robotEnServicio, idEvento): 
     miAdministrador = Administrador.query.filter_by (_Administrador__correoElectronico=session['correoElectronico']).first(); 
+    if (miAdministrador.funcion_verSiPuedoModificarRobot (idRobot) == False):
+        raise Exception ("adminstradorpanelrobotponerservicio  --- ese administrador no puede modificar el servicio de ese robot, ya que actualmente la hora de trabajo de este robot no se corresponde con ningun evento de este administrador. ");
     miAdministrador.funcion_activarOdesactivarRobot (idRobot, robotEnServicio);
     return redirect (url_for ('funcionAdministradorModificarRobotsEvento', idEvento=idEvento));
 
