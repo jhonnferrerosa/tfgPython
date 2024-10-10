@@ -32,6 +32,11 @@ from estructuradatos import miDiccionarioEventoYasistentesDatos;
 db = SQLAlchemy();
 
 class Administrador(db.Model):
+    """
+        Parmetros: 
+            str: correoElectronico
+            str: contrasena
+    """
     __tablename__ = "miTablaAdministrador";
     __correoElectronico = db.Column(db.String(50), primary_key=True)
     __contrasena = db.Column(db.String(162), nullable=False)
@@ -66,7 +71,6 @@ class Administrador(db.Model):
         
         
     def funcion_modificarRobot (self, parametroIdRobot, parametroMacAddressDelRobot=None, parametroNombreDelRobot=None, parametroFotoDelRobot=None, parametroDescripcionDelRobot=None):
-        #print ("funcion_modificarRobot ()---",  parametroIdRobot, "+", parametroMacAddressDelRobot);
         miRobot = Robot.query.filter_by (_Robot__idRobot = parametroIdRobot).first();
         if (miRobot == None):
             raise Exception ("exception. No se puede modificar el robot, ya que el robot que has puesto no existe en la BBDD ");
@@ -75,8 +79,7 @@ class Administrador(db.Model):
                 parametroMacAddressDelRobot = miRobot.macAddressDelRobot;
             else:
                 if (miRobot.macAddressDelRobot != parametroMacAddressDelRobot):  #este es para que en el caso de que un robot este siendo controlado, y justo en ese momento, se le cambiia la mac, entonces a ese asistente se le va a declarar como esProvilegiado y le expulsara del robot.
-                    miListaRobotsQueNoEstanEnServicio.append (parametroIdRobot);  # cuidado,porque esto signica que en el caso de que yo cambie la MAC de un robot, significa que ese robot deja de estar en servicio. 
-                    #print ("funcion_modificarRobot ()---las MAC son distintas, antigua: ", miRobot.macAddressDelRobot +" la nueva: " +parametroMacAddressDelRobot);  
+                    miListaRobotsQueNoEstanEnServicio.append (parametroIdRobot);  # cuidado,porque esto signica que en el caso de que yo cambie la MAC de un robot, significa que ese robot deja de estar en servicio.
                     miAsistente = Asistente.query.filter (Asistente._Asistente__robot_idRobot == parametroIdRobot, Asistente._Asistente__fechaTomaDelRobot <= datetime.now(), Asistente._Asistente__fechaAbandonoDelRobot >= datetime.now()).first (); 
                     if (miAsistente):  # en el caso de que lo encuentre, a ese lo pongo como es privilegiado. 
                         # ahora voy hacer los modificaciones en el asistenten por parte de la aplicacion, es decir en el diccionario de eventos. 
@@ -109,7 +112,7 @@ class Administrador(db.Model):
         if (miRobot == None):
             raise Exception ("exception. No se puede borrar el robot, ya que el robot que has puesto no existe en la BBDD ");
         else:
-            # lo que voy a hacer aqui es modificar la clava formea de los eventos que tengan com clave foranea a ese robot que estoy apunto de borrar. 
+            # lo que voy a hacer aqui es modificar la clave formea de los eventos que tengan com clave foranea a ese robot que estoy apunto de borrar. 
             miListaDeEventos = Evento.query.filter_by (_Evento__administrador_correoElectronico= self.__correoElectronico).all ();
             for i in miListaDeEventos: 
                 if i.robot_idRobot == parametroIdRobot: 
@@ -210,7 +213,22 @@ class Administrador(db.Model):
                 miVerdadPuedoModificarRobot = False;
         
         return miVerdadPuedoModificarRobot;
-        
+
+    def funcion_verSiEseRobotEsDeEseAdministrador  (self, parametroIdRobot):
+        miVerdadSiEseRobotEsDeEseAdministrador = False;
+        miEventoAlias = aliased (Evento);
+        miDisponibleRobot = db.session.query (DisponibleRobot).join (miEventoAlias, DisponibleRobot.evento_idEvento == miEventoAlias._Evento__idEvento).filter (DisponibleRobot.robot_idRobot == parametroIdRobot, miEventoAlias._Evento__administrador_correoElectronico==self.__correoElectronico).first();
+        if (miDisponibleRobot):
+            miVerdadSiEseRobotEsDeEseAdministrador = True;
+        return miVerdadSiEseRobotEsDeEseAdministrador;
+
+    def funcion_verSiUnRobotEstaEnAlMenosUnEvento (self, parametroIdRobot):
+        miVerdadVerSiEseRobotEstaEnAlmenosUnEvento = False;
+        miDisponibleRobot = DisponibleRobot.query.filter_by (robot_idRobot = parametroIdRobot).first ();
+        if (miDisponibleRobot):
+            miVerdadVerSiEseRobotEstaEnAlmenosUnEvento = True;
+        return miVerdadVerSiEseRobotEstaEnAlmenosUnEvento;
+
 ##### funciones que menejan el evento  ##############################################################################################################################################
 
     def funcion_conseguirEventoPorIdEvento (self, parametroIdEvento):
@@ -321,11 +339,8 @@ class Administrador(db.Model):
         if (miEvento == None):
             raise Exception ("exception. No se puede borrar el evento, ya que no existe en la BBDD.");
         else:
-            if (miEvento.administrador_correoElectronico != self.__correoElectronico):
-                raise Exception ("exception. No se puede borrar el evento, ya que ese administrador no es el dueño");
-            else:
-                db.session.delete (miEvento);
-                db.session.commit ();
+            db.session.delete (miEvento);
+            db.session.commit ();
                 
     def funcion_borrarRobotDelEvento (self, parametroEvento_idEvento, parametroRobot_idRobot, parametroFechaComienzoEnEvento, parametroFechaFinEnEvento):
         #print ("funcion_borrarRobotDelEvento()--- ");
@@ -342,14 +357,15 @@ class Administrador(db.Model):
                 db.session.delete (miDisponibleRobot);
                 db.session.commit ();
                 
-    def funcion_verSiEseEventoTieneAlMenosUnRobot (self, parametroIdEvento):
-        #print ("funcion_verSiEseEventoTieneAlMenosUnRobot() --- ");
-        miVerdadVerSiHayMasEventos = True; 
-        miDisponibleRobot = DisponibleRobot.query.filter_by (evento_idEvento= parametroIdEvento).first ();
-        if (miDisponibleRobot == None):
-            miVerdadVerSiHayMasEventos = False;
-        #print ("funcion_verSiEseEventoTieneAlMenosUnRobot() --- ", miVerdadVerSiHayMasEventos);
-        return miVerdadVerSiHayMasEventos;
+    # con esta funcion lo que hago es comprobar si el administrdor que ha pulsado en el evento, es o no el administrador, lo que pasa es que a un administrador nunca se le van a mostrar los eventos que no son suyos, pero en el caso de que 
+    #conozca el idDvento de un evento que no es suyo, los que va a pasar es que si el lo pone en la URL, va a poder hacer modificaciones sobre este evento, y eso es algo que yo no quiero, por lo tanto cada vez que se vaya  a conseguir un 
+    # evento, lo que voy a hacer aqu es comprobar si ese evento es o no de ese administrador. 
+    def funcion_verSiEseEventoEsDeEseAdministrador (self, parametroIdEvento):
+        miVerdadVerSiEseEventoEsDeEseAdministrador = True; 
+        miEvento = Evento.query.filter (Evento._Evento__idEvento == parametroIdEvento, Evento._Evento__administrador_correoElectronico == self.__correoElectronico).first();  
+        if (miEvento == None):
+            miVerdadVerSiEseEventoEsDeEseAdministrador = False;
+        return miVerdadVerSiEseEventoEsDeEseAdministrador;
         
 ##### funciones que menejan las cuentas de los administradores  ##############################################################################################################################################
 
@@ -369,9 +385,17 @@ sqlParaPoderUtilizarGistConEnteros = """CREATE EXTENSION IF NOT EXISTS btree_gis
 event.listen (Administrador.__table__, 'before_create', DDL(sqlParaPoderUtilizarGistConEnteros));
 
 class Robot (db.Model):
+    """
+        Parmetros: 
+            int: idRobot
+            str: contrasena
+            str: macAddressDelRobot
+            str: nombreDelRobot
+            str: descripcionDelRobot
+    """
     __tablename__ = "miTablaRobot";
     __idRobot = db.Column (db.Integer, primary_key = True);
-    __macAddressDelRobot = db.Column (db.String (12), unique=True, nullable = False); 
+    __macAddressDelRobot = db.Column (db.String (17), unique=True, nullable = False); 
     __nombreDelRobot = db.Column (db.String (50), unique=True, nullable = False);
     __fotoDelRobot = db.Column (db.LargeBinary); 
     __descripcionDelRobot = db.Column (db.String (100));
@@ -413,6 +437,18 @@ class Robot (db.Model):
         self.__descripcionDelRobot = value;
 
 class Evento(db.Model):   
+    """
+        Parmetros: 
+            int: idEvento
+            str: nombreDelEvento
+            date: fechaDeCreacionDelEvento
+            str: calle
+            str: numero
+            str: edificioDondeSeCelebra
+            int: codigoPostal
+            str: administrador_correoElectronico
+            int: robot_idRobot
+    """
     __tablename__ = "miTablaEvento";
     __idEvento = db.Column (db.Integer, primary_key = True);
     __nombreDelEvento = db.Column (db.String (50), nullable=False, unique=True);
@@ -484,6 +520,15 @@ class Evento(db.Model):
         self.__robot_idRobot = value;
 
 class Asistente (db.Model):
+    """
+        Parmetros: 
+            int: idAsistente
+            str: tokenDeSesion
+            date: fechaTomaDelRobot
+            date: fechaAbandonoDelRobot
+            int: evento_idEvento
+            int: robot_idRobot
+    """
     __tablename__ = "miTablaAsistente";
     __idAsistente = db.Column (db.Integer, primary_key = True);
     __tokenDeSesion = db.Column (db.String (48), nullable = False);
@@ -546,6 +591,14 @@ class Asistente (db.Model):
         return Robot.query.filter_by (_Robot__idRobot=parametroIdRobot).first();
 
 class DisponibleRobot (db.Model):
+    """
+        Parmetros: 
+            int: idDisponibleRobot
+            int: robot_idRobot
+            int: evento_idEvento
+            date: fechaComienzoEnEvento
+            date: fechaFinEnEvento
+    """
     __tablename__ = "miTablaDisponibleRobot";
     idDisponibleRobot = db.Column(db.Integer, primary_key=True);
     robot_idRobot = db.Column(db.Integer, db.ForeignKey('miTablaRobot._Robot__idRobot', onupdate="CASCADE"), nullable=False);

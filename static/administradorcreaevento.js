@@ -1,7 +1,11 @@
 
 
-
-// esta funcuon lo que hace, es que 
+/**
+ * @function validarFechas
+ * @description  esta funcion lo que hace es que no permite que se pueda elegir una fecha anterior a dos horas antes desde el navegador, de esta forma consigo que no se pueda marcar  
+ * una fecha pasada en el tiempo, y que se pueda poner un robot en un evento en una facha que ya ha pasado. 
+ * 
+ */
 function validarFechas() {
 	//alert ("validarFechas()---");
 	//console.log ("validarFechas()----");
@@ -14,3 +18,5 @@ function validarFechas() {
 }
 
 window.addEventListener ("load", validarFechas, false);
+
+

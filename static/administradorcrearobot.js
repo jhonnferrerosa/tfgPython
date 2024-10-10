@@ -1,11 +1,14 @@
 
-// en esta funcion cnado me refiero al campo addEventListener de macAddresDelRobot,  lo que permite es que cuando se escriba una MAC y se escriba un caracter que no es hexagesimal, 
-//que salga un mesaje de error diciendo que se ha escrito mal la MAC.
-// lo que hace tambien es que en el caso de que se escriba un caracter en minuscula, que se pase a mayuscula. 
-// y ademas en el caso de que se este escribiendo bien la MAC, entonces que los dos puntos se escriban solos. 
-
-//cuando me refiero al addEventListener del boton de enviar botonEniarId, lo que hago primero es comprobar que la MAC tanga los 17 caracteres. 
-// y en el caso de que los tenga, lo que hago es comprobar el formato de la MAC, para validarlo antes de enviarselo al servidor. 
+/**
+ * @function validarMac
+ * @description  en esta funcion cnado me refiero al campo addEventListener de macAddresDelRobot,  lo que permite es que cuando se escriba una MAC y se escriba un caracter que no es hexagesimal, 
+ * que salga un mesaje de error diciendo que se ha escrito mal la MAC.
+ * lo que hace tambien es que en el caso de que se escriba un caracter en minuscula, que se pase a mayuscula. 
+ * y ademas en el caso de que se este escribiendo bien la MAC, entonces que los dos puntos se escriban solos. 
+ * 
+ * cuando me refiero al addEventListener del boton de enviar botonEniarId, lo que hago primero es comprobar que la MAC tanga los 17 caracteres. 
+ * y en el caso de que los tenga, lo que hago es comprobar el formato de la MAC, para validarlo antes de enviarselo al servidor. 
+*/
 
 function validarMac (){
 	let miMacAddressDelRobotAnterior = null;

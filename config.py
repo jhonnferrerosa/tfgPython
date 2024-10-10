@@ -1,11 +1,4 @@
 
-
-
-
-
-
-import psycopg2
-
 # esta es la clase en la que vamos a hacer la configuracion para todo nuestro entorno de desarrollo. 
 class DevelopmentConfig ():
     DEBUG = True;

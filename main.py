@@ -54,18 +54,18 @@ def index2 ():
     db.session.add (miAdmin3);
     db.session.commit();
 
-    robot1 = Robot(idRobot=101, macAddressDelRobot="AABBCCDDEEFF", nombreDelRobot="Robot Explorador1");
-    robot2 = Robot(idRobot=102, macAddressDelRobot="AABBCCDDEE00", nombreDelRobot="Robot Explorador2");
-    robot3 = Robot(idRobot=103, macAddressDelRobot="AABBCCDDEE11", nombreDelRobot="Robot Explorador3");
-    robot4 = Robot(idRobot=104, macAddressDelRobot="AABBCCDDEE22", nombreDelRobot="Robot Explorador4");
-    robot5 = Robot(idRobot=105, macAddressDelRobot="AABBCCDDEE33", nombreDelRobot="Robot Explorador6");
-    robot6 = Robot(idRobot=106, macAddressDelRobot="AABBCCDDEE44", nombreDelRobot="Robot Explorador7");
-    robot7 = Robot(idRobot=130, macAddressDelRobot="AABBCCDDEE55", nombreDelRobot="Robot Explorador8");
-    robot8 = Robot(idRobot=131, macAddressDelRobot="AABBCCDDEE66", nombreDelRobot="Robot Explorador9");
-    robot9 = Robot(idRobot=132, macAddressDelRobot="AABBCCDDEE77", nombreDelRobot="Robot Explorador10");
-    robot10 = Robot(idRobot=107, macAddressDelRobot="AABBCCDDEE88", nombreDelRobot="Robot Explorador11");
-    robot11 = Robot(idRobot=110, macAddressDelRobot="AABBCCDDEE99", nombreDelRobot="Robot Explorador12");
-    robot12 = Robot(idRobot=111, macAddressDelRobot="AABBCCDDEEAA", nombreDelRobot="Robot Explorador13");
+    robot1 = Robot(idRobot=101, macAddressDelRobot="AA:BB:CC:DD:EE:FF", nombreDelRobot="Robot Explorador1");
+    robot2 = Robot(idRobot=102, macAddressDelRobot="AA:BB:CC:DD:EE:00", nombreDelRobot="Robot Explorador2");
+    robot3 = Robot(idRobot=103, macAddressDelRobot="AA:BB:CC:DD:EE:11", nombreDelRobot="Robot Explorador3");
+    robot4 = Robot(idRobot=104, macAddressDelRobot="AA:BB:CC:DD:EE:22", nombreDelRobot="Robot Explorador4");
+    robot5 = Robot(idRobot=105, macAddressDelRobot="AA:BB:CC:DD:EE:33", nombreDelRobot="Robot Explorador6");
+    robot6 = Robot(idRobot=106, macAddressDelRobot="AA:BB:CC:DD:EE:44", nombreDelRobot="Robot Explorador7");
+    robot7 = Robot(idRobot=130, macAddressDelRobot="AA:BB:CC:DD:EE:55", nombreDelRobot="Robot Explorador8");
+    robot8 = Robot(idRobot=131, macAddressDelRobot="AA:BB:CC:DD:EE:66", nombreDelRobot="Robot Explorador9");
+    robot9 = Robot(idRobot=132, macAddressDelRobot="AA:BB:CC:DD:EE:77", nombreDelRobot="Robot Explorador10");
+    robot10 = Robot(idRobot=107, macAddressDelRobot="AA:BB:CC:DD:EE:88", nombreDelRobot="Robot Explorador11");
+    robot11 = Robot(idRobot=110, macAddressDelRobot="AA:BB:CC:DD:EE:99", nombreDelRobot="Robot Explorador12");
+    robot12 = Robot(idRobot=111, macAddressDelRobot="AA:BB:CC:DD:EE:AA", nombreDelRobot="Robot Explorador13");
     db.session.add (robot1);
     db.session.add (robot2);
     db.session.add (robot3);
@@ -90,25 +90,25 @@ def index2 ():
     db.session.add (evento3);
     db.session.commit ();
     
-    disponbleRobot1 = DisponibleRobot (robot_idRobot=101, evento_idEvento = 1, fechaComienzoEnEvento='2024-09-01', fechaFinEnEvento='2024-09-30');
-    disponbleRobot2 = DisponibleRobot (robot_idRobot=102, evento_idEvento = 2, fechaComienzoEnEvento='2024-09-01', fechaFinEnEvento='2024-09-30');
-    disponbleRobot3 = DisponibleRobot (robot_idRobot=103, evento_idEvento = 2, fechaComienzoEnEvento='2024-09-01', fechaFinEnEvento='2024-09-30');
+    disponbleRobot1 = DisponibleRobot (robot_idRobot=101, evento_idEvento = 1, fechaComienzoEnEvento='2024-10-01', fechaFinEnEvento='2024-10-30');
+    disponbleRobot2 = DisponibleRobot (robot_idRobot=102, evento_idEvento = 2, fechaComienzoEnEvento='2024-10-01', fechaFinEnEvento='2024-10-30');
+    disponbleRobot3 = DisponibleRobot (robot_idRobot=103, evento_idEvento = 2, fechaComienzoEnEvento='2024-10-01', fechaFinEnEvento='2024-10-30');
     
-    disponbleRobot4 = DisponibleRobot (robot_idRobot=101, evento_idEvento = 1, fechaComienzoEnEvento='2024-10-01', fechaFinEnEvento='2024-10-30');
-    disponbleRobot5 = DisponibleRobot (robot_idRobot=103, evento_idEvento = 1, fechaComienzoEnEvento='2024-10-01', fechaFinEnEvento='2024-10-30');
-    disponbleRobot6 = DisponibleRobot (robot_idRobot=105, evento_idEvento = 3, fechaComienzoEnEvento='2024-10-01', fechaFinEnEvento='2024-10-30');
+    disponbleRobot4 = DisponibleRobot (robot_idRobot=101, evento_idEvento = 1, fechaComienzoEnEvento='2024-11-01', fechaFinEnEvento='2024-11-30');
+    disponbleRobot5 = DisponibleRobot (robot_idRobot=103, evento_idEvento = 1, fechaComienzoEnEvento='2024-11-01', fechaFinEnEvento='2024-11-30');
+    disponbleRobot6 = DisponibleRobot (robot_idRobot=105, evento_idEvento = 3, fechaComienzoEnEvento='2024-11-01', fechaFinEnEvento='2024-11-30');
     
-    disponbleRobot7 = DisponibleRobot (robot_idRobot=105, evento_idEvento = 1, fechaComienzoEnEvento='2024-11-01', fechaFinEnEvento='2024-11-30');
-    disponbleRobot8 = DisponibleRobot (robot_idRobot=106, evento_idEvento = 1, fechaComienzoEnEvento='2024-09-01', fechaFinEnEvento='2024-09-30');
-    disponbleRobot9 = DisponibleRobot (robot_idRobot=101, evento_idEvento = 2, fechaComienzoEnEvento='2024-11-01', fechaFinEnEvento='2024-11-30');
+    disponbleRobot7 = DisponibleRobot (robot_idRobot=105, evento_idEvento = 1, fechaComienzoEnEvento='2024-12-01', fechaFinEnEvento='2024-12-30');
+    disponbleRobot8 = DisponibleRobot (robot_idRobot=106, evento_idEvento = 1, fechaComienzoEnEvento='2024-10-01', fechaFinEnEvento='2024-10-30');
+    disponbleRobot9 = DisponibleRobot (robot_idRobot=101, evento_idEvento = 2, fechaComienzoEnEvento='2024-12-01', fechaFinEnEvento='2024-12-30');
     
-    disponbleRobot10 = DisponibleRobot (robot_idRobot=107, evento_idEvento = 1, fechaComienzoEnEvento='2024-9-01', fechaFinEnEvento='2024-9-30');
-    disponbleRobot11 = DisponibleRobot (robot_idRobot=101, evento_idEvento = 1, fechaComienzoEnEvento='2024-12-01', fechaFinEnEvento='2024-12-30');
-    disponbleRobot12 = DisponibleRobot (robot_idRobot=130, evento_idEvento = 3, fechaComienzoEnEvento='2024-10-01', fechaFinEnEvento='2024-10-30');
+    disponbleRobot10 = DisponibleRobot (robot_idRobot=107, evento_idEvento = 1, fechaComienzoEnEvento='2024-10-01', fechaFinEnEvento='2024-10-30');
+    disponbleRobot11 = DisponibleRobot (robot_idRobot=101, evento_idEvento = 1, fechaComienzoEnEvento='2025-1-01', fechaFinEnEvento='2025-1-30');
+    disponbleRobot12 = DisponibleRobot (robot_idRobot=130, evento_idEvento = 3, fechaComienzoEnEvento='2024-11-01', fechaFinEnEvento='2024-11-30');
     
-    disponbleRobot13 = DisponibleRobot (robot_idRobot=131, evento_idEvento = 3, fechaComienzoEnEvento='2024-10-01', fechaFinEnEvento='2024-10-30');
-    disponbleRobot14 = DisponibleRobot (robot_idRobot=132, evento_idEvento = 3, fechaComienzoEnEvento='2024-9-01', fechaFinEnEvento='2024-9-30');
-    disponbleRobot15 = DisponibleRobot (robot_idRobot=132, evento_idEvento = 1, fechaComienzoEnEvento='2024-10-01', fechaFinEnEvento='2024-10-30');
+    disponbleRobot13 = DisponibleRobot (robot_idRobot=131, evento_idEvento = 3, fechaComienzoEnEvento='2024-11-01', fechaFinEnEvento='2024-11-30');
+    disponbleRobot14 = DisponibleRobot (robot_idRobot=132, evento_idEvento = 3, fechaComienzoEnEvento='2024-10-01', fechaFinEnEvento='2024-10-30');
+    disponbleRobot15 = DisponibleRobot (robot_idRobot=132, evento_idEvento = 1, fechaComienzoEnEvento='2024-11-01', fechaFinEnEvento='2024-11-30');
     
     
     
@@ -491,6 +491,9 @@ def funcionAdministradorPanelRobot (idEvento = '-1'):
 @app.route ('/adminstradorpanelrobotborrar/<int:idRobot>')
 def funcionAdministradorPanelRobotBorrar (idRobot, idEvento=0):
     miAdministrador = Administrador.query.filter_by (_Administrador__correoElectronico=session['correoElectronico']).first ();
+    if (miAdministrador.funcion_verSiPuedoBorrarRobot (idRobot) == False):
+        raise Exception ("administradorpaneleventoborrar.html --- ese administrador, no puede eliminar ese robot.");
+
     miAdministrador.funcion_borrarRobot (idRobot);
     if (idEvento > 0):
         return redirect (url_for ('funcionAdministradorModificarRobotsEvento', idEvento = idEvento));
@@ -549,18 +552,32 @@ def funcionAdministradorPanelRobotModificar (idRobot, idEvento=0):
             # en el caso de que no se valide el formulario, lo que hago es que devuelvo el formulario con los datos que se acaban de rellenar por el request.form y en este ya está almacenado el error. 
             return render_template ("administradorcrearrobot.html", miFormularioParametro=miFormulario, miParametroAccionHtml="modificar", miParametroIdEvento=idEvento);
     else:
+        # esto es para comprobar si se esta edtando un robot que no esta asociado a ningun evento. 
+        if (miAdministrador.funcion_verSiUnRobotEstaEnAlMenosUnEvento (idRobot)):
+            # dado que s un adinistrador conoce el idRobot de un robot que no se le muestra, el puede poner en la URL que lo va a modificar, con este IF yo comppruebo si ese administrador lo va a utilizar en algun momento. En el caso de que no, no le dejo modificar.
+            if (miAdministrador.funcion_verSiEseRobotEsDeEseAdministrador (idRobot) == False):
+                raise Exception ("administradorpaneleventoborrar.html --- ese administrador, no utiliza, ni va a utilizar ese robot, por lo tanto no lo va a modificar.");
+            else:
+                #en el caso de que un administrador vea un robot, sabiendo que esta en la tabla de disponible, pero que ademas ese robot lo estan utilizando actualmente, entonces no se le va a mostrar la opcion de modificar, pero lo que pasa es que si el pone en la URL
+                # a este robot, entonecs sí que lo puede modificar, por lo tanto hago este if que vuelve a comprobar si ese administrador lo puede o no modificar, en el caso de que no pueda, le mando un error. 
+                if (miAdministrador.funcion_verSiPuedoModificarRobot (idRobot) == False):
+                    raise Exception ("administradorpaneleventoborrar.html --- ese administrador, no puede modificcar ese robot, ya que otro adminsitrador lo esta usando actualmente. ");
+
         miRobot = miAdministrador.funcion_conseguirRobotPorIdRobot (idRobot);
         miFormulario = formulario.FormularioCreaRobot(obj=miRobot);
         return render_template ("administradorcrearrobot.html", miFormularioParametro=miFormulario, miParametroAccionHtml="modificar", miParametroIdEvento=idEvento);
+        
+        
 
 @app.route ('/administradorpanelevento')
 def funcionAdministradorPanelEvento ():
-    #print ("funcionAdministradorPanelEvento()---");
     miAdministrador = Administrador.query.filter_by (_Administrador__correoElectronico=session['correoElectronico']).first ();
 
     miListaDeRobots = miAdministrador.funcion_conseguirTodosLosRobots ();
+    # esto lo estoy haciendo debido a que puede en el momento de que no yahan datos en el sistema y se cree por primera vez un administrador y este acceda el sistema, lo que va a pasar es que 
+    #dentro de el, no van a haber robots, evidantemente, y en el caso de que pulse administradr eventos, que salga un mensaje de error que diga "no hay eventos en el sistema" ya que si no hay 
+    # robots, no puede haber eventos.
     if (not miListaDeRobots):
-        #print ("funcionAdministradorPanelEvento()---miListaDeRobots: ", miListaDeRobots);
         return redirect (url_for ('funcionAdministradorHome', parametroVerdadHayEventos=0));
     else:
         #print ("funcionAdministradorPanelEvento()---miListaDeRobots: ", miListaDeRobots);
@@ -570,10 +587,11 @@ def funcionAdministradorPanelEvento ():
 @app.route ('/administradorpaneleventoborrar/<int:idEvento>')
 def funcionAdministradorPanelEventoBorrar (idEvento):
     miAdministrador = Administrador.query.filter_by (_Administrador__correoElectronico=session['correoElectronico']).first ();
-    
-    miAdministrador.funcion_borrarEvento (idEvento);
-    miListaEventos = miAdministrador.funcion_conseguirTodosLosEventosDeEseAdministrador ();
-    return redirect (url_for ('funcionAdministradorPanelEvento'));
+    if (miAdministrador.funcion_verSiEseEventoEsDeEseAdministrador(idEvento)):
+        miAdministrador.funcion_borrarEvento (idEvento);
+        return redirect (url_for ('funcionAdministradorPanelEvento'));
+    else:
+        raise Exception ("administradorpaneleventoborrar.html --- para ese adminstrador, ese evento no existe");
 
 
 @app.route ('/administradorcrearevento', methods = ['GET', 'POST'])
@@ -618,7 +636,6 @@ def funcionAdministradorCrearEvento ():
 def funcionAdministradorModificarDatosEvento (idEvento):
     miAdministrador = Administrador.query.filter_by (_Administrador__correoElectronico=session['correoElectronico']).first ();
     miFormulario = formulario.FormularioCrearEvento (request.form);
-    miListaRobots = [];
     miVariableSeHaRellenadoFormularioCorrectamente = True;
     
     if (request.method == 'POST'):
@@ -626,9 +643,13 @@ def funcionAdministradorModificarDatosEvento (idEvento):
         miFormulario.codigoPostal.data);
         return redirect(url_for('funcionAdministradorPanelEvento'));
 
-    miEvento = miAdministrador.funcion_conseguirEventoPorIdEvento (idEvento);
-    miFormulario = formulario.FormularioCrearEvento (obj=miEvento);
-    return render_template ("administradorcrearevento.html", miFormularioParametro = miFormulario, miParametroAccionHtml = "modificar", miListaRobotsParametro=miListaRobots, miParametroVariableNoSeHaRellenadoFormularioCorrectamente= miVariableSeHaRellenadoFormularioCorrectamente);
+    if (miAdministrador.funcion_verSiEseEventoEsDeEseAdministrador (idEvento)):
+        miEvento = miAdministrador.funcion_conseguirEventoPorIdEvento (idEvento);
+        miFormulario = formulario.FormularioCrearEvento (obj=miEvento);
+        return render_template ("administradorcrearevento.html", miFormularioParametro = miFormulario, miParametroAccionHtml = "modificar", miParametroVariableNoSeHaRellenadoFormularioCorrectamente= miVariableSeHaRellenadoFormularioCorrectamente);
+    else:
+        raise Exception ("administradormodificardatosevento.htmml --- para este administrador, ese evento no existe.");
+    
     
 @app.route ('/administradormodificarrobotsevento/<int:idEvento>', methods = ['GET', 'POST'])
 def funcionAdministradorModificarRobotsEvento (idEvento):
@@ -660,7 +681,7 @@ def funcionAdministradorModificarRobotsEvento (idEvento):
                 else:
                     raise Exception ("administradormodificarrobotsevento.htmml --- formulario invalido.");
     
-    if (miAdministrador.funcion_verSiEseEventoTieneAlMenosUnRobot (idEvento)):
+    if (miAdministrador.funcion_verSiEseEventoEsDeEseAdministrador (idEvento)):
         miDiccionarioRobots = {};
         miListaDisponibleRobot = miAdministrador.funcion_conseguirDisponibleRobotPorEvento (idEvento);
         for miDisponibleRobotObjeto in miListaDisponibleRobot:  #  este for me vale para rellenar los robots del evento. formulario1
@@ -692,18 +713,13 @@ def funcionAdministradorModificarRobotsEvento (idEvento):
             miListaDeSumarRobot.append ([miRobotObjeto.idRobot, miRobotObjeto.macAddressDelRobot]);
         return render_template ("administradormodificarrobotsevento.html", miDiccionarioRobotsParametro=miDiccionarioRobots, miListaDeSumarRobotParametro=miListaDeSumarRobot, miParametroIdEvento =idEvento);
     else:
-        return redirect (url_for ('funcionAdministradorPanelEvento'));
+        raise Exception ("administradormodificarrobotsevento.htmml --- para este administrador, ese evento no existe.");
         
-@app.route ('/adminstradorpanelrobotponerservicio/<int:idRobot>/<int:robotEnServicio>')
 @app.route ('/adminstradorpanelrobotponerservicio/<int:idRobot>/<int:robotEnServicio>/<int:idEvento>')
-def funcionAdministradorPanelRobotPonerServicio (idRobot, robotEnServicio, idEvento=0): 
-    #print ("funcionAdministradorPanelRobotPonerServicio()--- ");
+def funcionAdministradorPanelRobotPonerServicio (idRobot, robotEnServicio, idEvento): 
     miAdministrador = Administrador.query.filter_by (_Administrador__correoElectronico=session['correoElectronico']).first(); 
     miAdministrador.funcion_activarOdesactivarRobot (idRobot, robotEnServicio);
-    if (idEvento > 0):
-        return redirect (url_for ('funcionAdministradorModificarRobotsEvento', idEvento=idEvento));
-    else:
-        return redirect (url_for ('funcionAdministradorPanelRobot'));
+    return redirect (url_for ('funcionAdministradorModificarRobotsEvento', idEvento=idEvento));
 
 @app.route ('/administradorpaneladministradorgestioncuentas')
 def funcionAdministradorGestioncuentas ():
