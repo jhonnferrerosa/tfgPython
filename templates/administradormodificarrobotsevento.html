@@ -60,6 +60,14 @@
                 </form>
             </tbody>
             {% endfor %}
+            <form  method="POST" >
+                <tr class="align-middle">
+                    <input type="hidden" value="{{ clave.idRobot }}" name="p_idRobot"/>
+                    <td><input type="datetime-local" id="idFechaComienzoEnEvento" name="p_fechaComienzoEnEvento"></td>
+                    <td><input type="datetime-local" id="idFechaFinEnEvento" name="p_fechaFinEnEvento"></td>
+                    <td><button type="submit" name="nameformulariosumarhorario"  class="btn btn-warning">Sumar horario</button></td>
+                </tr>
+            </form>
         </table>
     </div>
 </div>
@@ -69,28 +77,7 @@
 
 
 
-
-
-
-<h4> Apartado para sumar robots al evento: </h4>
-    {% for iteracion in miListaDeFormularioSumarRobotParametro %}
-    <form  method="POST">
-        <p> Id del robot: {{ iteracion[0] }}.    MAC: {{ iteracion[1] }} </p>
-        <label>Fecha de comienzo en el evento: </label>
-        {{ iteracion[2].fechaComienzoEnEvento }}
-        <label >Fecha de fin en el evento: </label>
-        {{ iteracion[2].fechaFinEnEvento }}
-        {{ iteracion[2].robot_idRobot }}
-        <input  type="submit" name="nameformulariosumarrobot" value="Sumar robot">
-    </form>
-    {% endfor %}
-
-
-
-
-
-
-
+<h4> Apartado para sumar robots al eventooo: </h4>
 <div class="card mb-4" style="clear: both; margin-top: 50px;">
     <div class="card-header">
         <h3 class="card-title">Apartado para sumar robots al evento:</h3>
@@ -120,7 +107,7 @@
                             <input type="datetime-local" id="idFechaFinEnEvento" name="p_fechaFinEnEvento">
                         </td>
 
-                        <td><button type="submit" name="nameformulariosumarrobot"  class="btn btn-primary">Sumar robot</button></td>
+                        <td><button type="submit" name="nameformulariosumarhorario"  class="btn btn-primary">Sumar robot</button></td>
                 </form>
             </tbody>
 {% endfor %}
@@ -128,20 +115,7 @@
     </div>
 </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    </section>
+</section>
 {% endblock %}
 
 

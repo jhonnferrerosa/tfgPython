@@ -658,28 +658,29 @@ def funcionAdministradorModificarRobotsEvento (idEvento):
     
     if (request.method == 'POST'):
         if ('nameformulariomodificar' in request.form):
-            #print ("funcionAdministradorModificarRobotsEvento() ---nameformulariomodificar");
             miAdministrador.funcion_modificarRobotDelEvento (idEvento, miFormularioModificarFechasRobot.robot_idRobot.data, miFormularioModificarFechasRobot.fechaComienzoEnEventoAntigua.data, miFormularioModificarFechasRobot.fechaFinEnEventoAntigua.data,
             miFormularioModificarFechasRobot.fechaComienzoEnEvento.data, miFormularioModificarFechasRobot.fechaFinEnEvento.data);
             return redirect (url_for ('funcionAdministradorModificarRobotsEvento', idEvento=idEvento));
-
         else:
             if ("nameformulariosumarrobot" in request.form):
-                #print ("funcionAdministradorModificarRobotsEvento() ---nameformulariosumarrobot: ", request.form.get(f'p_idRobot'), request.form.get (f'p_fechaComienzoEnEvento'));
                 miIdRobotRecibido = request.form.get(f'p_idRobot');
                 miFechaComienzoEnEventoRecibido = request.form.get (f'p_fechaComienzoEnEvento');
                 miFechaFinEnEventoRecibido = request.form.get (f'p_fechaFinEnEvento');
-                
                 miAdministrador.funcion_sumarRobotAlEvento (idEvento, miIdRobotRecibido, miFechaComienzoEnEventoRecibido, miFechaFinEnEventoRecibido);
                 return redirect (url_for ('funcionAdministradorModificarRobotsEvento', idEvento=idEvento));
-                
             else:
                 if ("nameformularioeliminar" in request.form):
-                    #print ("funcionAdministradorModificarRobotsEvento() ---nameformularioeliminar");
                     miAdministrador.funcion_eliminarRobotDelEvento (idEvento, miFormularioModificarFechasRobot.robot_idRobot.data, miFormularioModificarFechasRobot.fechaComienzoEnEvento.data, miFormularioModificarFechasRobot.fechaFinEnEvento.data);
                     return redirect (url_for ('funcionAdministradorModificarRobotsEvento', idEvento=idEvento));
                 else:
-                    raise Exception ("administradormodificarrobotsevento.htmml --- formulario invalido.");
+                    if ("nameformulariosumarhorario" in request.form):
+                        miIdRobotRecibido = request.form.get(f'p_idRobot');
+                        miFechaComienzoEnEventoRecibido = request.form.get (f'p_fechaComienzoEnEvento');
+                        miFechaFinEnEventoRecibido = request.form.get (f'p_fechaFinEnEvento');
+                        miAdministrador.funcion_sumarRobotAlEvento (idEvento, miIdRobotRecibido, miFechaComienzoEnEventoRecibido, miFechaFinEnEventoRecibido);
+                        return redirect (url_for ('funcionAdministradorModificarRobotsEvento', idEvento=idEvento));
+                    else:
+                        raise Exception ("administradormodificarrobotsevento.htmml --- formulario invalido.");
     
     if (miAdministrador.funcion_verSiEseEventoEsDeEseAdministrador (idEvento)):
         miDiccionarioRobots = {};
