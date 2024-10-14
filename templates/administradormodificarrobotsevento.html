@@ -15,9 +15,66 @@
 
 
     <section>
-	<h4> Robots programados para el evento: </h4>
+	<h4> Robots que actualmente están en el evento: </h4>
 
-{% for clave, valor in miDiccionarioRobotsParametro.items() %}
+{% for clave, valor in miDiccionarioRobotsActualmenteEstanEnEvetoParametro.items() %}
+<div class="card mb-4" style="clear: both;">
+    <div class="card-header">
+        <h3 class="card-title">Id del robot: {{ clave.idRobot }} - Mac: {{ clave.macAddressDelRobot }} - Nombre del robot: {{ clave.nombreDelRobot }}</h3>
+        <h3 class="card-title">
+            <ol class="list-unstyled" style="margin-left: 30px;">
+                <li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotModificar', idRobot=clave.idRobot, idEvento=miParametroIdEvento) }}" class="btn btn-danger btn-block">Modificar robot </a></li>
+                    {% if valor["subclaveQueBotonEnServicioEs"] == True %}
+<li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=clave.idRobot, robotEnServicio=1, idEvento=miParametroIdEvento) }}" class="btn btn-danger btn-block">Activar robot</a></li>
+                    {% else %}
+<li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=clave.idRobot, robotEnServicio=0, idEvento=miParametroIdEvento) }}" class="btn btn-danger btn-block">Desactivar robot</a></li>
+                    {% endif %}
+                    <li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotBorrar', idRobot=clave.idRobot, idEvento=miParametroIdEvento) }}" class="btn btn-danger btn-block">Borrar robot</a></li> 
+            </ol>
+        </h3>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th style="width: 350px">fecha de comienzo en el evento: </th>
+                    <th>fecha de fin en el evento: </th>
+                    <th>Accion:</th>
+                </tr>
+            </thead>
+            {% for iteracion in valor["subclaveListas"] %}
+            <tbody>
+                <form  method="POST" >
+                    <tr class="align-middle">
+                        <td>{{ iteracion.fechaComienzoEnEvento }}</td>
+                        <td>{{ iteracion.fechaFinEnEvento }} {{ iteracion.robot_idRobot }} {{ iteracion.fechaComienzoEnEventoAntigua }} {{ iteracion.fechaFinEnEventoAntigua }}</td>
+                        <td>
+                            <button type="submit" name="nameformulariomodificar"  class="btn btn-success">Modificar</button>
+                            <button type="submit" name="nameformularioeliminar"  class="btn btn-success">Eliminar fecha</button> 
+                        </td>
+                    </tr>
+                </form>
+            </tbody>
+            {% endfor %}
+            <form  method="POST" >
+                <tr class="align-middle">
+                    <input type="hidden" value="{{ clave.idRobot }}" name="p_idRobot"/>
+                    <td><input type="datetime-local" id="idFechaComienzoEnEvento" name="p_fechaComienzoEnEvento"></td>
+                    <td><input type="datetime-local" id="idFechaFinEnEvento" name="p_fechaFinEnEvento"></td>
+                    <td><button type="submit" name="nameformulariosumarhorario"  class="btn btn-warning">Sumar horario</button></td>
+                </tr>
+            </form>
+        </table>
+    </div>
+</div>
+{% else %}
+<nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">En la fecha actual del sistema ese evento, no tiene robots. </nav>
+{% endfor %}
+
+
+
+<h4> Otros robots que están apuntados al evento:  </h4>
+{% for clave, valor in miDiccionarioRobotsActualmenteNoEstanEnEvetoParametro.items() %}
 <div class="card mb-4" style="clear: both;">
     <div class="card-header">
         <h3 class="card-title">Id del robot: {{ clave.idRobot }} - Mac: {{ clave.macAddressDelRobot }} - Nombre del robot: {{ clave.nombreDelRobot }}</h3>
@@ -71,14 +128,16 @@
         </table>
     </div>
 </div>
+{% else %}
+<nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">El evento no tiene robots en otros momenntos. </nav>
 {% endfor %}
 
 
 
 
 
-<h4> Apartado para sumar robots al eventooo: </h4>
-<div class="card mb-4" style="clear: both; margin-top: 50px;">
+<h4> Apartado para sumar robots al evento: </h4>
+<div class="card mb-4">
     <div class="card-header">
         <h3 class="card-title">Apartado para sumar robots al evento:</h3>
     </div> <!-- /.card-header -->
@@ -112,6 +171,9 @@
             </tbody>
 {% endfor %}
         </table>
+        {% if miListaDeSumarRobotParametro|length == 0 %}
+        <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">Este evento ya tiene todos los robots del sistema asignados, no hay más que se puedan asignar</nav>
+        {% endif %} 
     </div>
 </div>
 

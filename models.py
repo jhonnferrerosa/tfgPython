@@ -268,7 +268,28 @@ class Administrador(db.Model):
         
     def funcion_conseguirDisponibleRobotPorEvento (self, miParametroIdEvento):
         return DisponibleRobot.query.filter_by (evento_idEvento=miParametroIdEvento).all();
-        
+
+    def funcion_conseguirDisponibleRobotPorEventoYporEstarContempladaLaFechaDelSistema (self, miParametroIdEvento):
+        miListaDisponibleRobot = [];
+        miListaDisponibleRobotQueActualmenteEstanEnElEvento= DisponibleRobot.query.filter (DisponibleRobot.evento_idEvento == miParametroIdEvento, DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now()).all();
+        for i in miListaDisponibleRobotQueActualmenteEstanEnElEvento:
+            miListaDisponibleRobot.append (i);
+            miListaDisponibleRobot += DisponibleRobot.query.filter (DisponibleRobot.robot_idRobot == i.robot_idRobot, DisponibleRobot.fechaFinEnEvento < datetime.now(), DisponibleRobot.evento_idEvento == miParametroIdEvento).all();
+            miListaDisponibleRobot += DisponibleRobot.query.filter (DisponibleRobot.robot_idRobot == i.robot_idRobot, DisponibleRobot.fechaComienzoEnEvento > datetime.now(), DisponibleRobot.evento_idEvento == miParametroIdEvento).all();
+        return miListaDisponibleRobot;
+
+    def funcion_conseguirDisponibleRobotPorEventoYporNoEstarContempladaLaFechaDelSistema (self, miParametroIdEvento):
+        miListaDisponibleRobotQueActualmenteNoEstanEnElEvento = DisponibleRobot.query.filter (DisponibleRobot.evento_idEvento == miParametroIdEvento, DisponibleRobot.fechaComienzoEnEvento > datetime.now()).all();
+        miListaDisponibleRobotQueActualmenteNoEstanEnElEvento += DisponibleRobot.query.filter (DisponibleRobot.evento_idEvento == miParametroIdEvento, DisponibleRobot.fechaFinEnEvento < datetime.now()).all();
+        miListaDisponibleRobotQueActualmenteEstanEnElEvento= DisponibleRobot.query.filter (DisponibleRobot.evento_idEvento == miParametroIdEvento, DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now()).all();
+        milistaDeEnterosRobot_idRobot = [];
+        # de esta forma obtengo los enteros. 
+        for i in miListaDisponibleRobotQueActualmenteEstanEnElEvento:
+            milistaDeEnterosRobot_idRobot.append (i.robot_idRobot);
+        for i in miListaDisponibleRobotQueActualmenteNoEstanEnElEvento[:]:
+            if (i.robot_idRobot in milistaDeEnterosRobot_idRobot):
+                miListaDisponibleRobotQueActualmenteNoEstanEnElEvento.remove (i);
+        return miListaDisponibleRobotQueActualmenteNoEstanEnElEvento
         
     def funcion_modificarDatosDelEvento (self, parametroAntiguoIdEvento, parametroNuevoIdEveto, parametroNombreDelEvento, parametroCalle=None, parametroNumero=None, parametroEdificioDondeSeCelebra=None, parametroCodigoPostal=None):
         print ("modificarDatosDelEvento()---", parametroAntiguoIdEvento);

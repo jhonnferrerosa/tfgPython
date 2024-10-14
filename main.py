@@ -109,6 +109,8 @@ def index2 ():
     disponbleRobot13 = DisponibleRobot (robot_idRobot=131, evento_idEvento = 3, fechaComienzoEnEvento='2024-11-01', fechaFinEnEvento='2024-11-30');
     disponbleRobot14 = DisponibleRobot (robot_idRobot=132, evento_idEvento = 3, fechaComienzoEnEvento='2024-10-01', fechaFinEnEvento='2024-10-30');
     disponbleRobot15 = DisponibleRobot (robot_idRobot=132, evento_idEvento = 1, fechaComienzoEnEvento='2024-11-01', fechaFinEnEvento='2024-11-30');
+
+    disponbleRobot16 = DisponibleRobot (robot_idRobot=101, evento_idEvento = 1, fechaComienzoEnEvento='2024-9-01', fechaFinEnEvento='2024-9-30');
     
     
     
@@ -127,6 +129,8 @@ def index2 ():
     db.session.add (disponbleRobot13);
     db.session.add (disponbleRobot14);
     db.session.add (disponbleRobot15);
+    db.session.add (disponbleRobot16);
+
     db.session.commit ();
     
     asistente1 = Asistente (tokenDeSesion="aaa", fechaTomaDelRobot=datetime.now(), fechaAbandonoDelRobot=datetime.now()+timedelta(minutes=5), evento_idEvento=2, robot_idRobot = 102);
@@ -654,7 +658,7 @@ def funcionAdministradorModificarDatosEvento (idEvento):
 @app.route ('/administradormodificarrobotsevento/<int:idEvento>', methods = ['GET', 'POST'])
 def funcionAdministradorModificarRobotsEvento (idEvento):
     miAdministrador = Administrador.query.filter_by (_Administrador__correoElectronico=session['correoElectronico']).first(); 
-    miFormularioModificarFechasRobot = formulario.FormularioModificarFechasRobot (request.form);  # este formulario, es de los robots que ya estan en el evento. 
+    miFormularioModificarFechasRobot = formulario.FormularioModificarFechasRobot (request.form);  
     
     if (request.method == 'POST'):
         if ('nameformulariomodificar' in request.form):
@@ -683,36 +687,48 @@ def funcionAdministradorModificarRobotsEvento (idEvento):
                         raise Exception ("administradormodificarrobotsevento.htmml --- formulario invalido.");
     
     if (miAdministrador.funcion_verSiEseEventoEsDeEseAdministrador (idEvento)):
-        miDiccionarioRobots = {};
-        miListaDisponibleRobot = miAdministrador.funcion_conseguirDisponibleRobotPorEvento (idEvento);
-        for miDisponibleRobotObjeto in miListaDisponibleRobot:  #  este for me vale para rellenar los robots del evento. formulario1
+        miDiccionarioRobotsActualmenteEstanEnEvento = {};
+        miListaDisponibleRobot = miAdministrador.funcion_conseguirDisponibleRobotPorEventoYporEstarContempladaLaFechaDelSistema (idEvento);
+        for miDisponibleRobotObjeto in miListaDisponibleRobot:  #  este for me vale para rellenar los robots del evento. tabla1.
             miRobot = miAdministrador.funcion_conseguirRobotPorIdRobot (miDisponibleRobotObjeto.robot_idRobot);
-            if (miRobot not in miDiccionarioRobots):
-                miDiccionarioRobots[miRobot] = [];  # de esta manera inicializo el vector. 
+            if (miRobot not in miDiccionarioRobotsActualmenteEstanEnEvento):
+                miDiccionarioRobotsActualmenteEstanEnEvento[miRobot] = [];  # de esta manera inicializo el vector. 
             # con esta linea como el objeto DisponibleRobot tiene los mismos atributos que la clase FormularioModificarFechasRobot, se asignan los valores del objeto miDisponibleRobot al formulario. 
             miFormularioModificarFechasRobot = formulario.FormularioModificarFechasRobot(obj=miDisponibleRobotObjeto);
             # en estas dos lineas, lo que hago es guardar los velores en el formulario, para que en el POST los pueda recuperar facilmente. 
             miFormularioModificarFechasRobot.fechaComienzoEnEventoAntigua.data = miDisponibleRobotObjeto.fechaComienzoEnEvento;
             miFormularioModificarFechasRobot.fechaFinEnEventoAntigua.data = miDisponibleRobotObjeto.fechaFinEnEvento;
             # aqui guardo el furmulario dentro de ese vector. 
-            miDiccionarioRobots[miRobot].append (miFormularioModificarFechasRobot);
-            
-        #este for es para rellenar en el diccionario que almacena los robots del formulario 1, par que el diccionario tenga tambien de cada uno de los robots en conocimiento de si debe mostrar los botones de borrar, modificar y enServicio. 
-        for clave in miDiccionarioRobots:
-            miVariablePuedoeliminar = True;
-            miVariablePuedoModificar = True;
+            miDiccionarioRobotsActualmenteEstanEnEvento[miRobot].append (miFormularioModificarFechasRobot);    
+        #este for es para rellenar en el diccionario que almacena los robots de la tabla 1, par que el diccionario tenga tambien de cada uno de los robots en conocimiento de si debe mostrar los botones de borrar, modificar y enServicio. 
+        for clave in miDiccionarioRobotsActualmenteEstanEnEvento:
+            miVariablePuedoeliminar = miAdministrador.funcion_verSiPuedoBorrarRobot (clave.idRobot);
+            miVariableQueBotonEnServicioEs = clave.idRobot in miListaRobotsQueNoEstanEnServicio;  # aqui lo que hago es ver si ese robot_idRobot esta en la lista, en el caso de que no esté me devuelve false. 
+            miDiccionarioRobotsActualmenteEstanEnEvento[clave] = {"subclaveListas":miDiccionarioRobotsActualmenteEstanEnEvento[clave], "subclavePuedoeliminar": miVariablePuedoeliminar, "subclaveQueBotonEnServicioEs": miVariableQueBotonEnServicioEs};
+
+        miDiccionarioRobotsActualmenteNoEstanEnEvento = {};
+        miListaDisponibleRobot = miAdministrador.funcion_conseguirDisponibleRobotPorEventoYporNoEstarContempladaLaFechaDelSistema (idEvento);
+        for miDisponibleRobotObjeto in miListaDisponibleRobot: 
+            miRobot = miAdministrador.funcion_conseguirRobotPorIdRobot (miDisponibleRobotObjeto.robot_idRobot);
+            if (miRobot not in miDiccionarioRobotsActualmenteNoEstanEnEvento):
+                miDiccionarioRobotsActualmenteNoEstanEnEvento[miRobot] = [];
+            miFormularioModificarFechasRobot = formulario.FormularioModificarFechasRobot(obj=miDisponibleRobotObjeto);
+            miFormularioModificarFechasRobot.fechaComienzoEnEventoAntigua.data = miDisponibleRobotObjeto.fechaComienzoEnEvento;
+            miFormularioModificarFechasRobot.fechaFinEnEventoAntigua.data = miDisponibleRobotObjeto.fechaFinEnEvento;
+            miDiccionarioRobotsActualmenteNoEstanEnEvento[miRobot].append (miFormularioModificarFechasRobot);  
+        for clave in miDiccionarioRobotsActualmenteNoEstanEnEvento:
             miVariablePuedoeliminar = miAdministrador.funcion_verSiPuedoBorrarRobot (clave.idRobot);
             miVariablePuedoModificar = miAdministrador.funcion_verSiPuedoModificarRobot (clave.idRobot);
-            miVariableQueBotonEnServicioEs = clave.idRobot in miListaRobotsQueNoEstanEnServicio;  # aqui lo que hago es ver si ese robot_idRobot esta en la lista, en el caso de que no esté me devuelve false. 
-            #print ("funcionAdministradorModificarRobotsEvento()--- miVariableQueBotonEnServicioEs", miVariableQueBotonEnServicioEs);
-            miDiccionarioRobots[clave] = {"subclaveListas":miDiccionarioRobots[clave], "subclavePuedoModificar": miVariablePuedoModificar, "subclavePuedoeliminar": miVariablePuedoeliminar, "subclaveQueBotonEnServicioEs": miVariableQueBotonEnServicioEs};
-        #print ("funcionAdministradorModificarRobotsEvento()--- ", miDiccionarioRobots);
-            
+            miVariableQueBotonEnServicioEs = clave.idRobot in miListaRobotsQueNoEstanEnServicio; 
+            miDiccionarioRobotsActualmenteNoEstanEnEvento[clave] = {"subclaveListas":miDiccionarioRobotsActualmenteNoEstanEnEvento[clave], "subclavePuedoModificar": miVariablePuedoModificar, "subclavePuedoeliminar": miVariablePuedoeliminar, "subclaveQueBotonEnServicioEs": miVariableQueBotonEnServicioEs};
+        
+
+
         miListaDeSumarRobot = [];
-        for miRobotObjeto in miAdministrador.funcion_conseguirTodosLosRobotsQueNoSonDelAdministradorDeEseEvento (idEvento): # este for me vale para rellenar los formularios de los robots que no estan en ese evento. formulario2. (el de abajo del todo).  
+        for miRobotObjeto in miAdministrador.funcion_conseguirTodosLosRobotsQueNoSonDelAdministradorDeEseEvento (idEvento): # este for me vale para rellenar los formularios de los robots que no estan en ese evento. tabla 3. (la de abajo del todo).  
             #print ("funcionAdministradorModificarRobotsEvento() --", miRobotObjeto);
             miListaDeSumarRobot.append ([miRobotObjeto.idRobot, miRobotObjeto.macAddressDelRobot]);
-        return render_template ("administradormodificarrobotsevento.html", miDiccionarioRobotsParametro=miDiccionarioRobots, miListaDeSumarRobotParametro=miListaDeSumarRobot, miParametroIdEvento =idEvento);
+        return render_template ("administradormodificarrobotsevento.html", miDiccionarioRobotsActualmenteEstanEnEvetoParametro=miDiccionarioRobotsActualmenteEstanEnEvento, miDiccionarioRobotsActualmenteNoEstanEnEvetoParametro=miDiccionarioRobotsActualmenteNoEstanEnEvento, miListaDeSumarRobotParametro=miListaDeSumarRobot, miParametroIdEvento =idEvento);
     else:
         raise Exception ("administradormodificarrobotsevento.htmml --- para este administrador, ese evento no existe.");
         
