@@ -636,19 +636,14 @@ def funcionAdministradorCrearEvento ():
                 #print ("funcionAdministradorCrearEvento ()--- la fecha no se ha rellenado correctamente. ");
             else:
                 miVerdadSePuedeCrearEvento = True;
-                #print(f'Robot: {robot.idRobot}, fecha: {miFechaComienzoEnEventoRecibido}, Hora Fin: {miFechaFinEnEventoRecibido}');
-                miFormulario.idEvento.data;
                 miListaDisponibleRobot.append ([miFormulario.idEvento.data, robot.idRobot, miFechaComienzoEnEventoRecibido, miFechaFinEnEventoRecibido]);
                 
-            if (miVerdadSePuedeCrearEvento == True):
-                #print ("funcionAdministradorCrearEvento ()--- miListaDisponibleRobot:  ", miListaDisponibleRobot);
-                #print ("funcionAdministradorCrearEvento ()--- ", miFormulario.edificioDondeSeCelebra.data);
-                miAdministrador.funcion_crearEvento (miListaDisponibleRobot, miFormulario.idEvento.data, miFormulario.nombreDelEvento.data, miFormulario.calle.data, miFormulario.numero.data,
-                miFormulario.edificioDondeSeCelebra.data, miFormulario.codigoPostal.data);
-                miListaEventos = miAdministrador.funcion_conseguirTodosLosEventosDeEseAdministrador ();
-                return redirect (url_for ('funcionAdministradorPanelEvento'));
-            else:
-                miParametroVariableNoSeHaRellenadoFormularioCorrectamente = False;
+        if (miVerdadSePuedeCrearEvento == True):
+            miAdministrador.funcion_crearEvento (miListaDisponibleRobot, miFormulario.idEvento.data, miFormulario.nombreDelEvento.data, miFormulario.calle.data, miFormulario.numero.data,
+            miFormulario.edificioDondeSeCelebra.data, miFormulario.codigoPostal.data);
+            return redirect (url_for ('funcionAdministradorPanelEvento'));
+        else:
+            miParametroVariableNoSeHaRellenadoFormularioCorrectamente = False;
                 
     miListaRobots = miAdministrador.funcion_conseguirTodosLosRobots ();
     return render_template ("administradorcrearevento.html", miFormularioParametro = miFormulario, miParametroAccionHtml = "crear", miListaRobotsParametro=miListaRobots, miParametroVariableNoSeHaRellenadoFormularioCorrectamente= miVariableSeHaRellenadoFormularioCorrectamente);
