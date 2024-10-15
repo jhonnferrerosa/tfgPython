@@ -512,11 +512,11 @@ def funcionAdministradorCrearRobot ():
     
     if (request.method == 'POST') and (miFormulario.validate ()): 
         fotoRecibidaDelFormulario = request.files['fotoDelRobot'];
-        binarioDeFoto = None;
-        if (fotoRecibidaDelFormulario == None):
+        binarioDeFoto = fotoRecibidaDelFormulario.read();
+        # de esta forma tereminso si hay o no hay foto, ya que en el caso de que el peso de la foto sea 0, eso significa que no se ha adjuntado la foto. 
+        if (len (binarioDeFoto) == 0):
             pass;
         else:
-            binarioDeFoto = fotoRecibidaDelFormulario.read();
             print ("funcionAdministradorCrearRobot()--- este es el archivo:  ", fotoRecibidaDelFormulario.filename);
 
             #En esta parte voy a poner la validación del documento que se sube a la página web, la foto debe de pesar como maximo 10MB. 
