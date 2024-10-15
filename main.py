@@ -520,9 +520,10 @@ def funcionAdministradorCrearRobot ():
     if (request.method == 'POST') and (miFormulario.validate ()): 
         fotoRecibidaDelFormulario = request.files['fotoDelRobot'];
         binarioDeFoto = fotoRecibidaDelFormulario.read();
-        # de esta forma tereminso si hay o no hay foto, ya que en el caso de que el peso de la foto sea 0, eso significa que no se ha adjuntado la foto. 
+        # de esta forma detrmino si hay o no hay foto, ya que en el caso de que el peso de la foto sea 0, eso significa que no se ha adjuntado la foto. 
         if (len (binarioDeFoto) == 0):
-            pass;
+            # de esta forma en el caso de que la foto no se haya insertado, entonces a la BBDD le paso el valor de NULL. 
+            binarioDeFoto = None;
         else:
             print ("funcionAdministradorCrearRobot()--- este es el archivo:  ", fotoRecibidaDelFormulario.filename);
 

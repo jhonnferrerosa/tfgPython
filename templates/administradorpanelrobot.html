@@ -65,10 +65,10 @@
                                                 <td>{{ iteracion.nombreDelRobot }} </td>
                                                 <td>{{ iteracion.descripcionDelRobot }}</td>
                                                 <td>
-                                                    {% if iteracion.fotoDelRobot!= None %}
+                                                    {% if iteracion.fotoDelRobot != None %}
                                                         <img src="{{ url_for('funcionCapturarImagenRobot', idRobot=iteracion.idRobot) }}" style="max-width: 200px; max-height: 200px; width: auto; height: auto;">
                                                     {% else %}
-                                                        <p> No hay fotos del robot. </p>
+                                                        <p> No hay foto del robot</p>
                                                     {% endif %}
                                                 </td>
                                                 {% if miParametroMostrarRobotsNingunEvento == True %}
