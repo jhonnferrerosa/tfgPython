@@ -111,6 +111,7 @@ def index2 ():
     disponbleRobot15 = DisponibleRobot (robot_idRobot=132, evento_idEvento = 1, fechaComienzoEnEvento='2024-11-01', fechaFinEnEvento='2024-11-30');
 
     disponbleRobot16 = DisponibleRobot (robot_idRobot=101, evento_idEvento = 1, fechaComienzoEnEvento='2024-9-01', fechaFinEnEvento='2024-9-30');
+    disponbleRobot17 = DisponibleRobot (robot_idRobot=106, evento_idEvento = 3, fechaComienzoEnEvento='2024-11-01', fechaFinEnEvento='2024-11-30');
     
     db.session.add (disponbleRobot1);
     db.session.add (disponbleRobot2);
@@ -128,6 +129,7 @@ def index2 ():
     db.session.add (disponbleRobot14);
     db.session.add (disponbleRobot15);
     db.session.add (disponbleRobot16);
+    db.session.add (disponbleRobot17);
 
     db.session.commit ();
     
@@ -207,6 +209,11 @@ def miFuncionAntesDeLaPeticion ():
                             miDiccionarioEventoYasistentesDatos[clave][miVariablePosicionDondeHeEncontradoAlAsistentenMasAntiguo][1] = None; 
                             miDiccionarioEventoYasistentesDatos[clave][miVariablePosicionDondeHeEncontradoAlAsistentenMasAntiguo][2] = True; 
                             miDiccionarioFechasPasoAEsPrivilegiado[clave] = datetime.now ();
+
+@app.errorhandler (404)  # esto es para sacar el HTML que contiene el mensaje de error, para los casos en los que 
+# la aplicacion caiga en algun error. 
+def miPaginaNoEncntradaError (e):
+	return render_template ("404.html"), 404; 
 
 # este endpoint es necesario para la representacion de las imagenes en el HTML. Ya en la base dde datos la imagen
 #se alamecena codificada, lo que hago aqui es decodificarla y darsela al HTML 

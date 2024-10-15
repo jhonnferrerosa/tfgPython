@@ -29,7 +29,9 @@
                     {% else %}
 <li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=clave.idRobot, robotEnServicio=0, idEvento=miParametroIdEvento) }}" class="btn btn-danger btn-block">Desactivar robot</a></li>
                     {% endif %}
+                    {% if valor["subclavePuedoeliminar"] == True %}
                     <li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotBorrar', idRobot=clave.idRobot, idEvento=miParametroIdEvento) }}" class="btn btn-danger btn-block">Borrar robot</a></li> 
+                    {% endif %}
             </ol>
         </h3>
     </div>
