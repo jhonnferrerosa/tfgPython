@@ -6,8 +6,8 @@ from flask_wtf import Form
 from wtforms import StringField, IntegerField, SelectField, BooleanField, FileField, DateTimeField, HiddenField, PasswordField, BooleanField
 from wtforms.fields import EmailField
 
-from wtforms.validators import Length, InputRequired, NumberRange, MacAddress
 
+from wtforms.validators import Length, InputRequired, NumberRange, MacAddress
 
 class FormularioAcceder (Form):
     """
@@ -25,7 +25,8 @@ class FormularioCreaRobot (Form):
     macAddressDelRobot = StringField (validators= [InputRequired("Esta campo es requerido"), Length(min=17, max=17), MacAddress("Debe de introducir una MAC correcta, los caracteres deben ser hexagesimal, y el formato debe ser XX:XX:XX:XX:XX:XX")]);
     nombreDelRobot = StringField (validators= [InputRequired("Esta campo es requerido"), Length(min=3, max=50, message="esciba entre 3 y 50 caracteres.")]);
     descripcionDelRobot = StringField ();
-    fotoDelRobot = FileField ();
+    fotoDelRobot = FileField();
+    
 
 class FormularioCrearEvento (Form):
     """ 
@@ -54,7 +55,8 @@ class FormularioModificarFechasRobot (Form):
 
     
     
-    
+
+
     
     
     

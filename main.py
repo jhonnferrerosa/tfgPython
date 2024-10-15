@@ -23,14 +23,14 @@ from werkzeug.security import generate_password_hash
 # esta libreria es para poder enviar JSON al cliente. 
 from flask import jsonify
 
+# esto me vale para utilizar expresiones regulares en pyrhon. 
+import re
+
 app = Flask(__name__)
 app.config.from_object (DevelopmentConfig);
 
-
-
 from estructuradatos import miListaRobotsQueNoEstanEnServicio;
 from estructuradatos import miDiccionarioEventoYasistentesDatos;
-
 
 # en este diccionario la clave va a ser el token con el evento , para saber que asistenten en que evento hay rechazado un robot, para que de esta forma no se le muestre uno que el haya rechazado en el evento. 
 miDiccionarioGlobalTokensListaDeRobotsRechazados = {}
@@ -111,8 +111,6 @@ def index2 ():
     disponbleRobot15 = DisponibleRobot (robot_idRobot=132, evento_idEvento = 1, fechaComienzoEnEvento='2024-11-01', fechaFinEnEvento='2024-11-30');
 
     disponbleRobot16 = DisponibleRobot (robot_idRobot=101, evento_idEvento = 1, fechaComienzoEnEvento='2024-9-01', fechaFinEnEvento='2024-9-30');
-    
-    
     
     db.session.add (disponbleRobot1);
     db.session.add (disponbleRobot2);
@@ -516,11 +514,30 @@ def funcionAdministradorCrearRobot ():
         fotoRecibidaDelFormulario = request.files['fotoDelRobot'];
         binarioDeFoto = None;
         if (fotoRecibidaDelFormulario == None):
-            #print ("funcionAdministradorCrearRobot()--- No hay foto");
             pass;
         else:
-            #print ("funcionAdministradorCrearRobot()--- si hay foto ");
             binarioDeFoto = fotoRecibidaDelFormulario.read();
+            print ("funcionAdministradorCrearRobot()--- este es el archivo:  ", fotoRecibidaDelFormulario.filename);
+
+            #En esta parte voy a poner la validación del documento que se sube a la página web, la foto debe de pesar como maximo 10MB. 
+            if ((len(binarioDeFoto)/1024) > 10240):
+                raise Exception ("administradorcrearrobot.html --- el tamaño máxm de las fotos es de 10MB. ");
+            else:
+                # en esta parte voy a poner la validación del tipo de documento, debe ser .JPG o .JPEG o .PNG
+                miExpresionRegularParaJPG = r".+\.jpg$";
+                miExpresionRegularParaJPEG = r".+\.jpeg$";
+                miExpresionRegularParaPNG = r".+\.png$";
+
+                miVerdadEsJPG = bool(re.match (miExpresionRegularParaJPG, fotoRecibidaDelFormulario.filename));
+                miVerdadEsJPEG = bool(re.match (miExpresionRegularParaJPEG, fotoRecibidaDelFormulario.filename));
+                miVerdadEsPNG = bool(re.match (miExpresionRegularParaPNG, fotoRecibidaDelFormulario.filename));
+                if (miVerdadEsJPG == False) and (miVerdadEsJPEG == False) and (miVerdadEsPNG == False):
+                    raise Exception ("administradorcrearrobot.html --- la extesión del archivo no es valida, las extensiones permitidas son .jpg .jpeg y .png");
+                else:
+                    print ("funcionAdministradorCrearRobot()--- la expresion regular si que cuadra, por tanto no da error. ");
+            print ("funcionAdministradorCrearRobot()--- este es el tamaño:  ", len(binarioDeFoto));
+            print ("funcionAdministradorCrearRobot()--- este es el tamaño en KB:   ", len(binarioDeFoto)/1024);
+
             
         miAdministrador.funcion_crearRobot (miFormulario.macAddressDelRobot.data, miFormulario.nombreDelRobot.data, binarioDeFoto, miFormulario.descripcionDelRobot.data);
         return redirect(url_for('funcionAdministradorPanelRobot'));
