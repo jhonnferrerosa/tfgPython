@@ -15,6 +15,9 @@
 </nav>
 <section> 
 
+{% if miParametroVerdadErrorDeEventoInexistente == 1 %}
+    <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">Ese evento no existe, ha dejado de existir o es de otro administrador.</nav>
+{% endif %}
 
 <div class="card mb-4" style="clear: both;">
                                 <div class="card-header">

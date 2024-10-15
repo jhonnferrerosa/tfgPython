@@ -597,9 +597,9 @@ def funcionAdministradorPanelRobotModificar (idRobot, idEvento=0):
         return render_template ("administradorcrearrobot.html", miFormularioParametro=miFormulario, miParametroAccionHtml="modificar", miParametroIdEvento=idEvento);
         
         
-
+@app.route ('/administradorpanelevento/<int:miVerdadErrorDeEventoInexistente>')
 @app.route ('/administradorpanelevento')
-def funcionAdministradorPanelEvento ():
+def funcionAdministradorPanelEvento (miVerdadErrorDeEventoInexistente = 0):
     miAdministrador = Administrador.query.filter_by (_Administrador__correoElectronico=session['correoElectronico']).first ();
 
     miListaDeRobots = miAdministrador.funcion_conseguirTodosLosRobots ();
@@ -611,7 +611,7 @@ def funcionAdministradorPanelEvento ():
     else:
         #print ("funcionAdministradorPanelEvento()---miListaDeRobots: ", miListaDeRobots);
         miListaEventos = miAdministrador.funcion_conseguirTodosLosEventosDeEseAdministrador ();
-        return render_template ("administradorpanelevento.html", miListaEventosParametro=miListaEventos);
+        return render_template ("administradorpanelevento.html", miListaEventosParametro=miListaEventos, miParametroVerdadErrorDeEventoInexistente=miVerdadErrorDeEventoInexistente);
     
 @app.route ('/administradorpaneleventoborrar/<int:idEvento>')
 def funcionAdministradorPanelEventoBorrar (idEvento):
@@ -672,7 +672,7 @@ def funcionAdministradorModificarDatosEvento (idEvento):
         miFormulario = formulario.FormularioCrearEvento (obj=miEvento);
         return render_template ("administradorcrearevento.html", miFormularioParametro = miFormulario, miParametroAccionHtml = "modificar", miParametroVariableNoSeHaRellenadoFormularioCorrectamente= miVariableSeHaRellenadoFormularioCorrectamente);
     else:
-        raise Exception ("administradormodificardatosevento.htmml --- para este administrador, ese evento no existe.");
+        return redirect(url_for('funcionAdministradorPanelEvento', miVerdadErrorDeEventoInexistente=1));
     
     
 @app.route ('/administradormodificarrobotsevento/<int:idEvento>', methods = ['GET', 'POST'])
@@ -750,7 +750,7 @@ def funcionAdministradorModificarRobotsEvento (idEvento):
             miListaDeSumarRobot.append ([miRobotObjeto.idRobot, miRobotObjeto.macAddressDelRobot]);
         return render_template ("administradormodificarrobotsevento.html", miDiccionarioRobotsActualmenteEstanEnEvetoParametro=miDiccionarioRobotsActualmenteEstanEnEvento, miDiccionarioRobotsActualmenteNoEstanEnEvetoParametro=miDiccionarioRobotsActualmenteNoEstanEnEvento, miListaDeSumarRobotParametro=miListaDeSumarRobot, miParametroIdEvento =idEvento);
     else:
-        raise Exception ("administradormodificarrobotsevento.htmml --- para este administrador, ese evento no existe.");
+        return redirect(url_for('funcionAdministradorPanelEvento', miVerdadErrorDeEventoInexistente=1));
         
 @app.route ('/adminstradorpanelrobotponerservicio/<int:idRobot>/<int:robotEnServicio>/<int:idEvento>')
 def funcionAdministradorPanelRobotPonerServicio (idRobot, robotEnServicio, idEvento): 
