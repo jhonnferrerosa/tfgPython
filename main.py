@@ -643,7 +643,7 @@ def funcionAdministradorCrearEvento ():
             miFormulario.edificioDondeSeCelebra.data, miFormulario.codigoPostal.data);
             return redirect (url_for ('funcionAdministradorPanelEvento'));
         else:
-            miParametroVariableNoSeHaRellenadoFormularioCorrectamente = False;
+            miVariableSeHaRellenadoFormularioCorrectamente = False;
                 
     miListaRobots = miAdministrador.funcion_conseguirTodosLosRobots ();
     return render_template ("administradorcrearevento.html", miFormularioParametro = miFormulario, miParametroAccionHtml = "crear", miListaRobotsParametro=miListaRobots, miParametroVariableNoSeHaRellenadoFormularioCorrectamente= miVariableSeHaRellenadoFormularioCorrectamente);
