@@ -124,12 +124,10 @@ class Administrador(db.Model):
             db.session.commit();
             
     def funcion_activarOdesactivarRobot (self, parametroIdRobot, parametroEnServicio):
-        #print ("funcion_activarOdesactivarRobot ()--- esta es la la lista: ");
         miRobot = Robot.query.filter_by (_Robot__idRobot=parametroIdRobot).first();
         if (miRobot):
             if (parametroEnServicio <= 0):  
                 miListaRobotsQueNoEstanEnServicio.append (parametroIdRobot);
-                #print ("funcion_activarOdesactivarRobot ()--- se va a meter un robot en la lsita de los que no estan en servicio ");
                 # acabo de quitar del servicio a un robot, por lo tanto aqui lo que voy a hacer es ver si hay un asistente que tenga ese robot en ese momento. 
                 miAsistente = Asistente.query.filter (Asistente._Asistente__robot_idRobot == parametroIdRobot, Asistente._Asistente__fechaTomaDelRobot <= datetime.now(), Asistente._Asistente__fechaAbandonoDelRobot >= datetime.now()).first (); 
                 if (miAsistente):  # en el caso de que lo encuentre, a ese lo pongo como es privilegiado. 
@@ -139,11 +137,8 @@ class Administrador(db.Model):
                             miDiccionarioEventoYasistentesDatos[miAsistente.evento_idEvento][indiceNumerico][2] = True; # aqui he encontrado la lista, y de ella, el inidice 2 es el valor de esPrivilegiado, este lo pongo en True.  
                     miAsistente.fechaAbandonoDelRobot = datetime.now (); # aqui lo que hago es de la fecha de abandono, ponerle la fecha actual, para que de esta forma en la BBDD se vea que ese asistente ya no tiene ese robot. 
                     db.session.commit ();
-                    #print ("funcion_activarOdesactivarRobot ()--- en la BBDD en la tabla Asistente, se ha establecido la feha de abandono ");
             else:
                 miListaRobotsQueNoEstanEnServicio.remove (parametroIdRobot);
-                #print ("funcion_activarOdesactivarRobot ()--- se ha eliminado un robot de la lista de los que no estan en servicio. ");
-        #print (miListaRobotsQueNoEstanEnServicio);
         
     def funcion_conseguirTodosLosRobots (self):
         return Robot.query.all();
@@ -175,7 +170,7 @@ class Administrador(db.Model):
         #print ("funcion_conseguirTodosLosRobotsQueNoSonDelAdministrador()---", miConjuntoRobotsQueNoSonDelAdministrador);
         
         # en esta ultima parte lo que hago es conseguir los robots que no estan en ningun evento. para que los sume a los robots que no son del administrador pero que estan en la tabla de disponibleRobot. 
-        miListaRobotsQueNoEstanEnNingunEvento = self.funcion_conseguirRobotsQueNoEtanEnNingunEvento();
+        miListaRobotsQueNoEstanEnNingunEvento = self.funcion_conseguirRobotsQueNoEstanEnNingunEvento();
         for i in miListaRobotsQueNoEstanEnNingunEvento:
             miConjuntoRobotsQueNoSonDelAdministrador.add (i);
             
@@ -185,7 +180,7 @@ class Administrador(db.Model):
     def funcion_conseguirRobotPorIdRobot (self, parametroIdRobot):
         return Robot.query.filter_by (_Robot__idRobot=parametroIdRobot).first();
         
-    def funcion_conseguirRobotsQueNoEtanEnNingunEvento (self):
+    def funcion_conseguirRobotsQueNoEstanEnNingunEvento (self):
         miDisponibleRobotAlias = aliased (DisponibleRobot);
         return db.session.query(Robot).outerjoin (miDisponibleRobotAlias, Robot._Robot__idRobot == miDisponibleRobotAlias.robot_idRobot).filter (miDisponibleRobotAlias.robot_idRobot==None).all ();
         
@@ -394,8 +389,7 @@ class Administrador(db.Model):
         #print ("funcion_conseguirTodasLasCuentasMenosLaInstanciada()---");
         return Administrador.query.filter (Administrador._Administrador__correoElectronico != self.__correoElectronico).all ();
         
-    def funcion_borrarCuaentaAdministrador (self, parametroCorreoElectronico):
-        #print ("funcion_borrarCuaentaAdministrador()----");
+    def funcion_borrarCuentaAdministrador (self, parametroCorreoElectronico):
         miAdministrador = Administrador.query.filter_by (_Administrador__correoElectronico = parametroCorreoElectronico).first ();
         db.session.delete (miAdministrador);
         db.session.commit ();

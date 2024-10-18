@@ -9,8 +9,8 @@
 {% block content %}
 <nav> 
     <ol class="list-unstyled">
-        <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorCrearEvento') }}" class="btn btn-primary btn-block"> nuevo evento </a></li>
-       <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorHome') }}" class="btn btn-primary btn-block">Volver al home </a></li> 
+        <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorCrearEvento') }}" class="btn btn-primary"> nuevo evento </a></li>
+       <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorHome') }}" class="btn btn-primary">Volver al home </a></li> 
     </ol>
 </nav>
 <section> 
@@ -51,9 +51,9 @@
                                                 <td> {{ iteracion.codigoPostal }}</td>
                                                 <td>
                                                     <ol class="list-unstyled">
-                                                    <li class="mb-2"> <a href="{{ url_for('funcionAdministradorModificarDatosEvento', idEvento=iteracion.idEvento) }}" class="btn btn-primary btn-block">Modificar datos del evento</a></li>
-                                                    <li class="mb-2"> <a href="{{ url_for('funcionAdministradorModificarRobotsEvento', idEvento=iteracion.idEvento) }}" class="btn btn-primary btn-block">Modificar robots del evento</a></li>
-                                                    <li class="mb-2"> <a href="{{ url_for('funcionAdministradorPanelEventoBorrar', idEvento=iteracion.idEvento) }}" class="btn btn-primary btn-block">Borrar evento</a></li>
+                                                    <li class="mb-2"> <a href="{{ url_for('funcionAdministradorModificarDatosEvento', idEvento=iteracion.idEvento) }}" class="btn btn-primary">Modificar datos del evento</a></li>
+                                                    <li class="mb-2"> <a href="{{ url_for('funcionAdministradorModificarRobotsEvento', idEvento=iteracion.idEvento) }}" class="btn btn-primary">Modificar robots del evento</a></li>
+                                                    <li class="mb-2"> <a href="{{ url_for('funcionAdministradorPanelEventoBorrar', idEvento=iteracion.idEvento) }}" class="btn btn-primary">Borrar evento</a></li>
                                                     </ol>
                                                 </td>
                                             </tr>

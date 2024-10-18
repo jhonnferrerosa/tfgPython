@@ -9,30 +9,32 @@
 
 {% block content %}
 <nav>
-    <ol class="list-unstyled">
+    <ol class="list-group">
         <li class="mb-2">
-            <a href="{{ url_for('funcionAdministradorCrearRobot') }}" class="btn btn-primary btn-block">Dar de alta un robot en el sistema. </a>
+            <a href="{{ url_for('funcionAdministradorCrearRobot') }}" class="btn btn-primary">Dar de alta un robot en el sistema. </a>
         </li>
         <li class="mb-2">
-            <a href="{{ url_for('funcionAdministradorHome') }}" class="btn btn-primary btn-block">Volver al home </a>
+            <a href="{{ url_for('funcionAdministradorHome') }}" class="btn btn-primary">Volver al home </a>
         </li>
     </ol>
 </nav>
 
 
 
+
+
 <nav>
     <ol class="list-unstyled">
         <li class="mb-2" style="float:left; margin-left: 20px;">
-            <a href="{{ url_for('funcionAdministradorPanelRobot', idEvento=-1) }}" class="btn btn-success btn-block">Robots que no están en ningún evento</a>
+            <a href="{{ url_for('funcionAdministradorPanelRobot', idEvento=-1) }}" class="btn btn-success">Robots que no están en ningún evento</a>
         </li>
         <li class="mb-2" style="float:left; margin-left: 20px;">
-            <a href="{{ url_for('funcionAdministradorPanelRobot', idEvento=0) }}" class="btn btn-success btn-block">Todos los robots </a>
+            <a href="{{ url_for('funcionAdministradorPanelRobot', idEvento=0) }}" class="btn btn-success">Todos los robots </a>
         </li>
 
         {% for iteracion in miListaDeEventosEnLosQueHayRobotsParametro %}
         <li class="mb-2" style="float:left; margin-left: 20px;">
-            <a href="{{ url_for('funcionAdministradorPanelRobot', idEvento=iteracion.idEvento) }}" class="btn btn-danger btn-block">{{ iteracion.nombreDelEvento }}</a>
+            <a href="{{ url_for('funcionAdministradorPanelRobot', idEvento=iteracion.idEvento) }}" class="btn btn-danger">{{ iteracion.nombreDelEvento }}</a>
         {% endfor %}
         </li>
     </ol>
@@ -74,8 +76,8 @@
                                                 {% if miParametroMostrarRobotsNingunEvento == True %}
                                                 <td> 
                                                     <ol class="list-unstyled">
-                                                        <li class="mb-2"> <a href="{{ url_for('funcionAdministradorPanelRobotModificar', idRobot=iteracion.idRobot) }}" class="btn btn-primary btn-block">Modificar robot </a></li>
-                                                        <li class="mb-2"> <a href="{{ url_for('funcionAdministradorPanelRobotBorrar', idRobot=iteracion.idRobot) }}" class="btn btn-primary btn-block">Borrar robot</a></li>
+                                                        <li class="mb-2"> <a href="{{ url_for('funcionAdministradorPanelRobotModificar', idRobot=iteracion.idRobot) }}" class="btn btn-primary">Modificar robot </a></li>
+                                                        <li class="mb-2"> <a href="{{ url_for('funcionAdministradorPanelRobotBorrar', idRobot=iteracion.idRobot) }}" class="btn btn-primary">Borrar robot</a></li>
                                                     </ol>
                                                 </td>
                                                 {% endif %}

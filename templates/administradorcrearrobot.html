@@ -14,12 +14,12 @@
 <nav> 
     <ol class="list-unstyled">
         {% if miParametroIdEvento > 0 %}
-            <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorModificarRobotsEvento', idEvento=miParametroIdEvento) }}" class="btn btn-primary btn-block"> Volver a adminstrar robots del evento</a></li>
-            <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorPanelEvento') }}" class="btn btn-primary btn-block"> Volver a adminstrar eventos</a></li>
+            <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorModificarRobotsEvento', idEvento=miParametroIdEvento) }}" class="btn btn-primary"> Volver a adminstrar robots del evento</a></li>
+            <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorPanelEvento') }}" class="btn btn-primary"> Volver a adminstrar eventos</a></li>
         {% else %}
-            <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorPanelRobot') }}" class="btn btn-primary btn-block"> Volver a administrar robots</a></li>
+            <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorPanelRobot') }}" class="btn btn-primary"> Volver a administrar robots</a></li>
         {% endif%}
-        <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorHome') }}" class="btn btn-primary btn-block">Volver al home</a></li>
+        <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorHome') }}" class="btn btn-primary">Volver al home</a></li>
     </ol>
 </nav>
 

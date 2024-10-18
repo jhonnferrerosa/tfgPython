@@ -46,8 +46,8 @@ class FormularioModificarFechasRobot (Form):
         cliente para que luego la devuelva y de esta forma yo pueda tener la fecha antigua y la nueva, para posteriormente meterla en la funcion que 
         modifica esa fecha.  
     """
-    fechaComienzoEnEvento = DateTimeField (format='%Y-%m-%d %H:%M:');
-    fechaFinEnEvento = DateTimeField (format='%Y-%m-%d %H:%M:');
+    fechaComienzoEnEvento = DateTimeField (format='%Y-%m-%d %H:%M');
+    fechaFinEnEvento = DateTimeField (format='%Y-%m-%d %H:%M');
     robot_idRobot = HiddenField ();
     fechaComienzoEnEventoAntigua = HiddenField ();
     fechaFinEnEventoAntigua = HiddenField ();

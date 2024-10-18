@@ -232,10 +232,6 @@ def funcion_registrarAsistente (idEvento):
     else:
         if (('token' in session) == False):
             session['token'] = os.urandom(24).hex(); 
-            #print ("funcion_registrarAsistente()--- se ha creado el token.");
-        else:
-            #print ("funcion_registrarAsistente()--- ya habia una sesion, no se ha creado el token.");
-            pass;
             
         #aqui averiguo si ese token ya existe en el diccionario miDiccionarioEventoYasistentesDatos, para que de esta manera, no lo vuelva a meter.  
         miFilaDeDatosAsistente = [session['token'], datetime.now(), False];
@@ -358,7 +354,6 @@ def funcion_aceptarRobot (idRobot, idEvento):
                 if (idRobot in miListaRobotsQueNoEstanEnServicio):  # aqui lo que hago es comprobar si el robot esta o no en servicio, en el caso de que no lo este, entonces lo mando a la  funcion_registrarAsistente para que consiga otro robot. 
                     return redirect (url_for ('funcion_registrarAsistente', idEvento=idEvento));  
                 else:
-                    miDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.robot_idRobot==idRobot, DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento>=datetime.now()).first ();
                     miAsistente = Asistente (tokenDeSesion=session['token'], evento_idEvento=idEvento, robot_idRobot=idRobot, fechaTomaDelRobot=datetime.now(), fechaAbandonoDelRobot=datetime.now() + timedelta(minutes=5));
                     db.session.add (miAsistente);
                     db.session.commit ();
@@ -492,7 +487,7 @@ def funcionAdministradorPanelRobot (idEvento = '-1'):
     if (idEvento < 0):
         miMostrarRobotsNingunEvento = True;
         miListaRobots = [];
-        miListaRobots = miAdministrador.funcion_conseguirRobotsQueNoEtanEnNingunEvento ();
+        miListaRobots = miAdministrador.funcion_conseguirRobotsQueNoEstanEnNingunEvento ();
 
     return render_template ("administradorpanelrobot.html", miListaRobotsParametro=miListaRobots, miListaDeEventosEnLosQueHayRobotsParametro=miListaDeEventosEnLosQueHayRobots, miParametroMostrarRobotsNingunEvento=miMostrarRobotsNingunEvento);
 
@@ -741,8 +736,6 @@ def funcionAdministradorModificarRobotsEvento (idEvento):
             miVariablePuedoModificar = miAdministrador.funcion_verSiPuedoModificarRobot (clave.idRobot);
             miVariableQueBotonEnServicioEs = clave.idRobot in miListaRobotsQueNoEstanEnServicio; 
             miDiccionarioRobotsActualmenteNoEstanEnEvento[clave] = {"subclaveListas":miDiccionarioRobotsActualmenteNoEstanEnEvento[clave], "subclavePuedoModificar": miVariablePuedoModificar, "subclavePuedoeliminar": miVariablePuedoeliminar, "subclaveQueBotonEnServicioEs": miVariableQueBotonEnServicioEs};
-        
-
 
         miListaDeSumarRobot = [];
         for miRobotObjeto in miAdministrador.funcion_conseguirTodosLosRobotsQueNoSonDelAdministradorDeEseEvento (idEvento): # este for me vale para rellenar los formularios de los robots que no estan en ese evento. tabla 3. (la de abajo del todo).  
@@ -775,7 +768,7 @@ def funcionAdministradorGestioncuentas ():
 @app.route ('/administradorborrarcuentaadministrador/<correoelectronico>')
 def funcionAdministradorBorrarCuentaAdministrador (correoelectronico):
     miAdministrador = Administrador.query.filter_by (_Administrador__correoElectronico=session['correoElectronico']).first ();
-    miAdministrador.funcion_borrarCuaentaAdministrador (correoelectronico);
+    miAdministrador.funcion_borrarCuentaAdministrador (correoelectronico);
     return redirect (url_for ('funcionAdministradorGestioncuentas'));
 
 

@@ -3,13 +3,15 @@
 
 {% block title %}
     <script type="text/javascript" src="{{ url_for('static', filename='administradorcreaevento.js') }}"></script>
+
+    
 {% endblock %}
 
 {% block content%}
     <nav> 
         <ol class="list-unstyled">
-            <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorPanelEvento') }}" class="btn btn-primary btn-block"> Volver a adminstrar eventos </a></li>
-            <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorHome') }}" class="btn btn-primary btn-block">Volver al home </a></li>
+            <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorPanelEvento') }}" class="btn btn-primary"> Volver a adminstrar eventos </a></li>
+            <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorHome') }}" class="btn btn-primary">Volver al home </a></li>
         </ol>
     </nav>
 
@@ -23,14 +25,14 @@
         <h3 class="card-title">Id del robot: {{ clave.idRobot }} - Mac: {{ clave.macAddressDelRobot }} - Nombre del robot: {{ clave.nombreDelRobot }}</h3>
         <h3 class="card-title">
             <ol class="list-unstyled" style="margin-left: 30px;">
-                <li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotModificar', idRobot=clave.idRobot, idEvento=miParametroIdEvento) }}" class="btn btn-danger btn-block">Modificar robot </a></li>
+                <li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotModificar', idRobot=clave.idRobot, idEvento=miParametroIdEvento) }}" class="btn btn-danger">Modificar robot </a></li>
                     {% if valor["subclaveQueBotonEnServicioEs"] == True %}
-<li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=clave.idRobot, robotEnServicio=1, idEvento=miParametroIdEvento) }}" class="btn btn-danger btn-block">Activar robot</a></li>
+<li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=clave.idRobot, robotEnServicio=1, idEvento=miParametroIdEvento) }}" class="btn btn-danger">Activar robot</a></li>
                     {% else %}
-<li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=clave.idRobot, robotEnServicio=0, idEvento=miParametroIdEvento) }}" class="btn btn-danger btn-block">Desactivar robot</a></li>
+<li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=clave.idRobot, robotEnServicio=0, idEvento=miParametroIdEvento) }}" class="btn btn-danger">Desactivar robot</a></li>
                     {% endif %}
                     {% if valor["subclavePuedoeliminar"] == True %}
-                    <li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotBorrar', idRobot=clave.idRobot, idEvento=miParametroIdEvento) }}" class="btn btn-danger btn-block">Borrar robot</a></li> 
+                    <li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotBorrar', idRobot=clave.idRobot, idEvento=miParametroIdEvento) }}" class="btn btn-danger">Borrar robot</a></li> 
                     {% endif %}
             </ol>
         </h3>
@@ -48,7 +50,7 @@
             <tbody>
                 <form  method="POST" >
                     <tr class="align-middle">
-                        <td>{{ iteracion.fechaComienzoEnEvento }}</td>
+                        <td>{{ iteracion.fechaComienzoEnEvento }} </td>
                         <td>{{ iteracion.fechaFinEnEvento }} {{ iteracion.robot_idRobot }} {{ iteracion.fechaComienzoEnEventoAntigua }} {{ iteracion.fechaFinEnEventoAntigua }}</td>
                         <td>
                             <button type="submit" name="nameformulariomodificar"  class="btn btn-success">Modificar</button>
@@ -83,15 +85,15 @@
         <h3 class="card-title">
             <ol class="list-unstyled" style="margin-left: 30px;">
                 {% if valor["subclavePuedoModificar"] == True %}
-                <li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotModificar', idRobot=clave.idRobot, idEvento=miParametroIdEvento) }}" class="btn btn-danger btn-block">Modificar robot </a></li>
+                <li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotModificar', idRobot=clave.idRobot, idEvento=miParametroIdEvento) }}" class="btn btn-danger">Modificar robot </a></li>
                     {% if valor["subclaveQueBotonEnServicioEs"] == True %}
-<li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=clave.idRobot, robotEnServicio=1, idEvento=miParametroIdEvento) }}" class="btn btn-danger btn-block">Activar robot</a></li>
+<li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=clave.idRobot, robotEnServicio=1, idEvento=miParametroIdEvento) }}" class="btn btn-danger">Activar robot</a></li>
                     {% else %}
-<li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=clave.idRobot, robotEnServicio=0, idEvento=miParametroIdEvento) }}" class="btn btn-danger btn-block">Desactivar robot</a></li>
+<li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=clave.idRobot, robotEnServicio=0, idEvento=miParametroIdEvento) }}" class="btn btn-danger">Desactivar robot</a></li>
                     {% endif %}
                 {% endif %}
                 {% if valor["subclavePuedoeliminar"] == True %}
-                    <li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotBorrar', idRobot=clave.idRobot, idEvento=miParametroIdEvento) }}" class="btn btn-danger btn-block">Borrar robot</a></li> 
+                    <li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotBorrar', idRobot=clave.idRobot, idEvento=miParametroIdEvento) }}" class="btn btn-danger">Borrar robot</a></li> 
                 {% endif %}
             </ol>
         </h3>
@@ -157,6 +159,7 @@
 {% for iteracion in miListaDeSumarRobotParametro %}
             <tbody>
                 <form  method="POST" >
+                    <!--  el {{ iteracion[0] }} es el numero del idRobot  -->
                     <input type="hidden" value="{{ iteracion[0] }}" name="p_idRobot"/>
                     <tr class="align-middle">
                         <td>{{ iteracion[0] }}</td>
@@ -178,6 +181,7 @@
         {% endif %} 
     </div>
 </div>
+
 
 </section>
 {% endblock %}
