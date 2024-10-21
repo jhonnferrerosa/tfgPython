@@ -661,6 +661,7 @@ def funcionAdministradorModificarDatosEvento (idEvento):
         miAdministrador.funcion_modificarDatosDelEvento (idEvento, miFormulario.idEvento.data,  miFormulario.nombreDelEvento.data, miFormulario.calle.data, miFormulario.numero.data, miFormulario.edificioDondeSeCelebra.data,
         miFormulario.codigoPostal.data);
         return redirect(url_for('funcionAdministradorPanelEvento'));
+        
 
     if (miAdministrador.funcion_verSiEseEventoEsDeEseAdministrador (idEvento)):
         miEvento = miAdministrador.funcion_conseguirEventoPorIdEvento (idEvento);
@@ -673,12 +674,17 @@ def funcionAdministradorModificarDatosEvento (idEvento):
 @app.route ('/administradormodificarrobotsevento/<int:idEvento>', methods = ['GET', 'POST'])
 def funcionAdministradorModificarRobotsEvento (idEvento):
     miAdministrador = Administrador.query.filter_by (_Administrador__correoElectronico=session['correoElectronico']).first(); 
-    miFormularioModificarFechasRobot = formulario.FormularioModificarFechasRobot (request.form);  
     
     if (request.method == 'POST'):
         if ('nameformulariomodificar' in request.form):
-            miAdministrador.funcion_modificarRobotDelEvento (idEvento, miFormularioModificarFechasRobot.robot_idRobot.data, miFormularioModificarFechasRobot.fechaComienzoEnEventoAntigua.data, miFormularioModificarFechasRobot.fechaFinEnEventoAntigua.data,
-            miFormularioModificarFechasRobot.fechaComienzoEnEvento.data, miFormularioModificarFechasRobot.fechaFinEnEvento.data);
+            print ("funcionAdministradorModificarRobotsEvento()---", request.form.get('robot_idRobot'));
+            print ("funcionAdministradorModificarRobotsEvento()---", request.form.get('fechaComienzoEnEventoAntigua'));
+            print ("funcionAdministradorModificarRobotsEvento()---", request.form.get('fechaFinEnEventoAntigua'));
+            print ("funcionAdministradorModificarRobotsEvento()---", request.form.get('fechaComienzoEnEvento'));
+            print ("funcionAdministradorModificarRobotsEvento()---", request.form.get('fechaFinEnEvento'));
+
+
+            miAdministrador.funcion_modificarRobotDelEvento (idEvento, request.form.get('robot_idRobot'), request.form.get('fechaComienzoEnEventoAntigua'), request.form.get('fechaFinEnEventoAntigua'), request.form.get('fechaComienzoEnEvento'), request.form.get('fechaFinEnEvento'));
             return redirect (url_for ('funcionAdministradorModificarRobotsEvento', idEvento=idEvento));
         else:
             if ("nameformulariosumarrobot" in request.form):
@@ -689,7 +695,7 @@ def funcionAdministradorModificarRobotsEvento (idEvento):
                 return redirect (url_for ('funcionAdministradorModificarRobotsEvento', idEvento=idEvento));
             else:
                 if ("nameformularioeliminar" in request.form):
-                    miAdministrador.funcion_eliminarRobotDelEvento (idEvento, miFormularioModificarFechasRobot.robot_idRobot.data, miFormularioModificarFechasRobot.fechaComienzoEnEvento.data, miFormularioModificarFechasRobot.fechaFinEnEvento.data);
+                    miAdministrador.funcion_eliminarRobotDelEvento (idEvento, request.form.get('robot_idRobot'), request.form.get('fechaComienzoEnEventoAntigua'), request.form.get('fechaFinEnEventoAntigua'));
                     return redirect (url_for ('funcionAdministradorModificarRobotsEvento', idEvento=idEvento));
                 else:
                     if ("nameformulariosumarhorario" in request.form):
@@ -708,13 +714,7 @@ def funcionAdministradorModificarRobotsEvento (idEvento):
             miRobot = miAdministrador.funcion_conseguirRobotPorIdRobot (miDisponibleRobotObjeto.robot_idRobot);
             if (miRobot not in miDiccionarioRobotsActualmenteEstanEnEvento):
                 miDiccionarioRobotsActualmenteEstanEnEvento[miRobot] = [];  # de esta manera inicializo el vector. 
-            # con esta linea como el objeto DisponibleRobot tiene los mismos atributos que la clase FormularioModificarFechasRobot, se asignan los valores del objeto miDisponibleRobot al formulario. 
-            miFormularioModificarFechasRobot = formulario.FormularioModificarFechasRobot(obj=miDisponibleRobotObjeto);
-            # en estas dos lineas, lo que hago es guardar los velores en el formulario, para que en el POST los pueda recuperar facilmente. 
-            miFormularioModificarFechasRobot.fechaComienzoEnEventoAntigua.data = miDisponibleRobotObjeto.fechaComienzoEnEvento;
-            miFormularioModificarFechasRobot.fechaFinEnEventoAntigua.data = miDisponibleRobotObjeto.fechaFinEnEvento;
-            # aqui guardo el furmulario dentro de ese vector. 
-            miDiccionarioRobotsActualmenteEstanEnEvento[miRobot].append (miFormularioModificarFechasRobot);    
+            miDiccionarioRobotsActualmenteEstanEnEvento[miRobot].append (miDisponibleRobotObjeto);    
         #este for es para rellenar en el diccionario que almacena los robots de la tabla 1, par que el diccionario tenga tambien de cada uno de los robots en conocimiento de si debe mostrar los botones de borrar, modificar y enServicio. 
         for clave in miDiccionarioRobotsActualmenteEstanEnEvento:
             miVariablePuedoeliminar = miAdministrador.funcion_verSiPuedoBorrarRobot (clave.idRobot);
@@ -727,10 +727,7 @@ def funcionAdministradorModificarRobotsEvento (idEvento):
             miRobot = miAdministrador.funcion_conseguirRobotPorIdRobot (miDisponibleRobotObjeto.robot_idRobot);
             if (miRobot not in miDiccionarioRobotsActualmenteNoEstanEnEvento):
                 miDiccionarioRobotsActualmenteNoEstanEnEvento[miRobot] = [];
-            miFormularioModificarFechasRobot = formulario.FormularioModificarFechasRobot(obj=miDisponibleRobotObjeto);
-            miFormularioModificarFechasRobot.fechaComienzoEnEventoAntigua.data = miDisponibleRobotObjeto.fechaComienzoEnEvento;
-            miFormularioModificarFechasRobot.fechaFinEnEventoAntigua.data = miDisponibleRobotObjeto.fechaFinEnEvento;
-            miDiccionarioRobotsActualmenteNoEstanEnEvento[miRobot].append (miFormularioModificarFechasRobot);  
+            miDiccionarioRobotsActualmenteNoEstanEnEvento[miRobot].append (miDisponibleRobotObjeto);  
         for clave in miDiccionarioRobotsActualmenteNoEstanEnEvento:
             miVariablePuedoeliminar = miAdministrador.funcion_verSiPuedoBorrarRobot (clave.idRobot);
             miVariablePuedoModificar = miAdministrador.funcion_verSiPuedoModificarRobot (clave.idRobot);

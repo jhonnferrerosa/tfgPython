@@ -2,7 +2,31 @@
 {% extends "baseadministrador.html" %}
 
 {% block title %}
+    <!---  Lo primero que hago es importar la libreria Jquery para que la pueda usar en mi JS. -->
+    <script src="{{ url_for('static', filename='adminlte/plugins/jquery/jquery.js') }}"></script>
+
     <script type="text/javascript" src="{{ url_for('static', filename='administradorcreaevento.js') }}"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='adminlte/plugins/jquery-ui/jquery-ui.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='adminlte/plugins/jquery-ui/jquery-ui.structure.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='adminlte/plugins/jquery-ui/jquery.theme.css') }}">
+
+
+
+    
+    <script src="{{ url_for('static', filename='adminlte/plugins/jquery-ui/jquery-ui.js') }}"></script>
+
+
+
+    <!---   ESTO ES PARA EL DATE PICKER DEL ADMIN LTE-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='adminlte/plugins/fontawesome-free/css/all.min.css') }}">
+
+
+    
+    <!-- Tempus Dominus Bootstrap 4 (Date Picker) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='adminlte/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
+    <script src="{{ url_for('static', filename='adminlte/plugins/moment/moment.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='adminlte/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.js') }}"></script>
 
     
 {% endblock %}
@@ -50,8 +74,27 @@
             <tbody>
                 <form  method="POST" >
                     <tr class="align-middle">
-                        <td>{{ iteracion.fechaComienzoEnEvento }} </td>
-                        <td>{{ iteracion.fechaFinEnEvento }} {{ iteracion.robot_idRobot }} {{ iteracion.fechaComienzoEnEventoAntigua }} {{ iteracion.fechaFinEnEventoAntigua }}</td>
+                        <td>
+                            <div class="input-group date" id="fechaComienzoEnEvento_{{ iteracion.robot_idRobot }}_{{ loop.index }}" data-target-input="nearest">
+                                <input type="text" name="fechaComienzoEnEvento" class="datetimepicker-input" data-target="#fechaComienzoEnEvento_{{ iteracion.robot_idRobot }}_{{ loop.index }}" placeholder="{{ iteracion.fechaComienzoEnEvento }}">
+                                <div class="input-group-append" data-target="#fechaComienzoEnEvento_{{ iteracion.robot_idRobot }}_{{ loop.index }}" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                        </td>
+                        
+                        <td> 
+                            <div class="input-group date" id="fechaFinEnEvento_{{ iteracion.robot_idRobot }}_{{ loop.index }}" data-target-input="nearest">
+                                <input type="text" name="fechaFinEnEvento" class="datetimepicker-input" data-target="#fechaFinEnEvento_{{ iteracion.robot_idRobot }}_{{ loop.index }}" placeholder="{{ iteracion.fechaFinEnEvento }}">
+                                <div class="input-group-append" data-target="#fechaFinEnEvento_{{ iteracion.robot_idRobot }}_{{ loop.index }}" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>                            
+            
+                            <input name="robot_idRobot" type="hidden" value="{{ iteracion.robot_idRobot }}">
+                            <input name="fechaComienzoEnEventoAntigua" type="hidden" value="{{ iteracion.fechaComienzoEnEvento }}">
+                            <input name="fechaFinEnEventoAntigua" type="hidden" value="{{ iteracion.fechaFinEnEvento }}">
+                            
+                        </td>
                         <td>
                             <button type="submit" name="nameformulariomodificar"  class="btn btn-success">Modificar</button>
                             <button type="submit" name="nameformularioeliminar"  class="btn btn-success">Eliminar fecha</button> 
@@ -111,8 +154,24 @@
             <tbody>
                 <form  method="POST" >
                     <tr class="align-middle">
-                        <td>{{ iteracion.fechaComienzoEnEvento }}</td>
-                        <td>{{ iteracion.fechaFinEnEvento }} {{ iteracion.robot_idRobot }} {{ iteracion.fechaComienzoEnEventoAntigua }} {{ iteracion.fechaFinEnEventoAntigua }}</td>
+                        <td>
+                            <div class="input-group date" id="fechaComienzoEnEvento_{{ iteracion.robot_idRobot }}_{{ loop.index }}" data-target-input="nearest">
+                                <input type="text" name="fechaComienzoEnEvento" class="datetimepicker-input" data-target="#fechaComienzoEnEvento_{{ iteracion.robot_idRobot }}_{{ loop.index }}" placeholder="{{ iteracion.fechaComienzoEnEvento }}">
+                                <div class="input-group-append" data-target="#fechaComienzoEnEvento_{{ iteracion.robot_idRobot }}_{{ loop.index }}" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                        </td>
+                        <td>
+                            <div class="input-group date" id="fechaFinEnEvento_{{ iteracion.robot_idRobot }}_{{ loop.index }}" data-target-input="nearest">
+                                <input type="text" name="fechaFinEnEvento" class="datetimepicker-input" data-target="#fechaFinEnEvento_{{ iteracion.robot_idRobot }}_{{ loop.index }}" placeholder="{{ iteracion.fechaFinEnEvento }}">
+                                <div class="input-group-append" data-target="#fechaFinEnEvento_{{ iteracion.robot_idRobot }}_{{ loop.index }}" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>    
+                            <input name="robot_idRobot" type="hidden" value="{{ iteracion.robot_idRobot }}">
+                            <input name="fechaComienzoEnEventoAntigua" type="hidden" value="{{ iteracion.fechaComienzoEnEvento }}">
+                            <input name="fechaFinEnEventoAntigua" type="hidden" value="{{ iteracion.fechaFinEnEvento }}">
+                        </td>
                         <td>
                             <button type="submit" name="nameformulariomodificar"  class="btn btn-success">Modificar</button>
                             <button type="submit" name="nameformularioeliminar"  class="btn btn-success">Eliminar fecha</button> 
@@ -184,6 +243,8 @@
 
 
 </section>
-{% endblock %}
 
+
+
+{% endblock %}
 

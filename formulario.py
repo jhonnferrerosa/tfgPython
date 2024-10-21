@@ -39,19 +39,6 @@ class FormularioCrearEvento (Form):
     codigoPostal = IntegerField (validators=[NumberRange(min=1000, max=99999, message="El codigo postal debe de tener 5 dígitos.")]);
     edificioDondeSeCelebra = StringField (validators= [Length(min=3, max=50, message="esciba entre 3 y 50 caracteres.")]);
     
-class FormularioModificarFechasRobot (Form):
-    """
-        Este formulario lo uso para modificar la tabla disponibleRobot, y es que con la fecha de comienzo la paso rellena para que el cliente vea que fecha 
-        actualmente va a ser o esta siendo usado el robot por parte de ese evento. Por otro lado con la fecha antigua lo que estoy haciendo es pasarsela al 
-        cliente para que luego la devuelva y de esta forma yo pueda tener la fecha antigua y la nueva, para posteriormente meterla en la funcion que 
-        modifica esa fecha.  
-    """
-    fechaComienzoEnEvento = DateTimeField (format='%Y-%m-%d %H:%M');
-    fechaFinEnEvento = DateTimeField (format='%Y-%m-%d %H:%M');
-    robot_idRobot = HiddenField ();
-    fechaComienzoEnEventoAntigua = HiddenField ();
-    fechaFinEnEventoAntigua = HiddenField ();
-
 
     
     
