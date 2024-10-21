@@ -688,9 +688,9 @@ def funcionAdministradorModificarRobotsEvento (idEvento):
             return redirect (url_for ('funcionAdministradorModificarRobotsEvento', idEvento=idEvento));
         else:
             if ("nameformulariosumarrobot" in request.form):
-                miIdRobotRecibido = request.form.get(f'p_idRobot');
-                miFechaComienzoEnEventoRecibido = request.form.get (f'p_fechaComienzoEnEvento');
-                miFechaFinEnEventoRecibido = request.form.get (f'p_fechaFinEnEvento');
+                miIdRobotRecibido = request.form.get('p_idRobot');
+                miFechaComienzoEnEventoRecibido = request.form.get ('p_fechaComienzoEnEvento');
+                miFechaFinEnEventoRecibido = request.form.get ('p_fechaFinEnEvento');
                 miAdministrador.funcion_sumarRobotAlEvento (idEvento, miIdRobotRecibido, miFechaComienzoEnEventoRecibido, miFechaFinEnEventoRecibido);
                 return redirect (url_for ('funcionAdministradorModificarRobotsEvento', idEvento=idEvento));
             else:
@@ -698,14 +698,7 @@ def funcionAdministradorModificarRobotsEvento (idEvento):
                     miAdministrador.funcion_eliminarRobotDelEvento (idEvento, request.form.get('robot_idRobot'), request.form.get('fechaComienzoEnEventoAntigua'), request.form.get('fechaFinEnEventoAntigua'));
                     return redirect (url_for ('funcionAdministradorModificarRobotsEvento', idEvento=idEvento));
                 else:
-                    if ("nameformulariosumarhorario" in request.form):
-                        miIdRobotRecibido = request.form.get(f'p_idRobot');
-                        miFechaComienzoEnEventoRecibido = request.form.get (f'p_fechaComienzoEnEvento');
-                        miFechaFinEnEventoRecibido = request.form.get (f'p_fechaFinEnEvento');
-                        miAdministrador.funcion_sumarRobotAlEvento (idEvento, miIdRobotRecibido, miFechaComienzoEnEventoRecibido, miFechaFinEnEventoRecibido);
-                        return redirect (url_for ('funcionAdministradorModificarRobotsEvento', idEvento=idEvento));
-                    else:
-                        raise Exception ("administradormodificarrobotsevento.htmml --- formulario invalido.");
+                    raise Exception ("administradormodificarrobotsevento.htmml --- formulario invalido.");
     
     if (miAdministrador.funcion_verSiEseEventoEsDeEseAdministrador (idEvento)):
         miDiccionarioRobotsActualmenteEstanEnEvento = {};
