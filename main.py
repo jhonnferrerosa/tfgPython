@@ -634,11 +634,16 @@ def funcionAdministradorCrearEvento ():
         #  recorra todos los robots que se me han mostrado en las vistas, tengo que sumar uno. 
         for i in range(1, miCantidadDeRobots+1): 
             miFechaComienzoEnEventoRecibido = request.form.get(f'fechaComienzoEnEvento{i}');
-            miFechaComienzoEnEventoRecibido += "T";
-            miFechaComienzoEnEventoRecibido += request.form.get(f'fechaComienzoEnEventoHora{i}');
+            miHoraComienzoEnEventoRecibido  = request.form.get(f'fechaComienzoEnEventoHora{i}');
+            # el segundo elemento del and, es para que en el caso de que no se haya rellenado la hora, que no se escriba el caracter T.  
+            if (miFechaComienzoEnEventoRecibido != "" and miHoraComienzoEnEventoRecibido != ""):
+                miFechaComienzoEnEventoRecibido += "T";
+                miFechaComienzoEnEventoRecibido += miHoraComienzoEnEventoRecibido;
             miFechaFinEnEventoRecibido = request.form.get(f'fechaFinEnEvento{i}');
-            miFechaFinEnEventoRecibido += "T";
-            miFechaFinEnEventoRecibido += request.form.get(f'fechaFinEnEventoHora{i}');
+            miHoraFinEnEventoRecibido = request.form.get(f'fechaFinEnEventoHora{i}');
+            if (miFechaFinEnEventoRecibido != "" and miHoraFinEnEventoRecibido!= ""):
+                miFechaFinEnEventoRecibido += "T";
+                miFechaFinEnEventoRecibido += miHoraFinEnEventoRecibido;
             miRobotRecibido = request.form.get (f'robot_idRobot{i}');
             
             if (miFechaComienzoEnEventoRecibido != "") and (miFechaFinEnEventoRecibido != ""):
@@ -694,11 +699,16 @@ def funcionAdministradorModificarRobotsEvento (idEvento):
             if ("nameformulariosumarrobot" in request.form):
                 miIdRobotRecibido = request.form.get('idRobot');
                 miFechaComienzoEnEventoRecibido = request.form.get ('fechaComienzoEnEvento');
-                miFechaComienzoEnEventoRecibido += "T";
-                miFechaComienzoEnEventoRecibido += request.form.get ('fechaComienzoEnEventoHora');
+                miHoraEnEventoRecibido = request.form.get ('fechaComienzoEnEventoHora');
+                if (miFechaComienzoEnEventoRecibido != "" and miHoraEnEventoRecibido != ""):
+                    miFechaComienzoEnEventoRecibido += "T";
+                    miFechaComienzoEnEventoRecibido += miHoraEnEventoRecibido;
+                
                 miFechaFinEnEventoRecibido = request.form.get ('fechaFinEnEvento');
-                miFechaFinEnEventoRecibido += "T";
-                miFechaFinEnEventoRecibido += request.form.get ('fechaFinEnEventoHora');
+                miHoraEnEventoRecibido = request.form.get ('fechaFinEnEventoHora');
+                if (miFechaFinEnEventoRecibido != "" and miHoraEnEventoRecibido != ""):
+                    miFechaFinEnEventoRecibido += "T";
+                    miFechaFinEnEventoRecibido += miHoraEnEventoRecibido;
                 miAdministrador.funcion_sumarRobotAlEvento (idEvento, miIdRobotRecibido, miFechaComienzoEnEventoRecibido, miFechaFinEnEventoRecibido);
                 return redirect (url_for ('funcionAdministradorModificarRobotsEvento', idEvento=idEvento));
             else:
