@@ -7,8 +7,10 @@ function validarFechas() {
 	//alert ("validarFechas()---");
 	//console.log ("validarFechas()----");
 
-    const ahora = new Date().toISOString().slice(0, 16); // extrae la fecha actual, cogiendo 16 valores de la fecha global, es decir la que lleva segundos y milesimas. 
-	document.querySelectorAll('input[type="datetime-local"]').forEach(input => {input.min = ahora});
+    const ahora = new Date().toISOString().slice(0, 10); // extrae la fecha actual, cogiendo 16 valores de la fecha global, es decir la que lleva segundos y milesimas. 
+	document.querySelectorAll('input[type="date"]').forEach(input => {input.min = ahora});
+
+
 
 	//console.log ("validarFechas()----ahora: ", ahora);
 	//console.log ("validarFechas()----", new Date().toISOString());	
@@ -23,8 +25,9 @@ function usarDatePickerComienzo (){
 	// en esta losta voy a guardar todos los elementos HTML en los que tenga que establacer el datepicker que quiero. 
 	let miListaCamposAestablecerCalendario = [];
 	// con esto tengo todos los div del HTML. 
-	var miListaTodosLosDIV = document.getElementsByTagName('div'); 
+	let miListaTodosLosDIV = document.getElementsByTagName('div'); 
 	// con este fot lo que hago es buscar en cada uno de esos DIV, cuales son los que tiene un id que empieze por fechaComienzoEnEvento_
+	const ahora = new Date().toISOString().slice(0, 10);
 	for (let i = 0; i < miListaTodosLosDIV.length; i++) {
 		if (miListaTodosLosDIV[i].id.startsWith('fechaComienzoEnEvento_')) {
 			miListaCamposAestablecerCalendario.push (miListaTodosLosDIV[i].id);
@@ -36,7 +39,8 @@ function usarDatePickerComienzo (){
 		$(function () {
 			$("#" + miListaCamposAestablecerCalendario[i]).datetimepicker({
 				icons: { time: 'far fa-clock' },
-				format : 'YYYY-MM-DD HH:mm'
+				format : 'YYYY-MM-DD HH:mm',
+				minDate: ahora
 			});
 		});
 	}
@@ -49,7 +53,9 @@ function usarDatePickerComienzo (){
  */
 function usarDatePickerFin (){
 	let miListaCamposAestablecerCalendario = [];
-	var miListaTodosLosDIV = document.getElementsByTagName('div'); 
+	let miListaTodosLosDIV = document.getElementsByTagName('div'); 
+	const ahora = new Date().toISOString().slice(0, 10);
+
 	for (let i = 0; i < miListaTodosLosDIV.length; i++) {
 		if (miListaTodosLosDIV[i].id.startsWith('fechaFinEnEvento_')) {
 			miListaCamposAestablecerCalendario.push (miListaTodosLosDIV[i].id);
@@ -59,11 +65,14 @@ function usarDatePickerFin (){
 		$(function () {
 			$("#" + miListaCamposAestablecerCalendario[i]).datetimepicker({
 				icons: { time: 'far fa-clock' }, 
-				format : 'YYYY-MM-DD HH:mm'
+				format : 'YYYY-MM-DD HH:mm',
+				minDate: ahora
 			});
 		});
 	}
 }
+
+
 
 
 
