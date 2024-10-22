@@ -59,9 +59,11 @@
             {% for iteracion in miListaRobotsParametro %}
                 <p>MAC: {{ iteracion.macAddressDelRobot }} - - - Id del robot: {{ iteracion.idRobot }}</p> 
                 <label for="idFechaComienzoEnEvento">Fecha de comienzo en el evento: </label>
-                <input type="datetime-local" id="idFechaComienzoEnEvento" name="fechaComienzoEnEvento{{ loop.index }}">
+                <input type="date" id="idFechaComienzoEnEvento" name="fechaComienzoEnEvento{{ loop.index }}">
+                <input type="time" id="idFechaComienzoEnEvento" name="fechaComienzoEnEventoHora{{ loop.index }}">
                 <label for="idFechaFinEnEvento">Fecha de fin en el evento: </label>
-                <input type="datetime-local" id="idFechaFinEnEvento" name="fechaFinEnEvento{{ loop.index }}">
+                <input type="date" id="idFechaFinEnEvento" name="fechaFinEnEvento{{ loop.index }}">
+                <input type="time" id="idFechaFinEnEvento" name="fechaFinEnEventoHora{{ loop.index }}">
                 <input name="robot_idRobot{{ loop.index }}" type="hidden" value="{{ iteracion.idRobot }}">
             {% endfor %}
             {% endif %}

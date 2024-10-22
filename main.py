@@ -634,7 +634,11 @@ def funcionAdministradorCrearEvento ():
         #  recorra todos los robots que se me han mostrado en las vistas, tengo que sumar uno. 
         for i in range(1, miCantidadDeRobots+1): 
             miFechaComienzoEnEventoRecibido = request.form.get(f'fechaComienzoEnEvento{i}');
+            miFechaComienzoEnEventoRecibido += "T";
+            miFechaComienzoEnEventoRecibido += request.form.get(f'fechaComienzoEnEventoHora{i}');
             miFechaFinEnEventoRecibido = request.form.get(f'fechaFinEnEvento{i}');
+            miFechaFinEnEventoRecibido += "T";
+            miFechaFinEnEventoRecibido += request.form.get(f'fechaFinEnEventoHora{i}');
             miRobotRecibido = request.form.get (f'robot_idRobot{i}');
             
             if (miFechaComienzoEnEventoRecibido != "") and (miFechaFinEnEventoRecibido != ""):
