@@ -622,24 +622,24 @@ def funcionAdministradorPanelEventoBorrar (idEvento):
 def funcionAdministradorCrearEvento ():
     miAdministrador = Administrador.query.filter_by (_Administrador__correoElectronico=session['correoElectronico']).first ();
     miFormulario = formulario.FormularioCrearEvento (request.form);
-    miListaRobots = miAdministrador.funcion_conseguirTodosLosRobots ();
     
     miVariableSeHaRellenadoFormularioCorrectamente = True;
     if (request.method == 'POST'):
+        miCantidadDeRobots =  int(request.form.get('cantidadDeRobots'));
         miVerdadSePuedeCrearEvento = False;
         miListaDisponibleRobot = [];
-        #print ("funcionAdministradorCrearEvento ()--- ", miFormulario.idEvento.data);
         
-        for i, robot in enumerate(miListaRobots, start=1): # en esta linea el star es neceasrio que esté, ya que si el indice comienza en cero me devuelve un valor nulo. 
-            miFechaComienzoEnEventoRecibido = request.form.get(f'p_fechaComienzoEnEvento{i}');
-            miFechaFinEnEventoRecibido = request.form.get(f'p_fechaFinEnEvento{i}');
+        # este for lo uso para detectar si se ha rellenado al menos un robot, en el caso de que no se haya rellenado ninguno, no creo el evento. 
+        # A la cantidad de robots le tengo que sumar uno, ya que el range()  va desde el inicio hasta el final menos uno, por lo tanto si quiero que 
+        #  recorra todos los robots que se me han mostrado en las vistas, tengo que sumar uno. 
+        for i in range(1, miCantidadDeRobots+1): 
+            miFechaComienzoEnEventoRecibido = request.form.get(f'fechaComienzoEnEvento{i}');
+            miFechaFinEnEventoRecibido = request.form.get(f'fechaFinEnEvento{i}');
+            miRobotRecibido = request.form.get (f'robot_idRobot{i}');
             
-            if (miFechaComienzoEnEventoRecibido == "") or (miFechaFinEnEventoRecibido == ""):
-                pass;
-                #print ("funcionAdministradorCrearEvento ()--- la fecha no se ha rellenado correctamente. ");
-            else:
+            if (miFechaComienzoEnEventoRecibido != "") and (miFechaFinEnEventoRecibido != ""):
                 miVerdadSePuedeCrearEvento = True;
-                miListaDisponibleRobot.append ([miFormulario.idEvento.data, robot.idRobot, miFechaComienzoEnEventoRecibido, miFechaFinEnEventoRecibido]);
+                miListaDisponibleRobot.append ([miFormulario.idEvento.data, miRobotRecibido, miFechaComienzoEnEventoRecibido, miFechaFinEnEventoRecibido]);
                 
         if (miVerdadSePuedeCrearEvento == True):
             miAdministrador.funcion_crearEvento (miListaDisponibleRobot, miFormulario.idEvento.data, miFormulario.nombreDelEvento.data, miFormulario.calle.data, miFormulario.numero.data,
@@ -647,8 +647,8 @@ def funcionAdministradorCrearEvento ():
             return redirect (url_for ('funcionAdministradorPanelEvento'));
         else:
             miVariableSeHaRellenadoFormularioCorrectamente = False;
-                
-    miListaRobots = miAdministrador.funcion_conseguirTodosLosRobots ();
+    
+    miListaRobots = miAdministrador.funcion_conseguirTodosLosRobots ();            
     return render_template ("administradorcrearevento.html", miFormularioParametro = miFormulario, miParametroAccionHtml = "crear", miListaRobotsParametro=miListaRobots, miParametroVariableNoSeHaRellenadoFormularioCorrectamente= miVariableSeHaRellenadoFormularioCorrectamente);
 
 @app.route ('/administradormodificardatosevento/<int:idEvento>', methods = ['GET', 'POST'])
@@ -688,9 +688,13 @@ def funcionAdministradorModificarRobotsEvento (idEvento):
             return redirect (url_for ('funcionAdministradorModificarRobotsEvento', idEvento=idEvento));
         else:
             if ("nameformulariosumarrobot" in request.form):
-                miIdRobotRecibido = request.form.get('p_idRobot');
-                miFechaComienzoEnEventoRecibido = request.form.get ('p_fechaComienzoEnEvento');
-                miFechaFinEnEventoRecibido = request.form.get ('p_fechaFinEnEvento');
+                miIdRobotRecibido = request.form.get('idRobot');
+                miFechaComienzoEnEventoRecibido = request.form.get ('fechaComienzoEnEvento');
+                miFechaComienzoEnEventoRecibido += "T";
+                miFechaComienzoEnEventoRecibido += request.form.get ('fechaComienzoEnEventoHora');
+                miFechaFinEnEventoRecibido = request.form.get ('fechaFinEnEvento');
+                miFechaFinEnEventoRecibido += "T";
+                miFechaFinEnEventoRecibido += request.form.get ('fechaFinEnEventoHora');
                 miAdministrador.funcion_sumarRobotAlEvento (idEvento, miIdRobotRecibido, miFechaComienzoEnEventoRecibido, miFechaFinEnEventoRecibido);
                 return redirect (url_for ('funcionAdministradorModificarRobotsEvento', idEvento=idEvento));
             else:

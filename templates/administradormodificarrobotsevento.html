@@ -105,9 +105,15 @@
             {% endfor %}
             <form  method="POST" >
                 <tr class="align-middle">
-                    <input type="hidden" value="{{ clave.idRobot }}" name="p_idRobot"/>
-                    <td><input type="datetime-local" id="idFechaComienzoEnEvento" name="p_fechaComienzoEnEvento"></td>
-                    <td><input type="datetime-local" id="idFechaFinEnEvento" name="p_fechaFinEnEvento"></td>
+                    <input type="hidden" value="{{ clave.idRobot }}" name="idRobot"/>
+                    <td>
+                        <input type="date" id="idFechaComienzoEnEvento" name="fechaComienzoEnEvento">
+                        <input type="time" id="idFechaComienzoEnEvento" name="fechaComienzoEnEventoHora">
+                    </td>
+                    <td>
+                        <input type="date" id="idFechaFinEnEvento" name="fechaFinEnEvento">
+                        <input type="time" id="idFechaFinEnEvento" name="fechaFinEnEventoHora">
+                    </td>
                     <td><button type="submit" name="nameformulariosumarrobot"  class="btn btn-warning">Sumar horario</button></td>
                 </tr>
             </form>
@@ -182,9 +188,15 @@
             {% endfor %}
             <form  method="POST" >
                 <tr class="align-middle">
-                    <input type="hidden" value="{{ clave.idRobot }}" name="p_idRobot"/>
-                    <td><input type="datetime-local" id="idFechaComienzoEnEvento" name="p_fechaComienzoEnEvento"></td>
-                    <td><input type="datetime-local" id="idFechaFinEnEvento" name="p_fechaFinEnEvento"></td>
+                    <input type="hidden" value="{{ clave.idRobot }}" name="idRobot"/>
+                    <td>
+                        <input type="date" id="idFechaComienzoEnEvento" name="fechaComienzoEnEvento">
+                        <input type="time" id="idFechaComienzoEnEvento" name="fechaComienzoEnEventoHora">
+                    </td>
+                    <td>
+                        <input type="date" id="idFechaFinEnEvento" name="fechaFinEnEvento">
+                        <input type="time" id="idFechaFinEnEvento" name="fechaFinEnEventoHora">
+                    </td>
                     <td><button type="submit" name="nameformulariosumarrobot"  class="btn btn-warning">Sumar horario</button></td>
                 </tr>
             </form>
@@ -219,15 +231,17 @@
             <tbody>
                 <form  method="POST" >
                     <!--  el {{ iteracion[0] }} es el numero del idRobot  -->
-                    <input type="hidden" value="{{ iteracion[0] }}" name="p_idRobot"/>
+                    <input type="hidden" value="{{ iteracion[0] }}" name="idRobot"/>
                     <tr class="align-middle">
                         <td>{{ iteracion[0] }}</td>
                         <td>{{ iteracion[1] }}</td>
                         <td>
-                            <input type="datetime-local" id="idFechaComienzoEnEvento" name="p_fechaComienzoEnEvento">
+                            <input type="date" id="idFechaComienzoEnEvento" name="fechaComienzoEnEvento">
+                            <input type="time" id="idFechaComienzoEnEvento" name="fechaComienzoEnEventoHora">
                         </td>
                         <td>
-                            <input type="datetime-local" id="idFechaFinEnEvento" name="p_fechaFinEnEvento">
+                            <input type="date" id="idFechaFinEnEvento" name="fechaFinEnEvento">
+                            <input type="time" id="idFechaFinEnEvento" name="fechaFinEnEventoHora">
                         </td>
 
                         <td><button type="submit" name="nameformulariosumarrobot"  class="btn btn-primary">Sumar robot</button></td>
