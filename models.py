@@ -143,39 +143,27 @@ class Administrador(db.Model):
     def funcion_conseguirTodosLosRobots (self):
         return Robot.query.all();
         
-    def funcion_conseguirTodosLosRobotsQueNoSonDelAdministradorDeEseEvento (self, parametroIdEvento):
-        miListaEvento = Evento.query.filter (Evento._Evento__administrador_correoElectronico != self.__correoElectronico).all ();
-        #print ("funcion_conseguirTodosLosRobotsQueNoSonDelAdministrador()---", miListaEvento);
-        miListaRobot = [];
-        for i in miListaEvento: 
-            miListaDisponibleRobot = DisponibleRobot.query.filter_by (evento_idEvento=i._Evento__idEvento).all ();
-            for j in miListaDisponibleRobot:
-                miRobot = Robot.query.filter_by (_Robot__idRobot=j.robot_idRobot).first();
-                if (miRobot not in miListaRobot):
-                    miListaRobot.append (miRobot);
-                    
-        miConjuntoRobotsPropierarioOtrosAdministradores = set (miListaRobot);
-        #print ("funcion_conseguirTodosLosRobotsQueNoSonDelAdministrador()---", miConjuntoRobotsPropierarioOtrosAdministradores);
-                    
-        miListaRobot = []
-        miListaDisponibleRobot = DisponibleRobot.query.filter_by (evento_idEvento=parametroIdEvento).all ();
-        for j in miListaDisponibleRobot:
-            miRobot = Robot.query.filter_by (_Robot__idRobot=j.robot_idRobot).first();
-            if (miRobot not in miListaRobot):
-                miListaRobot.append (miRobot);
-        
-        miConjuntoRobotsPropierarioAdministrador = set (miListaRobot);
-        miConjuntoRobotsQueNoSonDelAdministrador = miConjuntoRobotsPropierarioOtrosAdministradores.difference (miConjuntoRobotsPropierarioAdministrador);
-        #print ("funcion_conseguirTodosLosRobotsQueNoSonDelAdministrador()---", miConjuntoRobotsPropierarioAdministrador);
-        #print ("funcion_conseguirTodosLosRobotsQueNoSonDelAdministrador()---", miConjuntoRobotsQueNoSonDelAdministrador);
-        
-        # en esta ultima parte lo que hago es conseguir los robots que no estan en ningun evento. para que los sume a los robots que no son del administrador pero que estan en la tabla de disponibleRobot. 
-        miListaRobotsQueNoEstanEnNingunEvento = self.funcion_conseguirRobotsQueNoEstanEnNingunEvento();
-        for i in miListaRobotsQueNoEstanEnNingunEvento:
-            miConjuntoRobotsQueNoSonDelAdministrador.add (i);
-            
-        
-        return miConjuntoRobotsQueNoSonDelAdministrador;
+    def funcion_conseguirTodosLosRobotsQueNoSonDeEseEvento (self, parametroIdEvento):
+        # lo que hago primero es obtener todos los Disponible robot que estan en el evento. 
+        miListaDisponibleRobotQueEstaEnElEvento = self.funcion_conseguirDisponibleRobotPorEventoYporEstarContempladaLaFechaDelSistema (parametroIdEvento);
+        miListaDisponibleRobotQueEstaEnElEvento += self.funcion_conseguirDisponibleRobotPorEventoYporNoEstarContempladaLaFechaDelSistema (parametroIdEvento);
+
+        # aqui lo que hago es de los disponible que estan asignados al evento, los conivierto a Robot, para saber que robots son los que sí estan cogidos. 
+        miListaRobotQueSeEstanUsando = [];
+        for i in miListaDisponibleRobotQueEstaEnElEvento:
+            miRobot = Robot.query.filter_by (_Robot__idRobot=i.robot_idRobot).first ();
+            if (miRobot not in miListaRobotQueSeEstanUsando):
+                miListaRobotQueSeEstanUsando.append (miRobot);
+
+        # en esta parte lo que hago es que de todos esos disponble que no estan en el evento, obtengo los objeto robot. 
+        miListaRobotTodos = Robot.query.all();
+
+        #en esta parte lo que hago es que a la lista que almacena todos los robots del sistema, le resto los robots que sí que están en el evento. 
+        for i in miListaRobotTodos[:]:
+            if (i in miListaRobotQueSeEstanUsando):
+                miListaRobotTodos.remove (i);
+
+        return miListaRobotTodos;
         
     def funcion_conseguirRobotPorIdRobot (self, parametroIdRobot):
         return Robot.query.filter_by (_Robot__idRobot=parametroIdRobot).first();

@@ -740,7 +740,7 @@ def funcionAdministradorModificarRobotsEvento (idEvento):
             miDiccionarioRobotsActualmenteNoEstanEnEvento[clave] = {"subclaveListas":miDiccionarioRobotsActualmenteNoEstanEnEvento[clave], "subclavePuedoModificar": miVariablePuedoModificar, "subclavePuedoeliminar": miVariablePuedoeliminar, "subclaveQueBotonEnServicioEs": miVariableQueBotonEnServicioEs};
 
         miListaDeSumarRobot = [];
-        for miRobotObjeto in miAdministrador.funcion_conseguirTodosLosRobotsQueNoSonDelAdministradorDeEseEvento (idEvento): # este for me vale para rellenar los formularios de los robots que no estan en ese evento. tabla 3. (la de abajo del todo).  
+        for miRobotObjeto in miAdministrador.funcion_conseguirTodosLosRobotsQueNoSonDeEseEvento (idEvento): # este for me vale para rellenar los formularios de los robots que no estan en ese evento. tabla 3. (la de abajo del todo).  
             #print ("funcionAdministradorModificarRobotsEvento() --", miRobotObjeto);
             miListaDeSumarRobot.append ([miRobotObjeto.idRobot, miRobotObjeto.macAddressDelRobot]);
         return render_template ("administradormodificarrobotsevento.html", miDiccionarioRobotsActualmenteEstanEnEvetoParametro=miDiccionarioRobotsActualmenteEstanEnEvento, miDiccionarioRobotsActualmenteNoEstanEnEvetoParametro=miDiccionarioRobotsActualmenteNoEstanEnEvento, miListaDeSumarRobotParametro=miListaDeSumarRobot, miParametroIdEvento =idEvento);

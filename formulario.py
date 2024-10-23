@@ -40,16 +40,4 @@ class FormularioCrearEvento (Form):
     edificioDondeSeCelebra = StringField (validators= [Length(min=3, max=50, message="esciba entre 3 y 50 caracteres.")]);
     
 
-    
-    
-
-
-    
-    
-    
-
-
-
-
-
 

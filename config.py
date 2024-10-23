@@ -7,7 +7,3 @@ class DevelopmentConfig ():
     SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:Grandesvirus2!@localhost/z';
 
     
-
-
-
-
