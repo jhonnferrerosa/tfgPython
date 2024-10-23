@@ -19,7 +19,7 @@ class FormularioAcceder (Form):
     opcionMostrarContrasena = BooleanField('Mostrar contraseña');
 
 class FormularioCreaRobot (Form):
-    """
+    """ 
         Este formulario lo uso para crear y modificar un robot en el sistema. 
     """
     macAddressDelRobot = StringField (validators= [InputRequired("Esta campo es requerido"), Length(min=17, max=17), MacAddress("Debe de introducir una MAC correcta, los caracteres deben ser hexagesimal, y el formato debe ser XX:XX:XX:XX:XX:XX")]);

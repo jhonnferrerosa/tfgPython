@@ -557,13 +557,10 @@ def funcionAdministradorPanelRobotModificar (idRobot, idEvento=0):
         if (miFormulario.validate()):
             miFormulario = formulario.FormularioCreaRobot (request.form);
             fotoRecibidaDelFormulario = request.files['fotoDelRobot'];
-            binarioDeFoto = None;
-            if (fotoRecibidaDelFormulario == None):
+            binarioDeFoto = fotoRecibidaDelFormulario.read();
+            if (len(binarioDeFoto) == 0):
                 #print ("funcionAdministradorModificaRobot()--- No hay foto, se utilizara la anterior. ");
-                binarioDeFoto = miRobot.fotoDelRobot;
-            else:
-                #print ("funcionAdministradorModificaRobot()--- SI hay foto ");
-                binarioDeFoto = fotoRecibidaDelFormulario.read();
+                binarioDeFoto = None;
             miAdministrador.funcion_modificarRobot (idRobot, miFormulario.macAddressDelRobot.data, miFormulario.nombreDelRobot.data, binarioDeFoto, miFormulario.descripcionDelRobot.data);
             if (idEvento > 0):
                 return redirect (url_for ('funcionAdministradorModificarRobotsEvento', idEvento=idEvento));
