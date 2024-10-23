@@ -3,7 +3,7 @@ from flask_wtf import Form
 
 # SelectField, es para esto: evento_idEvento = SelectField ("Seleccione el evento en el que va a estar este robot: ", choices=[]);
 
-from wtforms import StringField, IntegerField, SelectField, BooleanField, FileField, DateTimeField, HiddenField, PasswordField, BooleanField
+from wtforms import StringField, IntegerField, SelectField, BooleanField, FileField, DateTimeField, HiddenField, PasswordField, BooleanField, TextAreaField
 from wtforms.fields import EmailField
 
 
@@ -24,7 +24,7 @@ class FormularioCreaRobot (Form):
     """
     macAddressDelRobot = StringField (validators= [InputRequired("Esta campo es requerido"), Length(min=17, max=17), MacAddress("Debe de introducir una MAC correcta, los caracteres deben ser hexagesimal, y el formato debe ser XX:XX:XX:XX:XX:XX")]);
     nombreDelRobot = StringField (validators= [InputRequired("Esta campo es requerido"), Length(min=3, max=50, message="esciba entre 3 y 50 caracteres.")]);
-    descripcionDelRobot = StringField ();
+    descripcionDelRobot = TextAreaField  (validators=[Length(max=100, message="Maximo 100 caracteres. ")]);
     fotoDelRobot = FileField();
     
 

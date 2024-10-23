@@ -151,15 +151,12 @@ def miFuncionAntesDeLaPeticion ():
     if (request.endpoint == 'index2') or (request.endpoint == 'funcionAdministradorsignup') or (request.endpoint == 'funcion_aceptarRobot') or (request.endpoint == 'funcion_rechazarRobot') or (request.endpoint == 'funcion_registrarAsistente') or (request.endpoint == 'static') or (request.endpoint == 'funcionAdministradorLogin'):
         miVariablePermitirAccesoSinCorreoElectronico = False
     
+    # en el caso de que el correoElectronico no este en la sesion y ademas la URL que yo he puesto no sea de las permitidas, me voy al loggin. 
     if ('correoElectronico' not in session) and (miVariablePermitirAccesoSinCorreoElectronico == True):
         #print ("miFuncionAntesDeLaPeticion() --- en la sesion no esta el correo electronico, y el endpoint no es uno permitido, se va a redirigir al login. ");
         if (request.endpoint != 'funcionAdministradorLogin'):
             #print ("miFuncionAntesDeLaPeticion() --- el endpoint es el login o el sign up, finalmente no redirijo. ");
             return redirect (url_for ('funcionAdministradorLogin'));
-    else: 
-        #print ("miFuncionAntesDeLaPeticion() --- es un endpoint permitido o en la sesion si esta el correo, se continua la ejecución ");
-        #print ("miFuncionAntesDeLaPeticion() ---", miDiccionarioEventoYasistentesDatos);
-        pass;
 
 
     #print("miFuncionAntesDeLaPeticion() --- request.view_args", request.view_args);

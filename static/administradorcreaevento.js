@@ -4,22 +4,15 @@
  * una fecha pasada en el tiempo, y que se pueda poner un robot en un evento en una facha que ya ha pasado. 
  */
 function validarFechas() {
-	//alert ("validarFechas()---");
-	//console.log ("validarFechas()----");
-
-    const ahora = new Date().toISOString().slice(0, 10); // extrae la fecha actual, cogiendo 16 valores de la fecha global, es decir la que lleva segundos y milesimas. 
-	document.querySelectorAll('input[type="date"]').forEach(input => {input.min = ahora});
-
-
-
-	//console.log ("validarFechas()----ahora: ", ahora);
-	//console.log ("validarFechas()----", new Date().toISOString());	
+    const ahora = new Date().toISOString().slice(0, 10); // extrae la fecha actual, cogiendo 10 valores de la fecha global, es decir coge hasta las horas y los minutos. 
+	document.querySelectorAll('input[type="date"]').forEach(input => {input.min = ahora});	
 }
 
 
 /**
  * @function usarDatePickerComienzo
- * @description  esta funcion lo que hace es establecer el estilo de calendario a todos los elementos en los que quiero usar el datepicker
+ * @description  esta funcion lo que hace es establecer el estilo de calendario a todos los elementos en los que quiero usar el datepicker, ademas 
+ * estblace el formato de la fecha y tambien limita la eleccion de la fecha para que no se puede establacer un robot en un dia que ya paso. 
  */
 function usarDatePickerComienzo (){
 	// en esta losta voy a guardar todos los elementos HTML en los que tenga que establacer el datepicker que quiero. 
@@ -47,10 +40,6 @@ function usarDatePickerComienzo (){
 }
 
 
-/**
- * @function usarDatePickerFin
- * @description  esta funcion lo que hace es establecer el estilo de calendario a todos los elementos en los que quiero usar el datepicker
- */
 function usarDatePickerFin (){
 	let miListaCamposAestablecerCalendario = [];
 	let miListaTodosLosDIV = document.getElementsByTagName('div'); 

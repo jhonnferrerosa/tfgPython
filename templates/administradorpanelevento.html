@@ -2,6 +2,7 @@
 {% extends "baseadministrador.html" %}
 
 {% block title %}
+    <script type="text/javascript" src="{{ url_for('static', filename='administradorpanelevento.js') }}"></script>
     <title>adminstradorpanelevento</title>
 {% endblock %}
 
@@ -53,7 +54,7 @@
                                                     <ol class="list-unstyled">
                                                     <li class="mb-2"> <a href="{{ url_for('funcionAdministradorModificarDatosEvento', idEvento=iteracion.idEvento) }}" class="btn btn-primary">Modificar datos del evento</a></li>
                                                     <li class="mb-2"> <a href="{{ url_for('funcionAdministradorModificarRobotsEvento', idEvento=iteracion.idEvento) }}" class="btn btn-primary">Modificar robots del evento</a></li>
-                                                    <li class="mb-2"> <a href="{{ url_for('funcionAdministradorPanelEventoBorrar', idEvento=iteracion.idEvento) }}" class="btn btn-primary">Borrar evento</a></li>
+                                                    <li class="mb-2"> <a href="{{ url_for('funcionAdministradorPanelEventoBorrar', idEvento=iteracion.idEvento) }}" class="btn btn-primary" id="botonborrarevento{{ loop.index}}">Borrar evento</a></li>
                                                     </ol>
                                                 </td>
                                             </tr>
