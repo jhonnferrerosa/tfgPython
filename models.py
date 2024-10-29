@@ -2,11 +2,10 @@
 from flask_sqlalchemy import SQLAlchemy
 
 # event, me vale para los trigger. 
-#inspect, me vale para que dentro de cada trigger sepa el valor de old y new.  (que es algo que yo usaba con facilidad en postgres)
-from sqlalchemy import event, inspect 
+from sqlalchemy import event
 
 #time delta me vale para poner trozos de tiempo, por ejemplo, en este proyecto, he puesto trozos de 5 minutos. 
-from datetime import datetime, timedelta
+from datetime import datetime
 
 # estlas librerias son para hacer los rangos con GIST y tratar a robot como entidad física. 
 from sqlalchemy.dialects.postgresql import ExcludeConstraint
@@ -15,9 +14,8 @@ from sqlalchemy.dialects.postgresql import ExcludeConstraint
 # func me vale para hacer el rango desde inicio hasta fin. 
 from sqlalchemy import event, DDL, func
 
-# esto me vale para validar el campo de fecha de comienzo en evento, el cual tiene que ser mayor o igual que la fecha actual del sistema. 
 # esto es para poder hacer el join: aliased, y que de esta manea pueda poner una tabla dentro del join. (inner join SQL).  
-from sqlalchemy.orm import validates, aliased
+from sqlalchemy.orm import  aliased
 
 from werkzeug.security import check_password_hash
 
@@ -617,6 +615,7 @@ class DisponibleRobot (db.Model):
 
 #REQUSITO9. 
 @event.listens_for (Asistente, 'before_insert')
+# No se puedde quitar mapper, connection, de los parametro de esta función, (aunque no se instancien en ningun momento y VSC los marque como gris) ya que si no SQLalchemy da error. 
 def trigger_funcion_B_I_antesDeManejarRobotRevisarRequisitos (mapper, connection, target):
     miDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.robot_idRobot==target.robot_idRobot, DisponibleRobot.evento_idEvento==target.evento_idEvento, DisponibleRobot.fechaComienzoEnEvento<=datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now()).first();
     if (miDisponibleRobot == None):
