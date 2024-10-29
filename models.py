@@ -13,9 +13,7 @@ from sqlalchemy.dialects.postgresql import ExcludeConstraint
 
 # DDL es para poder pasar codigo posquesql directamende desde este script a postgres. 
 # func me vale para hacer el rango desde inicio hasta fin. 
-# el checkConstraint me vale para hacer un check al igual que lo hacia en postgres. 
-# el and, me vale pare hacer expresones en sqlAlchemy, y de esta forma poder tener and en los checkConstrait. 
-from sqlalchemy import event, DDL, func, CheckConstraint, and_, or_
+from sqlalchemy import event, DDL, func
 
 # esto me vale para validar el campo de fecha de comienzo en evento, el cual tiene que ser mayor o igual que la fecha actual del sistema. 
 # esto es para poder hacer el join: aliased, y que de esta manea pueda poner una tabla dentro del join. (inner join SQL).  
