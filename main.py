@@ -146,7 +146,7 @@ def index2 ():
 
 @app.before_request
 def miFuncionAntesDeLaPeticion ():
-    #print  ("miFuncionAntesDeLaPeticion() --- este es el endpoint: ", request.endpoint); 
+    print  ("miFuncionAntesDeLaPeticion() --- este es el endpoint: ", request.endpoint); 
     miVariablePermitirAccesoSinCorreoElectronico = True;
     if (request.endpoint == 'index2') or (request.endpoint == 'funcionAdministradorsignup') or (request.endpoint == 'funcion_aceptarRobot') or (request.endpoint == 'funcion_rechazarRobot') or (request.endpoint == 'funcion_registrarAsistente') or (request.endpoint == 'static') or (request.endpoint == 'funcionAdministradorLogin'):
         miVariablePermitirAccesoSinCorreoElectronico = False
@@ -225,7 +225,9 @@ def funcionCapturarImagenRobot (idRobot):
 def funcion_registrarAsistente (idEvento):
     miEvento = Evento.query.filter_by (_Evento__idEvento = idEvento).first();
     if (miEvento == None):
-        return "<p> funcion_registrarAsistente () --- error, el evento que se ha pasado por parametro, no existe. </p>";
+        mirespuestaJson = {'idRobot': None, 'macAddressDelRobot': None, "estadoActual": "ese evento No existe"};
+        return jsonify(mirespuestaJson), 200;
+        #return "<p> funcion_registrarAsistente () --- error, el evento que se ha pasado por parametro, no existe. </p>";
     else:
         if (('token' in session) == False):
             session['token'] = os.urandom(24).hex(); 
@@ -296,7 +298,9 @@ def funcion_registrarAsistente (idEvento):
                 miRobot = Robot.query.filter_by (_Robot__idRobot=miDisponibleRobotObjeto.robot_idRobot).first ();
                 miListaRobots.append (miRobot);
             #miEvento = Evento.query.filter_by (_Evento__idEvento = idEvento).first ();
-            return (render_template("registrarasistente.html", miParametroMiEventoNombreDelEvento=miEvento.nombreDelEvento, miListaRobotsParametro=miListaRobots));
+            mirespuestaJson = {'idRobot': None, 'macAddressDelRobot': None, "estadoActual": "esperando por un robot. "};
+            return jsonify(mirespuestaJson), 200;
+            #return (render_template("registrarasistente.html", miParametroMiEventoNombreDelEvento=miEvento.nombreDelEvento, miListaRobotsParametro=miListaRobots));
         else:
             if (miVariabletokenDeSesionYevento in miDiccionarioGlobalTokensListaDeRobotsRechazados):# si he rechazado algun robot, voy a ver que otro robot le puedo ofrecer al asistente. 
                 #print ("funcion_registrarAsistente()--- ese token y evento, ya ha rechazado algun robot. : ", miDiccionarioGlobalTokensListaDeRobotsRechazados);
@@ -306,27 +310,35 @@ def funcion_registrarAsistente (idEvento):
                 if (miRobot == None):  # en este caso si no he conseguido ningú robot, eso significa que he pasado todos, voy a olvodarme de todos los que he rechazado. 
                     miDiccionarioGlobalTokensListaDeRobotsRechazados[miVariabletokenDeSesionYevento].clear ();
                     miRobot = Robot.query.filter_by (_Robot__idRobot=miListaDisponibleRobot[0].robot_idRobot).first();
-                return render_template ("robotlisto.html", miRobotParametro=miRobot, miParametroMiEventoNombreDelEvento=miEvento.nombreDelEvento, miParametroMiEventoIdEvento=miEvento.idEvento);
+                mirespuestaJson = {'idRobot': miRobot.idRobot, 'macAddressDelRobot': miRobot.macAddressDelRobot, "estadoActual": "acepte o rechaze el robot propuesto."};
+                return jsonify(mirespuestaJson), 200;
+                #return render_template ("robotlisto.html", miRobotParametro=miRobot, miParametroMiEventoNombreDelEvento=miEvento.nombreDelEvento, miParametroMiEventoIdEvento=miEvento.idEvento);
             else:
                 #miEvento = Evento.query.filter_by (_Evento__idEvento = idEvento).first ();
                 miRobot = Robot.query.filter_by (_Robot__idRobot=miListaDisponibleRobot[0].robot_idRobot).first(); 
-                return render_template ("robotlisto.html", miRobotParametro=miRobot, miParametroMiEventoNombreDelEvento=miEvento.nombreDelEvento, miParametroMiEventoIdEvento=miEvento.idEvento);
+                mirespuestaJson = {'idRobot': miRobot.idRobot, 'macAddressDelRobot': miRobot.macAddressDelRobot, "estadoActual": "acepte o rechaze el robot propuesto."};
+                return jsonify(mirespuestaJson), 200;
+                #return render_template ("robotlisto.html", miRobotParametro=miRobot, miParametroMiEventoNombreDelEvento=miEvento.nombreDelEvento, miParametroMiEventoIdEvento=miEvento.idEvento);
                     
 
-@app.route ('/aceptarrobot/<int:idRobot>/<int:idEvento>')
-def funcion_aceptarRobot (idRobot, idEvento):
-    #en el caso de que no tenga token, que se vaya a una pagina de error, ya que el token se utilza en funciones. 
+@app.route ('/aceptarrobot', methods = ['POST'])
+def funcion_aceptarRobot ():
+    miJsonRecibido = request.get_json ();
+    idRobot = miJsonRecibido['idRobot'];
+    idEvento = miJsonRecibido['idEvento'];
+
+    #en el caso de que no tenga token, lo que hago es volver a la funcion_registrarAsistente para recuperar el token de sesion. 
     if ('token' not in session):
-        return "<p>  no se puede entrar a esta URL, no se ha declarado el evento. utiliza el QR para acceder. ";
+        return redirect (url_for ('funcion_registrarAsistente', idEvento=idEvento));   
         
     miAsistente = Asistente.query.filter (Asistente._Asistente__tokenDeSesion==session['token'], Asistente._Asistente__fechaTomaDelRobot <= datetime.now(), Asistente._Asistente__fechaAbandonoDelRobot >= datetime.now()).first ();
     if (miAsistente):   # en este momento el asistente esta controlando un robot
         #print ("funcion_aceptarRobot() --- en este momento el asistente esta controlando un robot");
         miRobot = miAsistente.funcion_consultaRobot (idRobot);
         miEvento = miAsistente.funcion_consultaEvento (miAsistente.evento_idEvento);
-        #mirespuestaJson = {'idRobot': miRobot.idRobot, 'macAddressDelRobot': miRobot.macAddressDelRobot};
-        #return jsonify(mirespuestaJson), 200;
-        return render_template ("robotmanejando.html", miRobotParametro=miRobot, miParametroMiEventoNombreDelEvento=miEvento.nombreDelEvento);
+        mirespuestaJson = {'idRobot': miRobot.idRobot, 'macAddressDelRobot': miRobot.macAddressDelRobot, "estadoActual": "manejando un robot."};
+        return jsonify(mirespuestaJson), 200;
+        #return render_template ("robotmanejando.html", miRobotParametro=miRobot, miParametroMiEventoNombreDelEvento=miEvento.nombreDelEvento);
     else:
         #print ("funcion_aceptarRobot() --- el aistenten no esta controlando un robot. ");
         miPosicionDeColaConFecha = None;# esta variable la uso pra extraer la posicionDeColaConFecha de del token en ese evento, que es lo que hago en el siguiente for. 
@@ -367,15 +379,17 @@ def funcion_aceptarRobot (idRobot, idEvento):
                     miVariabletokenDeSesionYevento = session ['token'] +"-" +str(idEvento);
                     if (miVariabletokenDeSesionYevento in miDiccionarioGlobalTokensListaDeRobotsRechazados): # este if lo tengo porque unas veces el asistente no rechaza un robot, por lo tanto nunca se mete en este diccionario, entonces lo que estoy haciendo es ver primero si esta.
                         miDiccionarioGlobalTokensListaDeRobotsRechazados[miVariabletokenDeSesionYevento].clear (); 
-                    return (render_template ("robotmanejando.html", miRobotParametro=miRobot, miParametroMiEventoNombreDelEvento=miEvento.nombreDelEvento));
+                    mirespuestaJson = {'idRobot': miRobot.idRobot, 'macAddressDelRobot': miRobot.macAddressDelRobot, "estadoActual": "manejando un robot."};
+                    return jsonify(mirespuestaJson), 200;
+                    #return (render_template ("robotmanejando.html", miRobotParametro=miRobot, miParametroMiEventoNombreDelEvento=miEvento.nombreDelEvento));
                 
 
     
 @app.route ('/rechazarrobot/<int:idRobot>/<int:idEvento>')
 def funcion_rechazarRobot (idRobot, idEvento):
-    #en el caso de que no tenga token, que se vaya a una pagina de error, ya que el token se utilza en funciones. 
+    #en el caso de que no tenga token, lo que hago es redirigirlo a la funcion_registrarAsistente para que obtenga el token. 
     if ('token' not in session):
-        return "<p>  no se puede entrar a esta URL, utiliza el QR para acceder. ";
+        return redirect (url_for ('funcion_registrarAsistente', idEvento=idEvento)); 
 
     #print ("funcion_rechazarRobot --- ");
     # aqui lo que hago es dejar preparada la calve del diccionario miDiccionarioGlobalTokensListaDeRobotsRechazados para que su clave  sea el token y el idEvento, para que este elemento sea unico, lo que voy a dejar en el valor va a ser una lista de
