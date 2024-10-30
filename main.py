@@ -411,6 +411,8 @@ def funcion_rechazarRobot (idRobot, idEvento):
 def funcionAdministradorsignup ():
     miFormulario = formulario.FormularioAcceder (request.form);
     if (request.method == 'POST'):
+        if (miFormulario.contrasena.data != miFormulario.confirmarContrasena.data):
+            raise Exception ("administradorsignup --- las contarseñas no coinciden. ");
         miContrasenaHaseada = generate_password_hash (miFormulario.contrasena.data);
         miAdministrador = Administrador (correoElectronico=miFormulario.correoElectronico.data, contrasena=miContrasenaHaseada);
         db.session.add (miAdministrador);
