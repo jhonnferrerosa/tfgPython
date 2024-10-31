@@ -24,6 +24,16 @@ function comenzar() {
             }
         }
     );
+
+    let miBotonSignup = document.getElementById ("botonSignup");
+    miBotonSignup.addEventListener ("click", function (event){
+        if (miContrasena.value != miConfirmarContrasena.value){
+            alert ("Las contrseñas deben de coincidir. ");
+            event.preventDefault ();
+        }
+
+    });
+
 }
 window.addEventListener ("load", comenzar, false);
 
