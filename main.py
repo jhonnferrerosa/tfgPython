@@ -1,6 +1,10 @@
+# he cambiado a la rama 4-11. 
+
 # el request,  me vale para recibir parámetros por a URL. 
 # el redirect me vale para redirigir a los usuarios a otra pagina de mi aplicacion. 
 # el url_for genera una url para una de las funciones que tengo en este main.py. 
+
+
 from flask import Flask, request, render_template, redirect, url_for, session
 
 from models import db

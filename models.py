@@ -606,7 +606,7 @@ class DisponibleRobot (db.Model):
     fechaFinEnEvento = db.Column(db.DateTime, nullable=False);
 
 
-    #REQUSITO4. 
+    #REQUISITO4. 
     __table_args__ = (ExcludeConstraint((robot_idRobot, '='),(func.tstzrange(func.timezone('UTC', fechaComienzoEnEvento), func.timezone('UTC', fechaFinEnEvento)), '&&'), name='miExclusionFechasYrobot_idRobotTablaDisponibleRobot', using='gist'),);
 
 
