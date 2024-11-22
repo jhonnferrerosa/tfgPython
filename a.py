@@ -6,211 +6,76 @@
 
 
 
-
-
-#en esta parte voy a poner a los que no entran ya que incumplen alguno de los requisotos de la base de datos. 
-
-@app.route ("/index3")   
-def index3 ():
-    miDisponibleRobot1 = DisponibleRobot (robot_idRobot=103, evento_idEvento = 3, fechaComienzoEnEvento='2024-09-01', fechaFinEnEvento='2024-09-30');  # este no entra, incimple requisito 4. 
+#Esta no va a entrar.  este me vale para comprobar que funciona el indice GIST en la relacion disponibleRobot, ya que en todo noviembre ya hay un robot funcionando. 
+@app.route ("/index5")
+def index5 ():
+    miDisponibleRobot1 = DisponibleRobot (eventos_nombreDelEvento="aula1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="ifema1", robots_idRobot=101 , fechaComienzoEnEvento="2024-11-01", fechaFinEnEvento="2024-11-30");
     db.session.add (miDisponibleRobot1);
     db.session.commit ();
-    return "<p>Hello, World! Demostraciones Robóticas.3 </p>";
-    
-@app.route ("/index3")   
-def index3 ():
-    miAsistente = Asistente (tokenDeSesion="ddd", evento_idEvento=1, robot_idRobot=101, fechaTomaDelRobot=datetime.now(), fechaAbandonoDelRobot=datetime.now()+timedelta(minutes=5)); #no entra, incumple requisito7. 
-    db.session.add (miAsistente);
-    db.session.commit ();
-    return "<p>Hello, World! Demostraciones Robóticas.3 </p>";
+    return "<p> este es el index5.  </p>";
 
 
-    
-@app.route ("/index3")   
-def index3 ():
-    miAsistente = Asistente (tokenDeSesion="ccc", evento_idEvento=1, robot_idRobot=106, fechaTomaDelRobot=datetime.now(), fechaAbandonoDelRobot=datetime.now()+timedelta(minutes=5)); #no entra, incumple requisito8. 
-    db.session.add (miAsistente);
-    db.session.commit ();
-    return "<p>Hello, World! Demostraciones Robóticas.3 </p>";
-    
-@app.route ("/index3")   
-def index3 ():
-    miAsistente = Asistente (tokenDeSesion="ddd", evento_idEvento=1, robot_idRobot=105, fechaTomaDelRobot=datetime.now(), fechaAbandonoDelRobot=datetime.now()+timedelta(minutes=5)); #no entra, incumple requisito9. 
-    db.session.add (miAsistente);
-    db.session.commit ();
-    return "<p>Hello, World! Demostraciones Robóticas.3 </p>";
-    
-@app.route ("/index3")   
-def index3 ():
-    miAsistente = Asistente (tokenDeSesion="ddd", evento_idEvento=1, robot_idRobot=106, fechaTomaDelRobot=datetime.now(), fechaAbandonoDelRobot='2024-11-30'); #no entra, incumple requisito9. 
-    db.session.add (miAsistente);
-    db.session.commit ();
-    return "<p>Hello, World! Demostraciones Robóticas.3 </p>";
-    
-    
-###### estos son pruebas para  probar algunas funciones que ejecuta la clase Administrador:  
 
-
-@app.route ("/index3")     # esa la funcion:  funcion_crearRobot
-def index3 ():
-    
-    miCorreoAdmin = ("jhon@gmail.com");
-    miAdmin = Administrador.query.filter_by (_Administrador__correoElectronico=miCorreoAdmin).first ();
-    if (miAdmin):
-        print ("se ha encontrado el administradior. ");
-        miAdmin.funcion_crearRobot (110, "AABBCCDDddaa", "nombreAA");
-    else:
-        print ("No se ha encontrado el adminstrador. ");
-    return "<p>Hello, World! Demostraciones Robóticas.3 </p>";
-
-
-@app.route ("/index4")    #usa la fucnion: funcion_borrarRobot. 
-def index4 ():
-    miCorreoAdmin = ("jhon@gmail.com");
-    miAdmin = Administrador.query.filter_by (_Administrador__correoElectronico=miCorreoAdmin).first ();
-    if (miAdmin):
-        print ("se ha encontrado el administradior. ");
-        miAdmin.funcion_borrarRobot (110);
-    else:
-        print ("No se ha encontrado el adminstrador. ");
-    return "<p>Hello, World! Demostraciones Robóticas.4 </p>";
-
-@app.route ("/index5")   # usa la funcion:  funcion_modificarRobot. 
+# este no entra. lo que esta pasando es que ese robot ya esta ocupad oen todo noveembre, y lo estoy intentndo controlar con otro asistentes en esa misma fecha. 
+@app.route ("/index5")
 def index5 ():
-    miCorreoAdmin = ("jhon@gmail.com");
-    miAdmin = Administrador.query.filter_by (_Administrador__correoElectronico=miCorreoAdmin).first ();
-    if (miAdmin):
-        print ("se ha encontrado el administradior. ");
-        miAdmin.funcion_borrarRobot (110);
-    else:
-        print ("No se ha encontrado el adminstrador. ");
-    return "<p>Hello, World! Demostraciones Robóticas.4 </p>";
-    
-@app.route ("/index6")     # usa la funcion:  funcion_modificarRobot. 
+    miControla1 = Controla (asistentes_identificadorUnicoAsistente="IUA2", robots_idRobot=101, fechaTomaDelRobot="2024-11-01", fechaAbandonoDelRobot="2024-11-30");
+    db.session.add (miControla1);
+    db.session.commit ();
+    return "<p> este es el index5.  </p>";
+
+# este no entra, ya que el asistente IUA1 ya controla un robot en todo noviembre, no puede controlar mas robots en noviembre. 
+@app.route ("/index5")
+def index5 ():
+    miControla = Controla (asistentes_identificadorUnicoAsistente="IUA1", robots_idRobot=102, fechaTomaDelRobot="2024-11-01", fechaAbandonoDelRobot="2024-11-30");
+    db.session.add (miControla);
+    db.session.commit ();
+    return "<p> este es el index5.  </p>";
+
+
+#  estas insercciones en la tabla COntrola, sí que valen, pero antes de crear el trigger, porque despues de que se cree el trigger dde la tabla Controla, esto ya no vale para nada. Y es que lo que pasa es que el trigger comprueba  que ese robot que se pasa a 
+# controlar por parte de ese asistente, que el evento en el que este el asistente, sea el que se corresponde con el que esta el robot en ese momento.  Por lo tanto, esto sólo me vala para commprobar que  en la tabla controla, no salte la exception por el indice
+# GIST , con esa fecha de toma y de abandono.  
+    miControla1 = Controla (asistentes_identificadorUnicoAsistente="IUA1", robots_idRobot=101, fechaTomaDelRobot="2024-11-01", fechaAbandonoDelRobot="2024-11-30");
+    miControla2 = Controla (asistentes_identificadorUnicoAsistente="IUA2", robots_idRobot=101, fechaTomaDelRobot="2024-12-01", fechaAbandonoDelRobot="2024-12-30");
+    miControla3 = Controla (asistentes_identificadorUnicoAsistente="IUA1", robots_idRobot=102, fechaTomaDelRobot="2024-12-01", fechaAbandonoDelRobot="2024-12-30");
+    db.session.add (miControla1);
+    db.session.add (miControla2);
+    db.session.add (miControla3);
+    db.session.commit ();
+
+
+
+# para robar esta:  raise Exception ("exception.B_I. Ese robot no esta en ningun evento.");
+@app.route ("/index5")
+def index5 ():
+    miControla = Controla (asistentes_identificadorUnicoAsistente="IUA3", robots_idRobot=103, fechaTomaDelRobot=datetime.now(), fechaAbandonoDelRobot=datetime.now() + timedelta(minutes=5));
+    db.session.add (miControla);
+    db.session.commit ();
+    return "<p> este es el index5.  </p>";
+
+# para probar este:    raise Exception ("exception.B_I. Ese asistente, no está en ese evento en el cual se ha solicitado ese robot. ");
+@app.route ("/index6")
 def index6 ():
-    miCorreoAdmin = ("jhon@gmail.com");
-    miAdmin = Administrador.query.filter_by (_Administrador__correoElectronico=miCorreoAdmin).first ();
-    if (miAdmin):
-        print ("se ha encontrado el administradior. ");
-        miAdmin.funcion_modificarRobot (110, 120, "cafe0000cafe", "robotcafe.");
-    else:
-        print ("No se ha encontrado el adminstrador. ");
-    return "<p>Hello, World! Demostraciones Robóticas.6 </p>";
-    
-    
-@app.route ("/index7")   
+    miControla = Controla (asistentes_identificadorUnicoAsistente="IUA4", robots_idRobot=104, fechaTomaDelRobot=datetime.now(), fechaAbandonoDelRobot=datetime.now() + timedelta(minutes=5));
+    db.session.add (miControla);
+    db.session.commit ();
+    return "<p>  este es el index 6";
+
+
+# probar que salta este execotion:  raise Exception ("exception.B_I. Ese robot y ese asistente, sí etan en ese evento, pero le fecha en la que ta el robot en el evento, no abarca la fecha en la que ese asistente maneja ese robot. ");
+# me lo da este codigo:   
+@app.route ("/index7")
 def index7 ():
-    miCorreoAdmin = ("jhon@gmail.com");
-    miAdmin = Administrador.query.filter_by (_Administrador__correoElectronico=miCorreoAdmin).first ();
-    if (miAdmin):
-        print ("se ha encontrado el administradior. ");
-        miAdmin.funcion_activarOdesactivarRobot (110, False);
-    else:
-        print ("No se ha encontrado el adminstrador. ");
-    return "<p>Hello, World! Demostraciones Robóticas.7 </p>";
-    
-    
-@app.route ("/index8")   
-def index8 ():
-    miCorreoAdmin = ("jhon@gmail.com");
-    miAdmin = Administrador.query.filter_by (_Administrador__correoElectronico=miCorreoAdmin).first ();
-    if (miAdmin):
-        print ("se ha encontrado el administradior. ");
-        miPila = [];
-        elemento1 = [1, 130, '2024-09-01', '2024-09-30'];
-        elemento2 = [1, 131, '2024-09-01', '2024-09-30'];
-        elemento3 = [1, 132, '2024-09-01', '2024-09-30'];
-        miPila.append (elemento1);
-        miPila.append (elemento2);
-        miPila.append (elemento3);
-        miAdmin.funcion_crearEvento (miPila, 5, "eurobot", "calle EPS");
-        
-    else:
-        print ("No se ha encontrado el adminstrador. ");
-    return "<p>Hello, World! Demostraciones Robóticas.8 </p>";
-    
-    
-@app.route ("/index9")   
-def index9 ():
-    miCorreoAdmin = ("jhon@gmail.com");
-    miAdmin = Administrador.query.filter_by (_Administrador__correoElectronico=miCorreoAdmin).first ();
-    if (miAdmin):
-        print ("se ha encontrado el administradior. ");
-        miPila = [];
-        elemento1 = [1, 130, '2024-09-01', '2024-09-30'];
-        elemento2 = [1, 131, '2024-09-01', '2024-09-30'];
-        elemento3 = [1, 132, '2024-09-01', '2024-09-30'];
-        miPila.append (elemento1);
-        miPila.append (elemento2);
-        miPila.append (elemento3);
-        miAdmin.funcion_crearEvento (miPila, 5, "eurobot", "calle EPS");
-        
-    else:
-        print ("No se ha encontrado el adminstrador. ");
-    return "<p>Hello, World! Demostraciones Robóticas.9 </p>";
-    
-@app.route ("/index10")   
-def index10 ():
-    miCorreoAdmin = ("jhon@gmail.com");
-    miAdmin = Administrador.query.filter_by (_Administrador__correoElectronico=miCorreoAdmin).first ();
-    if (miAdmin):
-        print ("se ha encontrado el administradior. ");
-        miAdmin.funcion_modificarDatosDelEvento (1, 10, "aula2025", "calleIFEMA25");
-        
-    else:
-        print ("No se ha encontrado el adminstrador. ");
-    return "<p>Hello, World! Demostraciones Robóticas.10 </p>";
-    
-@app.route ("/index11")   
-def index11 ():
-    miCorreoAdmin = ("jhon@gmail.com");
-    miAdmin = Administrador.query.filter_by (_Administrador__correoElectronico=miCorreoAdmin).first ();
-    if (miAdmin):
-        print ("se ha encontrado el administradior. ");
 
-        miEvento_idEvento = 1;
-        miRobot_idRobot = 132;
-        miFechaComienzoEnEvento = '2024-09-01';
-        miFechaFinEnEveto = '2024-09-30';
-        
-        miNuevaFechaComienzoEnEvento = '2024-10-01';
-        miNuevaFechaFinEnEvento = '2024-10-30'
-        
-        miAdmin.funcion_modificarRobotsDelEvento (miEvento_idEvento, miRobot_idRobot, miFechaComienzoEnEvento, miFechaFinEnEveto, miNuevaFechaComienzoEnEvento, miNuevaFechaFinEnEvento);
-        
-    else:
-        print ("No se ha encontrado el adminstrador. ");
-    return "<p>Hello, World! Demostraciones Robóticas.11 </p>";
-    
-    
-@app.route ("/index12")   
-def index12 ():
-    miCorreoAdmin = ("jhon@gmail.com");
-    miAdmin = Administrador.query.filter_by (_Administrador__correoElectronico=miCorreoAdmin).first ();
-    if (miAdmin):
-        print ("se ha encontrado el administradior. ");
-    
-        miAdmin.funcion_borrarEvento (2);
+    miControla = Controla (asistentes_identificadorUnicoAsistente="IUA3", robots_idRobot=104, fechaTomaDelRobot=datetime.now(), fechaAbandonoDelRobot=datetime.now() + timedelta(days=30));
+    db.session.add (miControla);
+    db.session.commit ();
+    return "<p>  este es el index 7";
 
-    else:
-        print ("No se ha encontrado el adminstrador. ");
-    return "<p>Hello, World! Demostraciones Robóticas.12 </p>";
-    
-@app.route ("/index13")   
-def index13 ():
-    miCorreoAdmin = ("jhon@gmail.com");
-    miAdmin = Administrador.query.filter_by (_Administrador__correoElectronico=miCorreoAdmin).first ();
-    if (miAdmin):
-        print ("se ha encontrado el administradior. ");
-        miEvento_idEvento = 1;
-        miRobot_idRobot = 132;
-        miFechaComienzoEnEvento = '2024-09-01';
-        miFechaFinEnEveto = '2024-09-30';miListaDisponibleRobot
-        miAdmin.funcion_borrarRobotDelEvento (miEvento_idEvento, miRobot_idRobot, miFechaComienzoEnEvento, miFechaFinEnEveto);
-    else:
-        print ("No se ha encontrado el adminstrador. ");
-    return "<p>Hello, World! Demostraciones Robóticas.13 </p>";
-    
+
+
+
     
     
 
