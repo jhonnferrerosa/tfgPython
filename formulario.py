@@ -1,8 +1,6 @@
 
 from flask_wtf import Form
-
 # SelectField, es para esto: evento_idEvento = SelectField ("Seleccione el evento en el que va a estar este robot: ", choices=[]);
-
 from wtforms import StringField, IntegerField, SelectField, BooleanField, FileField, DateTimeField, HiddenField, PasswordField, BooleanField, TextAreaField
 from wtforms.fields import EmailField
 
@@ -26,18 +24,19 @@ class FormularioCreaRobot (Form):
     nombreDelRobot = StringField (validators= [InputRequired("Esta campo es requerido"), Length(min=3, max=50, message="esciba entre 3 y 50 caracteres.")]);
     descripcionDelRobot = TextAreaField  (validators=[Length(max=100, message="Maximo 100 caracteres. ")]);
     fotoDelRobot = FileField();
-    
 
 class FormularioCrearEvento (Form):
     """ 
         Este formulario lo uso para crear y modificar un evento en el sistema. 
     """
-    idEvento = IntegerField (validators=[NumberRange(min=1, max=99999, message="El id del evento tiene que ser mayor que cero y como máximo 5 dígitos.")]);
     nombreDelEvento = StringField (validators= [InputRequired("Esta campo es requerido"), Length(min=3, max=50, message="esciba entre 3 y 50 caracteres.")]);
+    fechaDeCreacionDelEvento = HiddenField ();
+    lugarDondeSeCelebra = StringField (validators= [Length(min=3, max=50, message="esciba entre 3 y 50 caracteres.")]);
     calle = StringField (validators= [Length(min=3, max=50, message="esciba entre 3 y 50 caracteres.")]);
     numero = StringField (validators= [Length(min=3, max=50, message="esciba entre 3 y 50 caracteres.")]);
     codigoPostal = IntegerField (validators=[NumberRange(min=1000, max=99999, message="El codigo postal debe de tener 5 dígitos.")]);
-    edificioDondeSeCelebra = StringField (validators= [Length(min=3, max=50, message="esciba entre 3 y 50 caracteres.")]);
+
+    
     
 
 

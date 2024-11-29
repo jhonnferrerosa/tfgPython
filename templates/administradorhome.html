@@ -29,10 +29,6 @@
 
 
 
-{% if parametroVerdadHayEventos == False %}
-    <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">No se puede acceder a Eventos, ya que no hay robots en el sitema, debe crear un robot primero.</nav>
-{% endif%}
-
 <section>
 
 
@@ -44,9 +40,9 @@
 <div class="col-lg-3 col-6">
 <!-- small box -->
     <div class="small-box bg-success">
-        <div class="inner">
-            <h3>{{ parametroCantidadDeEventosTotales }}</h3>           
-            <p>Cantidad de eventos Totales:</p>
+        <div class="inner">  
+            <h3>{{ parametroCantidadDeEventosDelAdministrador }}</h3>       
+            <p>Cantidad de eventos a gestionar:</p>
         </div>
         <div class="icon">
             <i class="ion ion-stats-bars"></i>
@@ -58,8 +54,7 @@
             <!-- small box -->
             <div class="small-box bg-warning">
               <div class="inner">
-                <h3>{{ parametroCantidadAsistentesTotales }}</h3>
-
+                <h3>{{ parametroCantidadAsistentesEnElSistema }}</h3>
                 <p>Cantidad de asistentes:</p>
               </div>
               <div class="icon">
@@ -72,9 +67,8 @@
             <!-- small box -->
             <div class="small-box bg-danger">
               <div class="inner">
-                <h3>{{ parametroCantidadDeRobotsTotales }}</h3>
-
-                <p>Cantidad de robots totales: </p>
+                <h3>{{ parametroCantidadDeRobotsEnElSistema }}</h3>
+                <p>Cantidad de robots a gestionar: </p>
               </div>
               <div class="icon">
                 <i class="ion ion-pie-graph"></i>
@@ -86,9 +80,8 @@
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
-                <h3>{{ parametroCantidadAsistentesEsperando }}</h3>
-
-                <p>cantida de personas que estan en cola:</p>
+                <h3>{{ parametroCantidadAsistentesEsperandoEnElSistema }}</h3>
+                <p>Cantidad de personas en cola de mis eventos:</p>
               </div>
               <div class="icon">
                 <i class="ion ion-person-add"></i>
@@ -97,7 +90,77 @@
           </div>
 
 
+          
+
+
 </div>
+
+<!--- ---------------------otras tarjetas -------------------------->
+
+<div class="row">
+
+
+
+  <div class="col-lg-3 col-6">
+  <!-- small box -->
+      <div class="small-box bg-indigo">
+          <div class="inner">
+              <h3>{{ parametroCantidadDeEventosEnElSistema }}</h3>           
+              <p>Cantidad de eventos en el sistema:</p>
+          </div>
+          <div class="icon">
+              <i class="ion ion-stats-bars"></i>
+          </div>
+      </div>
+  </div>
+  
+  <div class="col-lg-3 col-6">
+              <!-- small box -->
+              <div class="small-box bg-dark">
+                <div class="inner">
+                  <h3>{{ parametroCantidadAsistentesEnElSistema }}</h3>
+  
+                  <p>Cantidad de asistentes en el sistema:</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-person-add"></i>
+                </div>
+              </div>
+            </div>
+  
+  <div class="col-lg-3 col-6">
+              <!-- small box -->
+              <div class="small-box bg-fuchsia">
+                <div class="inner">
+                  <h3>{{ parametroCantidadDeRobotsEnElSistema }}</h3>
+  
+                  <p>Cantidad de robots en el sistema: </p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-pie-graph"></i>
+                </div>
+              </div>
+            </div>
+  
+  <div class="col-lg-3 col-6">
+              <!-- small box -->
+              <div class="small-box bg-secondary">
+                <div class="inner">
+                  <h3>{{ parametroCantidadAsistentesEsperandoEnElSistema }}</h3>
+  
+                  <p>Todos los asistentes del sistema que estan en cola:</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-person-add"></i>
+                </div>
+              </div>
+            </div>
+  
+  
+            
+  
+  
+  </div>
     
 </section>
 {% endblock %}

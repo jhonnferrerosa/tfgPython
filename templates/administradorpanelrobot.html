@@ -19,22 +19,18 @@
     </ol>
 </nav>
 
-
-
-
-
 <nav>
     <ol class="list-unstyled">
         <li class="mb-2" style="float:left; margin-left: 20px;">
-            <a href="{{ url_for('funcionAdministradorPanelRobot', idEvento=-1) }}" class="btn btn-success">Robots que no están en ningún evento</a>
+            <a href="{{ url_for('funcionAdministradorPanelRobot') }}" class="btn btn-success">Robots que no están en ningún evento</a>
         </li>
         <li class="mb-2" style="float:left; margin-left: 20px;">
-            <a href="{{ url_for('funcionAdministradorPanelRobot', idEvento=0) }}" class="btn btn-success">Todos los robots </a>
+            <a href="{{ url_for('funcionAdministradorPanelRobot', nombreDelEvento='todosLosRobots', fechaDeCreacionDelEvento='todosLosRobots', lugarDondeSeCelebra='todosLosRobots') }}" class="btn btn-success">Todos los robotss </a>
         </li>
 
-        {% for iteracion in miListaDeEventosEnLosQueHayRobotsParametro %}
+        {% for iteracion in miListaDeEventosParametro %}
         <li class="mb-2" style="float:left; margin-left: 20px;">
-            <a href="{{ url_for('funcionAdministradorPanelRobot', idEvento=iteracion.idEvento) }}" class="btn btn-danger">{{ iteracion.nombreDelEvento }}</a>
+            <a href="{{ url_for('funcionAdministradorPanelRobot', nombreDelEvento=iteracion.nombreDelEvento, fechaDeCreacionDelEvento=iteracion.fechaDeCreacionDelEvento, lugarDondeSeCelebra=iteracion.lugarDondeSeCelebra) }}" class="btn btn-danger">{{ iteracion.nombreDelEvento }} - {{iteracion.fechaDeCreacionDelEvento}} - {{iteracion.lugarDondeSeCelebra}}</a>
         {% endfor %}
         </li>
     </ol>
@@ -92,11 +88,6 @@
 {% if miListaRobotsParametro|length == 0 %}
     <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">No hay robots. </nav>
 {% endif %}
-
-
-
-    
-
 
 {% endblock %}
 
