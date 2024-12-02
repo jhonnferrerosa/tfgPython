@@ -1,7 +1,6 @@
 
 from flask_wtf import Form
-# SelectField, es para esto: evento_idEvento = SelectField ("Seleccione el evento en el que va a estar este robot: ", choices=[]);
-from wtforms import StringField, IntegerField, SelectField, BooleanField, FileField, DateTimeField, HiddenField, PasswordField, BooleanField, TextAreaField, validators
+from wtforms import StringField, IntegerField, BooleanField, FileField, HiddenField, PasswordField, BooleanField, TextAreaField, validators
 from wtforms.fields import EmailField
 
 # esto me vale para utilizar expresiones regulares en pyrhon. 
@@ -23,8 +22,8 @@ class FormularioCreaRobot (Form):
     """ 
         Este formulario lo uso para crear y modificar un robot en el sistema. 
     """
-    macAddressDelRobot = StringField (validators= [InputRequired("Esta campo es requerido"), Length(min=17, max=17), MacAddress("Debe de introducir una MAC correcta, los caracteres deben ser hexagesimal, y el formato debe ser XX:XX:XX:XX:XX:XX")]);
-    nombreDelRobot = StringField (validators= [InputRequired("Esta campo es requerido"), Length(min=3, max=50, message="Esciba entre 3 y 50 caracteres.")]);
+    macAddressDelRobot = StringField (validators= [InputRequired("Esta campo MAC es requerido"), Length(min=17, max=17), MacAddress("Debe de introducir una MAC correcta, los caracteres deben ser hexagesimal, y el formato debe ser XX:XX:XX:XX:XX:XX")]);
+    nombreDelRobot = StringField (validators= [InputRequired("Esta campon nombre es requerido"), Length(min=3, max=50, message="Esciba entre 3 y 50 caracteres.")]);
     descripcionDelRobot = TextAreaField  (validators=[Optional(), Length(max=100, message="Escriba entre 3 y 100 caracteres")]);
     fotoDelRobot = FileField();
 

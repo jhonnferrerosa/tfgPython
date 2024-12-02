@@ -43,7 +43,7 @@ miDiccionarioAsistentesYestadoControlandoRobot = {}
 # en este diccionario la clave va a ser el token con el evento , para saber que asistenten en que evento hay rechazado un robot, para que de esta forma no se le muestre uno que el haya rechazado en el evento. 
 miDiccionarioGlobalTokensListaDeRobotsRechazados = {}
 
-from estructuradatos import miVariableGlobalURL;
+miVariableGlobalURL = "http://localhost:5000/"; 
 
 
 
@@ -191,6 +191,8 @@ def miFuncionAntesDeLaPeticion ():
         #print ("miFuncionAntesDeLaPeticion() --- en la sesion no esta el correo electronico, y el endpoint no es uno permitido, se va a redirigir al login. ");
         return redirect (url_for ('funcionAdministradorLogin'));
 
+
+
 @app.errorhandler (404)  # esto es para sacar el HTML que contiene el mensaje de error, para los casos en los que 
 # la aplicacion caiga en algun error. 
 def miPaginaNoEncntradaError (e):
@@ -239,7 +241,7 @@ def funcion_registrarAsistente (codigoQR):
             miAsistentes = Asistentes (identificadorUnicoAsistente = session['token'], apodoAsistente=crearApodoUnico(), eventos_nombreDelEvento=miEventos.nombreDelEvento, eventos_fechaDeCreacionDelEvento= miEventos.fechaDeCreacionDelEvento, eventos_lugarDondeSeCelebra=miEventos.lugarDondeSeCelebra);
             db.session.add (miAsistentes);
             db.session.commit ();
-            miVincula = Vincula (asistentes_identificadorUnicoAsistente=session['token'], eventos_nombreDelEvento=miEventos.nombreDelEvento, eventos_fechaDeCreacionDelEvento=miEventos.fechaDeCreacionDelEvento, eventos_lugarDondeSeCelebra=miEventos.lugarDondeSeCelebra, fechaAcceso=datetime.now(), fechaSalida=datetime.now() + timedelta(hours=6));
+            miVincula = Vincula (asistentes_identificadorUnicoAsistente=session['token'], eventos_nombreDelEvento=miEventos.nombreDelEvento, eventos_fechaDeCreacionDelEvento=miEventos.fechaDeCreacionDelEvento, eventos_lugarDondeSeCelebra=miEventos.lugarDondeSeCelebra, fechaAcceso=datetime.now(), fechaSalida=datetime.now() + timedelta(hours=1));
             db.session.add (miVincula);
             db.session.commit ();
         else: 
@@ -249,7 +251,7 @@ def funcion_registrarAsistente (codigoQR):
                 miAsistentes = Asistentes (identificadorUnicoAsistente = session['token'], apodoAsistente=crearApodoUnico(), eventos_nombreDelEvento=miEventos.nombreDelEvento, eventos_fechaDeCreacionDelEvento= miEventos.fechaDeCreacionDelEvento, eventos_lugarDondeSeCelebra=miEventos.lugarDondeSeCelebra);
                 db.session.add (miAsistentes);
                 db.session.commit ();
-                miVincula = Vincula (asistentes_identificadorUnicoAsistente=session['token'], eventos_nombreDelEvento=miEventos.nombreDelEvento, eventos_fechaDeCreacionDelEvento=miEventos.fechaDeCreacionDelEvento, eventos_lugarDondeSeCelebra=miEventos.lugarDondeSeCelebra, fechaAcceso=datetime.now(), fechaSalida=datetime.now() + timedelta(hours=6));
+                miVincula = Vincula (asistentes_identificadorUnicoAsistente=session['token'], eventos_nombreDelEvento=miEventos.nombreDelEvento, eventos_fechaDeCreacionDelEvento=miEventos.fechaDeCreacionDelEvento, eventos_lugarDondeSeCelebra=miEventos.lugarDondeSeCelebra, fechaAcceso=datetime.now(), fechaSalida=datetime.now() + timedelta(hours=1));
                 db.session.add (miVincula);
                 db.session.commit ();
             else: 
@@ -262,6 +264,11 @@ def funcion_registrarAsistente (codigoQR):
                     db.session.add (miVincula);
                     db.session.commit ();
         
+        # Ya que el cliente no tienen ninga accion para decir que ha cerreado la aplcaicion, sí se registra alguna acción suya despues de la hora de fechaAcceso, entonces su hora de salida será la actual más una hora.  Esto nos vale para estimar su hora de salida. 
+        if (datetime.now() > miVincula.fechaSalida):
+            miVincula.fechaSalida = datetime.now() + timedelta (hours=1);
+            db.session.commit ();
+
         # en el caso de que el token no esté inicializado en miDiccionarioAsistentesYestadoControlandoRobot, entonces lo inicializo. 
         if (session['token'] not in miDiccionarioAsistentesYestadoControlandoRobot):
             miDiccionarioAsistentesYestadoControlandoRobot[session['token']] = False;
@@ -296,7 +303,7 @@ def funcion_registrarAsistente (codigoQR):
             for miDisponibleRobotObjeto in miListaDisponibleRobot: 
                 miRobots = Robots.query.filter_by (_Robots__idRobot=miDisponibleRobotObjeto.robots_idRobot).first ();
                 miListaRobots.append (miRobots);
-            return (render_template("registrarasistente.html", miParametroMiEventoNombreDelEvento=miEventos.nombreDelEvento, miListaRobotsParametro=miListaRobots, miParametroIdentificadorUnicoAsistente=miAsistentes.identificadorUnicoAsistente, miParametroApodoAsistente=miAsistentes.apodoAsistente));
+            return (render_template("registrarasistente.html", miParametroMiEventoNombreDelEvento=miEventos.nombreDelEvento, miListaRobotsParametro=miListaRobots, miParametroApodoAsistente=miAsistentes.apodoAsistente));
         else:
             # por ultimo lo que hago es la lógica de los robots rechazados. 
             miVariabletokenDeSesionYeventoQR = session ['token'] +"-" +codigoQR;
@@ -312,21 +319,36 @@ def funcion_registrarAsistente (codigoQR):
                 if (miRobots == None):
                     miDiccionarioGlobalTokensListaDeRobotsRechazados[miVariabletokenDeSesionYeventoQR].clear ();
                     miRobots = Robots.query.filter_by (_Robots__idRobot=miListaDisponibleRobot[0].robots_idRobot).first();
-                return render_template ("robotlisto.html", miRobotParametro=miRobots, miParametroCodigoQR=codigoQR, miParametroIdentificadorUnicoAsistente=miAsistentes.identificadorUnicoAsistente, miParametroApodoAsistente=miAsistentes.apodoAsistente);
+                return render_template ("robotlisto.html", miRobotParametro=miRobots, miParametroCodigoQR=codigoQR, miParametroApodoAsistente=miAsistentes.apodoAsistente);
            # en este caso que ese token con ese evento, no está en el miDiccionarioGlobalTokensListaDeRobotsRechazados  entonces eso significa que ese asistente, nunca ha rechazado un robot, por tanto le propongo el primer robot que encuentre. 
             else:
                 miRobots = Robots.query.filter_by (_Robots__idRobot=miListaDisponibleRobot[0].robots_idRobot).first(); 
-                return render_template ("robotlisto.html", miRobotParametro=miRobots, miParametroCodigoQR=codigoQR, miParametroIdentificadorUnicoAsistente=miAsistentes.identificadorUnicoAsistente, miParametroApodoAsistente=miAsistentes.apodoAsistente);
+                return render_template ("robotlisto.html", miRobotParametro=miRobots, miParametroCodigoQR=codigoQR, miParametroApodoAsistente=miAsistentes.apodoAsistente);
 
 
-@app.route ('/aceptarrobot/<int:idRobot>/<codigoQR>/<identificadorUnicoAsistente>')
-def funcion_aceptarRobot (idRobot, codigoQR, identificadorUnicoAsistente):
-    #en el caso de que no ese asistente no exista en la BBDD, lo delvuelvo a funcion_registrarAsistente. 
-    miAsistentes = Asistentes.query.filter_by (_Asistentes__identificadorUnicoAsistente = identificadorUnicoAsistente).first ();
-    if (miAsistentes == None):
-        return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR)); 
+@app.route ('/aceptarrobot/<int:idRobot>/<codigoQR>')
+def funcion_aceptarRobot (idRobot, codigoQR):
+    miEventos = Eventos.query.filter (Eventos._Eventos__codigoQR == codigoQR).first();
+    if (miEventos == None):
+        return "<p> funcion_registrarAsistente () --- error, el evento que se ha pasado por parametro, no existe. </p>";
+    else:
+        if (('token' in session) == False):
+            return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR)); 
+        else:
+            #en el caso de que no ese asistente no exista en la BBDD, lo delvuelvo a funcion_registrarAsistente. 
+            miAsistentes = Asistentes.query.filter_by (_Asistentes__identificadorUnicoAsistente = session['token']).first ();
+            if (miAsistentes == None):
+                return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR)); 
+            else:
+                miVincula = Vincula.query.filter (Vincula.asistentes_identificadorUnicoAsistente == session['token'], Vincula.eventos_nombreDelEvento == miEventos.nombreDelEvento, Vincula.eventos_fechaDeCreacionDelEvento == miEventos.fechaDeCreacionDelEvento, Vincula.eventos_lugarDondeSeCelebra == miEventos.lugarDondeSeCelebra).first();
+                if (miVincula == None):
+                    return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR)); 
 
-    miControla = Controla.query.filter (Controla.asistentes_identificadorUnicoAsistente == identificadorUnicoAsistente, Controla.fechaTomaDelRobot <=datetime.now(), Controla.fechaAbandonoDelRobot >= datetime.now()).first ();
+    if (datetime.now() > miVincula.fechaSalida):
+        miVincula.fechaSalida = datetime.now() + timedelta (hours=1);
+        db.session.commit ();
+
+    miControla = Controla.query.filter (Controla.asistentes_identificadorUnicoAsistente == miAsistentes.identificadorUnicoAsistente, Controla.fechaTomaDelRobot <=datetime.now(), Controla.fechaAbandonoDelRobot >= datetime.now()).first ();
     # en este momento el asistente esta controlando un robot. 
     if (miControla):
         # en este caso solicito el objeto Asistentes, ya que el es el que tiene los métodos para consultar eventos y consultar robots. 
@@ -335,10 +357,10 @@ def funcion_aceptarRobot (idRobot, codigoQR, identificadorUnicoAsistente):
         return render_template ("robotmanejando.html", miRobotParametro=miRobots, miParametroMiEventoNombreDelEvento=miEventos.nombreDelEvento, miParametroIdentificadorUnicoAsistente=miAsistentes.identificadorUnicoAsistente, miParametroApodoAsistente=miAsistentes.apodoAsistente);
     else:
         # de esta forma prevengo el fallo de que si la aplicacion se cae, que a kodeular no le de error, ya que cuando la aplcacion empieza a ejecutarse, ningun diccionario esta inicializado. 
-        if (identificadorUnicoAsistente not in miDiccionarioAsistentesYestadoControlandoRobot):
+        if (miAsistentes.identificadorUnicoAsistente not in miDiccionarioAsistentesYestadoControlandoRobot):
             return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR)); 
         else:
-            if (miDiccionarioAsistentesYestadoControlandoRobot[identificadorUnicoAsistente] == True):
+            if (miDiccionarioAsistentesYestadoControlandoRobot[miAsistentes.identificadorUnicoAsistente] == True):
                 return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR)); 
             else:
                 miControla = Controla.query.filter (Controla.robots_idRobot ==idRobot, Controla.fechaTomaDelRobot <=datetime.now(), Controla.fechaAbandonoDelRobot >= datetime.now()).first();
@@ -355,27 +377,42 @@ def funcion_aceptarRobot (idRobot, codigoQR, identificadorUnicoAsistente):
                         if (miRobots.disponible == False):
                             return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR)); 
                         else:
-                            miAsistentes.pasarAcontrolarRobot (identificadorUnicoAsistente, idRobot);
+                            miAsistentes.pasarAcontrolarRobot (miAsistentes.identificadorUnicoAsistente, idRobot);
                             miEventos = miAsistentes.funcion_consultaEvento (idRobot);
-                            miDiccionarioAsistentesYestadoControlandoRobot[identificadorUnicoAsistente] = True;
+                            miDiccionarioAsistentesYestadoControlandoRobot[miAsistentes.identificadorUnicoAsistente] = True;
                             # como ya es definitivo que paso a controlar un robot, lo que hago es que la lista del diccionario que almecena los robots que han sido rechazados, no tenga ningun elemento, para que cuando quiera elegir de nuevo un robot,
                             # (despues de que haya acabado el tiempo de utilizar uno o le haya expulsado un administradir) que no haya ningun problema. 
-                            miVariabletokenDeSesionYeventoQR = identificadorUnicoAsistente +"-" +codigoQR;
+                            miVariabletokenDeSesionYeventoQR = miAsistentes.identificadorUnicoAsistente +"-" +codigoQR;
                             # este if lo tengo porque unas veces el asistente no rechaza un robot, por lo tanto nunca se mete en este diccionario, entonces lo que estoy haciendo es ver primero si esta.
                             if (miVariabletokenDeSesionYeventoQR in miDiccionarioGlobalTokensListaDeRobotsRechazados):
                                 miDiccionarioGlobalTokensListaDeRobotsRechazados[miVariabletokenDeSesionYeventoQR].clear (); 
                             return (render_template ("robotmanejando.html", miRobotParametro=miRobots, miParametroMiEventoNombreDelEvento=miEventos.nombreDelEvento, miParametroIdentificadorUnicoAsistente=miAsistentes.identificadorUnicoAsistente, miParametroApodoAsistente=miAsistentes.apodoAsistente));
 
 
-@app.route ('/rechazarrobot/<int:idRobot>/<codigoQR>/<identificadorUnicoAsistente>')
-def funcion_rechazarRobot (idRobot, codigoQR, identificadorUnicoAsistente):
-    miAsistentes = Asistentes.query.filter_by (_Asistentes__identificadorUnicoAsistente = identificadorUnicoAsistente).first ();
-    if (miAsistentes == None):
-        return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR)); 
+@app.route ('/rechazarrobot/<int:idRobot>/<codigoQR>')
+def funcion_rechazarRobot (idRobot, codigoQR):
+    miEventos = Eventos.query.filter (Eventos._Eventos__codigoQR == codigoQR).first();
+    if (miEventos == None):
+        return "<p> funcion_registrarAsistente () --- error, el evento que se ha pasado por parametro, no existe. </p>";
+    else:
+        if (('token' in session) == False):
+            return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR)); 
+        else:
+            miAsistentes = Asistentes.query.filter_by (_Asistentes__identificadorUnicoAsistente = session['token']).first ();
+            if (miAsistentes == None):
+                return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR)); 
+            else:
+                miVincula = Vincula.query.filter (Vincula.asistentes_identificadorUnicoAsistente == session['token'], Vincula.eventos_nombreDelEvento == miEventos.nombreDelEvento, Vincula.eventos_fechaDeCreacionDelEvento == miEventos.fechaDeCreacionDelEvento, Vincula.eventos_lugarDondeSeCelebra == miEventos.lugarDondeSeCelebra).first();
+                if (miVincula == None):
+                    return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR)); 
+
+    if (datetime.now() > miVincula.fechaSalida):
+        miVincula.fechaSalida = datetime.now() + timedelta (hours=1);
+        db.session.commit ();
 
     # aqui lo que hago es dejar preparada la calve del diccionario miDiccionarioGlobalTokensListaDeRobotsRechazados para que su clave  sea el token y el codigoQR, para que este elemento sea unico, lo que voy a dejar en el valor va a ser una lista de
     #idRobot para saber que estos son los que se han rechazado. 
-    miVariabletokenDeSesionYeventoQR = identificadorUnicoAsistente +"-" +codigoQR;
+    miVariabletokenDeSesionYeventoQR = miAsistentes.identificadorUnicoAsistente +"-" +codigoQR;
 
     # en el caso de que ese token con evento, no este en la clave del diccionrio, lo que hago es inicializarlo como lista, que recordar que ahi van a ir los robots que han sido rechazados.
     if (miVariabletokenDeSesionYeventoQR not in miDiccionarioGlobalTokensListaDeRobotsRechazados): 
@@ -446,6 +483,7 @@ def funcionAdministradorHome():
     parametroCantidadDeRobotsEnElSistema=miVariableCantidadRobotsEnElSistema, parametroCantidadRobotsSinServicioEnElSistema = miVariableCantidadRobotsSinServicioEnElSistema, parametroCorreoElectronico = miAdministradores.correoElectronico));
    
 
+
 @app.route ('/administradorpanelrobot/<nombreDelEvento>/<fechaDeCreacionDelEvento>/<lugarDondeSeCelebra>')
 @app.route ('/administradorpanelrobot')
 def funcionAdministradorPanelRobot (nombreDelEvento = None, fechaDeCreacionDelEvento = None, lugarDondeSeCelebra = None):
@@ -514,13 +552,11 @@ def funcionAdministradorCrearRobot ():
             miVerdadEsPNG = bool(re.match (miExpresionRegularParaPNG, fotoRecibidaDelFormulario.filename));
             if (miVerdadEsJPG == False) and (miVerdadEsJPEG == False) and (miVerdadEsPNG == False):
                 raise Exception ("administradorcrearrobot.html --- la extesión del archivo no es valida, las extensiones permitidas son .jpg .jpeg y .png");
-            #else:
-                #print ("funcionAdministradorCrearRobot()--- este es el tamaño en KB:   ", len(binarioDeFoto)/1024);
         
         miAdministradores.funcion_crearRobot (miFormulario.macAddressDelRobot.data, miFormulario.nombreDelRobot.data, binarioDeFoto, miFormulario.descripcionDelRobot.data);
         return redirect(url_for('funcionAdministradorPanelRobot'));
 
-    return render_template ('administradorcrearrobot.html', miFormularioParametro = miFormulario, miParametroAccionHtml = "crear", miParametroNombreDelEvento=nombreDelEvento, miParametroFechaDeCreacionDelEvento= fechaDeCreacionDelEvento, miParametroLugarDondeSeCelebra= lugarDondeSeCelebra);
+    return render_template ('administradorcrearrobot.html', miFormularioParametro = miFormulario, miParametroAccionHtml = "crear", miParametroNombreDelEvento=nombreDelEvento, miParametroFechaDeCreacionDelEvento= fechaDeCreacionDelEvento, miParametroLugarDondeSeCelebra= lugarDondeSeCelebra, parametroMACaddressDelRobot=None);
 
 
 
@@ -532,6 +568,7 @@ def funcionAdministradorPanelRobotModificar (idRobot, nombreDelEvento = None, fe
     miAdministradores = Administradores.query.filter_by (_Administradores__correoElectronico=session['correoElectronico']).first ();
     miFormulario = formulario.FormularioCreaRobot (request.form);
 
+    miRobot = miAdministradores.funcion_conseguirRobotPorIdRobot (idRobot);
     if (request.method == 'POST'):
         if (miFormulario.validate()):
             fotoRecibidaDelFormulario = request.files['fotoDelRobot'];
@@ -546,25 +583,17 @@ def funcionAdministradorPanelRobotModificar (idRobot, nombreDelEvento = None, fe
                 return redirect (url_for ('funcionAdministradorModificarRobotsEvento', nombreDelEvento=nombreDelEvento, fechaDeCreacionDelEvento=fechaDeCreacionDelEvento, lugarDondeSeCelebra=lugarDondeSeCelebra));
         else:
             # en el caso de que no se valide el formulario, lo que hago es que devuelvo el formulario con los datos que se acaban de rellenar por el request.form y en este ya está almacenado el error. 
-            return render_template ("administradorcrearrobot.html", miFormularioParametro=miFormulario, miParametroAccionHtml="modificar", miParametroNombreDelEvento=nombreDelEvento, miParametroFechaDeCreacionDelEvento= fechaDeCreacionDelEvento, miParametroLugarDondeSeCelebra= lugarDondeSeCelebra);
+            return render_template ("administradorcrearrobot.html", miFormularioParametro=miFormulario, miParametroAccionHtml="modificar", miParametroNombreDelEvento=nombreDelEvento, miParametroFechaDeCreacionDelEvento= fechaDeCreacionDelEvento, miParametroLugarDondeSeCelebra= lugarDondeSeCelebra,
+                                    parametroMACaddressDelRobot=miRobot.macAddressDelRobot);
     else:
-        # esto es para comprobar si se esta editando un robot que no esta asociado a ningun evento. 
-        if (miAdministradores.funcion_verSiUnRobotEstaEnAlMenosUnEvento (idRobot)):
-            # dado que un adinistrador que conoce el idRobot de un robot que no se le muestra, el puede poner en la URL que lo va a modificar, con este IF yo comppruebo si ese administrador lo va a utilizar en algun momento. En el caso de que no, no le dejo modificar.
-            if (miAdministradores.funcion_verSiEseRobotEsDeEseAdministrador (idRobot) == False):
-                raise Exception ("administradorpaneleventoborrar.html --- ese administrador, no utiliza, ni va a utilizar ese robot, por lo tanto no lo va a modificar.");
-            else:
-                #en el caso de que un administrador vea un robot, sabiendo que esta en la tabla de disponible, pero que ademas ese robot lo estan utilizando actualmente, entonces no se le va a mostrar la opcion de modificar, pero lo que pasa es que si el pone en la URL
-                # a este robot, entonecs sí que lo puede modificar, por lo tanto hago este if que vuelve a comprobar si ese administrador lo puede o no modificar, en el caso de que no pueda, le mando un error. 
-                if (miAdministradores.funcion_verSiPuedoModificarRobot (idRobot) == False):
-                    raise Exception ("administradorpaneleventoborrar.html --- ese administrador, no puede modificcar ese robot, ya que otro adminsitrador lo esta usando actualmente. ");
-        miRobot = miAdministradores.funcion_conseguirRobotPorIdRobot (idRobot);
-        miFormulario = formulario.FormularioCreaRobot(obj=miRobot);
-        return render_template ("administradorcrearrobot.html", miFormularioParametro=miFormulario, miParametroAccionHtml="modificar", miParametroNombreDelEvento=nombreDelEvento, miParametroFechaDeCreacionDelEvento= fechaDeCreacionDelEvento, miParametroLugarDondeSeCelebra= lugarDondeSeCelebra);
-
-
-
-
+        #en el caso de que un administrador vea un robot, sabiendo que esta en la tabla de disponible, pero que ademas ese robot lo estan utilizando actualmente, entonces no se le va a mostrar la opcion de modificar, pero lo que pasa es que si el pone en la URL
+        # a este robot, entonecs sí que lo puede modificar, por lo tanto hago este if que vuelve a comprobar si ese administrador lo puede o no modificar, en el caso de que no pueda, le mando un error. 
+        if (miAdministradores.funcion_verSiPuedoModificarRobot (idRobot) == False):
+            raise Exception ("administradorpaneleventoborrar.html --- ese administrador, no puede modificcar ese robot, ya que otro adminsitrador lo esta usando actualmente. ");
+        else:
+            miFormulario = formulario.FormularioCreaRobot(obj=miRobot);
+            return render_template ("administradorcrearrobot.html", miFormularioParametro=miFormulario, miParametroAccionHtml="modificar", miParametroNombreDelEvento=nombreDelEvento, miParametroFechaDeCreacionDelEvento= fechaDeCreacionDelEvento, miParametroLugarDondeSeCelebra= lugarDondeSeCelebra, 
+                                    parametroMACaddressDelRobot=miRobot.macAddressDelRobot);
 
 ########################### endpoints Administrador con los eventos #####################################################################################################################################################################################
 

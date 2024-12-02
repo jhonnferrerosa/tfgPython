@@ -97,7 +97,8 @@
 <form  method="POST" enctype="multipart/form-data"> <!--begin::Body-->
 <div class="card-body">
 {% if miParametroNombreDelEvento != None and miParametroFechaDeCreacionDelEvento!= None and miParametroLugarDondeSeCelebra!=None %}
-  <div class="mb-3"> <label class="form-label">Introduzca la MAC del robot*:</label>   <label>{{ miFormularioParametro.macAddressDelRobot.data }} </label>
+  <label style="display: none;"> {{ miFormularioParametro.macAddressDelRobot }} </label>
+  <div class="mb-3"> <label class="form-label">Esta es la MAC del robot:</label>   <label>{{ parametroMACaddressDelRobot }} </label>
 {% else %}
   <div class="mb-3"> <label class="form-label">Introduzca la MAC del robot*:</label> {{ miFormularioParametro.macAddressDelRobot }}
 {% endif %}

@@ -13,7 +13,6 @@ from sqlalchemy.orm import  aliased
 from werkzeug.security import check_password_hash
 
 
-from estructuradatos import miVariableGlobalURL;
 
 db = SQLAlchemy();
 
@@ -155,14 +154,7 @@ class Administradores(db.Model):
     
         return miVerdadPuedoModificarRobot;
 
-    def funcion_verSiEseRobotEsDeEseAdministrador  (self, parametroIdRobot):
-        miVerdadSiEseRobotEsDeEseAdministrador = False;
-        miEventoAlias = aliased (Eventos);
-        miDisponibleRobot = db.session.query (DisponibleRobot).join (miEventoAlias, DisponibleRobot.eventos_nombreDelEvento == miEventoAlias._Eventos__nombreDelEvento and DisponibleRobot.eventos_fechaDeCreacionDelEvento==miEventoAlias._Eventos__fechaDeCreacionDelEvento and DisponibleRobot.eventos_lugarDondeSeCelebra==miEventoAlias._Eventos__lugarDondeSeCelebra).filter (DisponibleRobot.robots_idRobot == parametroIdRobot, miEventoAlias._Eventos__administradores_correoElectronico==self.__correoElectronico).first();
-        if (miDisponibleRobot):
-            miVerdadSiEseRobotEsDeEseAdministrador = True;
-        return miVerdadSiEseRobotEsDeEseAdministrador;
-    
+
     def funcion_verSiUnRobotEstaEnAlMenosUnEvento (self, parametroIdRobot):
         miVerdadVerSiEseRobotEstaEnAlmenosUnEvento = False;
         miDisponibleRobot = DisponibleRobot.query.filter_by (robots_idRobot = parametroIdRobot).first ();

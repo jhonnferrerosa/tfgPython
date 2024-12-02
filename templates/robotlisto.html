@@ -8,15 +8,14 @@
 <body>
 	<header> 
 		<div> Demostraciones robóticas: {{ miParametroMiEventoNombreDelEvento }}</div>
-        <div> Demostraciones robóticas: {{ miParametroIdentificadorUnicoAsistente }}</div>
         <div> Demostraciones robóticas: {{ miParametroApodoAsistente }}</div>
 	</header>
 
     <nav>
         <p> su robot esta listo. </p>
-        <a href="{{ url_for('funcion_aceptarRobot', idRobot=miRobotParametro.idRobot, codigoQR=miParametroCodigoQR, identificadorUnicoAsistente=miParametroIdentificadorUnicoAsistente) }}"> Aceptar robot para controlarlo. </a>
+        <a href="{{ url_for('funcion_aceptarRobot', idRobot=miRobotParametro.idRobot, codigoQR=miParametroCodigoQR) }}"> Aceptar robot para controlarlo. </a>
         <br>
-        <a href="{{ url_for('funcion_rechazarRobot', idRobot=miRobotParametro.idRobot, codigoQR=miParametroCodigoQR ,identificadorUnicoAsistente=miParametroIdentificadorUnicoAsistente) }}"> Rechazar uso del robot </a>
+        <a href="{{ url_for('funcion_rechazarRobot', idRobot=miRobotParametro.idRobot, codigoQR=miParametroCodigoQR) }}"> Rechazar uso del robot </a>
     </nav>
 
 

@@ -4,6 +4,7 @@
 
 {% block title %}
     <title>administradorpanelrobot</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='administradorPanelRobot.css') }}">
 {% endblock %}
 
 
@@ -77,6 +78,10 @@
 
 <section style="padding-left: 10px;">
 
+
+{% if miParametroVerdadErrorDeRobotInexistente == 1 %}
+  <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">Ese robot no existe, ha dejado de existir o es de otro administrador.</nav>
+{% endif %}
 
 <div class="card mb-4" style="clear: both;">
                                 <div class="card-header">
