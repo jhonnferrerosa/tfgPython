@@ -275,6 +275,9 @@ class Administradores(db.Model):
                 db.session.commit ();
     
     def funcion_modificarRobotDelEvento (self, parametroNombreDelEvento, parametroFechaDeCreacionDelEvento, parametroLugarDondeSeCelebra, parametroRobot_idRobot, parametroFechaComienzoEnEvento, parametroFechaFinEnEvento, parametroNuevaFechaComienzoEnEvento, parametroNuevaFechaFinEnEvento):
+        # en el caso de que se smodifique la fecha de un robot en el día enterior, entonces no dejo que se modifique la fecha de ese robot en ese evento.  
+        if (parametroNuevaFechaComienzoEnEvento < (datetime.now().strftime ("%Y-%m-%d"))): 
+            raise Exception ("exception. No se puede modificar la fecha de ese robot en el evento, está estableciendo la fecha de comienzo en un día que ya pasó.  ");
         miDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento==parametroNombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento==parametroFechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra==parametroLugarDondeSeCelebra, 
                                                           DisponibleRobot.robots_idRobot==parametroRobot_idRobot, DisponibleRobot.fechaComienzoEnEvento==parametroFechaComienzoEnEvento, DisponibleRobot.fechaFinEnEvento == parametroFechaFinEnEvento).first();
 
@@ -283,6 +286,9 @@ class Administradores(db.Model):
         db.session.commit ();
     
     def funcion_sumarRobotAlEvento (self, parametroNombreDelEvento, parametroFechaDeCreacionDelEvento, parametroLugarDondeSeCelebra, parametroRobot_idRobot, parametroFechaComienzoEnEvento, parametroFechaFinEnEvento):
+        # en el caso de que se sume un robot en el día enterior, entonces no dejo que se meta ese robot en el evento. 
+        if (parametroFechaComienzoEnEvento < (datetime.now().strftime ("%Y-%m-%d"))): 
+            raise Exception ("exception. No se puede sumar ese robot al evento, está simando ese robot al evento en un día pasado.  ");
         miDisponibleRobot = DisponibleRobot (eventos_nombreDelEvento=parametroNombreDelEvento, eventos_fechaDeCreacionDelEvento=parametroFechaDeCreacionDelEvento, eventos_lugarDondeSeCelebra=parametroLugarDondeSeCelebra, 
                                              robots_idRobot=parametroRobot_idRobot, fechaComienzoEnEvento = parametroFechaComienzoEnEvento, fechaFinEnEvento = parametroFechaFinEnEvento);
         db.session.add (miDisponibleRobot);
@@ -357,22 +363,25 @@ class Administradores(db.Model):
         miPorcentajeAsistentesQueSiHanControladoUnRobot = 0;
         miListaAsistentesQueSiHanControladoUnRobot = [];
         miListaVincula = Vincula.query.filter (Vincula.eventos_nombreDelEvento == parametroNombreDelEvento, Vincula.eventos_fechaDeCreacionDelEvento == parametroFechaDeCreacionDelEvento, Vincula.eventos_lugarDondeSeCelebra == parametroLugarDondeSeCelebra).all();
-        miListaDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento == parametroNombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento == parametroFechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra == parametroLugarDondeSeCelebra).all();
-        for i in miListaVincula:
-            miListaControla = Controla.query.filter_by (asistentes_identificadorUnicoAsistente =i.asistentes_identificadorUnicoAsistente).all ();
-            for j in miListaControla: 
-                for k in miListaDisponibleRobot:
-                    # en este momento compruebo que ese asistenete que esta en la tabla controla, su controla se corresponde con algun disponibleRobot de la lista que se ha extraido con ese evento, entonces determino que sí ha controlado al menos un robot
-                    # en algún determinado momento. 
-                    if (j.robots_idRobot == k.robots_idRobot) and (j.fechaTomaDelRobot >= k.fechaComienzoEnEvento) and (j.fechaAbandonoDelRobot <= k.fechaFinEnEvento):
-                        miListaAsistentesQueSiHanControladoUnRobot.append (i.asistentes_identificadorUnicoAsistente);
-                        break;
+        # esto es para evitar ele error de división entre cero, ya que si no hay ningún asistente vinculado a mi evento, entonces no tiene sentido sacar el porcentaje de los que han utilizado ya un robot. 
+        if (len (miListaVincula) == 0):
+            return 0;
+        else:
+            miListaDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento == parametroNombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento == parametroFechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra == parametroLugarDondeSeCelebra).all();
+            for i in miListaVincula:
+                miListaControla = Controla.query.filter_by (asistentes_identificadorUnicoAsistente =i.asistentes_identificadorUnicoAsistente).all ();
+                for j in miListaControla: 
+                    for k in miListaDisponibleRobot:
+                        # en este momento compruebo que ese asistenete que esta en la tabla controla, su controla se corresponde con algun disponibleRobot de la lista que se ha extraido con ese evento, entonces determino que sí ha controlado al menos un robot
+                        # en algún determinado momento. 
+                        if (j.robots_idRobot == k.robots_idRobot) and (j.fechaTomaDelRobot >= k.fechaComienzoEnEvento) and (j.fechaAbandonoDelRobot <= k.fechaFinEnEvento):
+                            miListaAsistentesQueSiHanControladoUnRobot.append (i.asistentes_identificadorUnicoAsistente);
+                            break;
         
-        miPorcentajeAsistentesQueSiHanControladoUnRobot = len (miListaAsistentesQueSiHanControladoUnRobot) / len (miListaVincula);
-        miPorcentajeAsistentesQueSiHanControladoUnRobot = miPorcentajeAsistentesQueSiHanControladoUnRobot * 100;
-        miPorcentajeAsistentesQueSiHanControladoUnRobot = round (miPorcentajeAsistentesQueSiHanControladoUnRobot, 2);
-
-        return miPorcentajeAsistentesQueSiHanControladoUnRobot;
+            miPorcentajeAsistentesQueSiHanControladoUnRobot = len (miListaAsistentesQueSiHanControladoUnRobot) / len (miListaVincula);
+            miPorcentajeAsistentesQueSiHanControladoUnRobot = miPorcentajeAsistentesQueSiHanControladoUnRobot * 100;
+            miPorcentajeAsistentesQueSiHanControladoUnRobot = round (miPorcentajeAsistentesQueSiHanControladoUnRobot, 2);
+            return miPorcentajeAsistentesQueSiHanControladoUnRobot;
 
     def funcion_conseguirTodosLosAsistentesVinculadosAlEvento (self, parametroNombreDelEvento, parametroFechaDeCreacionDelEvento, parametroLugarDondeSeCelebra):
         return Vincula.query.filter (Vincula.eventos_nombreDelEvento == parametroNombreDelEvento, Vincula.eventos_fechaDeCreacionDelEvento == parametroFechaDeCreacionDelEvento, Vincula.eventos_lugarDondeSeCelebra == parametroLugarDondeSeCelebra).all();
