@@ -33,14 +33,50 @@
 
 {% block content%}
     <nav> 
-        <ol class="list-unstyled">
+        <ol class="list-unstyled" style="float: left">
             <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorPanelEvento') }}" class="btn btn-primary"> Volver a adminstrar eventos </a></li>
             <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorHome') }}" class="btn btn-primary">Volver al home </a></li>
         </ol>
+
+
+        <div class="col-lg-3 col-6" style="margin-left: 50px; float: left">
+            <!-- small box -->
+                <div class="small-box bg-info">
+                    <div class="inner">     
+                        <h3>
+                            {{ miParametroPorcentajeAsistentesQueSiHanControladoUnRobot }}
+                            <sup style="font-size: 20px">%</sup>
+                        </h3>
+                        <p>Porcentaje Asistentes que sí han controlado un robot:</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-stats-bars"></i>
+                    </div>
+                </div>
+        </div>
+
+        <div class="col-lg-3 col-6" style="margin-left: 50px; float: left">
+            <!-- small box -->
+                <div class="small-box bg-info">
+                    <div class="inner">     
+                        <h3>
+                            {{ miParametroCantidadDeAsistentesVinculadosEnElEvento }}
+                        </h3>
+                        <p>Cantidad de asistentes vinculados al evento:</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-stats-bars"></i>
+                    </div>
+                </div>
+        </div>
+
+
     </nav>
 
 
-    <section>
+
+
+    <section style="margin-top: 200px">
 	<h4> Robots que actualmente están en el evento: </h4>
 
 {% for clave, valor in miDiccionarioRobotsActualmenteEstanEnEvetoParametro.items() %}

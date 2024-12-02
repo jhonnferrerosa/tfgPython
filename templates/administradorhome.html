@@ -42,7 +42,7 @@
     <div class="small-box bg-success">
         <div class="inner">  
             <h3>{{ parametroCantidadDeEventosDelAdministrador }}</h3>       
-            <p>Cantidad de eventos a gestionar:</p>
+            <p>Mi cantidad de eventos a gestionar:</p>
         </div>
         <div class="icon">
             <i class="ion ion-stats-bars"></i>
@@ -54,8 +54,8 @@
             <!-- small box -->
             <div class="small-box bg-warning">
               <div class="inner">
-                <h3>{{ parametroCantidadAsistentesEnElSistema }}</h3>
-                <p>Cantidad de asistentes:</p>
+                <h3>{{ parametroCantidadDeAsistentesDelAdministrador }}</h3>
+                <p>Cantidad de asistentes en mis eventos:</p>
               </div>
               <div class="icon">
                 <i class="ion ion-person-add"></i>
@@ -67,8 +67,8 @@
             <!-- small box -->
             <div class="small-box bg-danger">
               <div class="inner">
-                <h3>{{ parametroCantidadDeRobotsEnElSistema }}</h3>
-                <p>Cantidad de robots a gestionar: </p>
+                <h3>{{ parametroCantidadRobotsDelAdminstrador }}</h3>
+                <p>Cantidad de robots usando en mis eventos: </p>
               </div>
               <div class="icon">
                 <i class="ion ion-pie-graph"></i>
@@ -80,8 +80,8 @@
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
-                <h3>{{ parametroCantidadAsistentesEsperandoEnElSistema }}</h3>
-                <p>Cantidad de personas en cola de mis eventos:</p>
+                <h3>{{ parametroRobotsQueUsoEnEventosAdministradorSinServicioActualmente }}</h3>
+                <p>Cantidad de robots que no están en servicio en mis eventos celebrándose: </p>
               </div>
               <div class="icon">
                 <i class="ion ion-person-add"></i>
@@ -119,7 +119,6 @@
               <div class="small-box bg-dark">
                 <div class="inner">
                   <h3>{{ parametroCantidadAsistentesEnElSistema }}</h3>
-  
                   <p>Cantidad de asistentes en el sistema:</p>
                 </div>
                 <div class="icon">
@@ -133,7 +132,6 @@
               <div class="small-box bg-fuchsia">
                 <div class="inner">
                   <h3>{{ parametroCantidadDeRobotsEnElSistema }}</h3>
-  
                   <p>Cantidad de robots en el sistema: </p>
                 </div>
                 <div class="icon">
@@ -146,9 +144,8 @@
               <!-- small box -->
               <div class="small-box bg-secondary">
                 <div class="inner">
-                  <h3>{{ parametroCantidadAsistentesEsperandoEnElSistema }}</h3>
-  
-                  <p>Todos los asistentes del sistema que estan en cola:</p>
+                  <h3>{{ parametroCantidadRobotsSinServicioEnElSistema }}</h3>
+                  <p>Cantidad de robots que no están en servicio en el sistema:</p>
                 </div>
                 <div class="icon">
                   <i class="ion ion-person-add"></i>

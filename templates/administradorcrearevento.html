@@ -19,6 +19,11 @@
         </ol>
     </nav>
 
+{% if miFormularioParametro.codigoQR.errors %}
+    {% for error in miFormularioParametro.codigoQR.errors %}
+        <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">Error: {{ error }} </nav>
+    {% endfor %}
+{% endif%}
 
 
 <div class="container">
@@ -40,11 +45,12 @@
     <form  method="POST"> <!--begin::Body-->
         <div class="card-body">
             {{ miFormularioParametro.fechaDeCreacionDelEvento }}
-            <div class="mb-3"> <label  class="form-label">Introdzca el nombre del evento (max. 50 caracteres)*:</label> {{ miFormularioParametro.nombreDelEvento }}  </div>
-            <div class="mb-3"> <label  class="form-label">Introdzca el lugar donde se celebra el evento (max. 50 caracteres):</label> {{ miFormularioParametro.lugarDondeSeCelebra }} </div>
-            <div class="mb-3"> <label  class="form-label">Introdzca la calle del evento (max. 50 caracteres):</label> {{ miFormularioParametro.calle }} </div>
-            <div class="mb-3"> <label  class="form-label">Introdzca el número de la calle del evento (max. 50 caracteres):</label> {{ miFormularioParametro.numero }}   </div>
-            <div class="mb-3"> <label  class="form-label">Introdzca el código postal:</label> {{ miFormularioParametro.codigoPostal }}  </div>
+            <div class="mb-3"> <label  class="form-label">Introduzca el nombre del evento (max. 50 caracteres)*:</label> {{ miFormularioParametro.nombreDelEvento }}  </div>
+            <div class="mb-3"> <label  class="form-label">Introduzca el lugar donde se celebra el evento (max. 50 caracteres)*:</label> {{ miFormularioParametro.lugarDondeSeCelebra }} </div>
+            <div class="mb-3"> <label  class="form-label">Introduzca una URL personalizada para el evento {{ parametroURL }}:</label> {{ miFormularioParametro.codigoQR }} </div>
+            <div class="mb-3"> <label  class="form-label">Introduzca la calle del evento (max. 50 caracteres):</label> {{ miFormularioParametro.calle }} </div>
+            <div class="mb-3"> <label  class="form-label">Introduzca el número de la calle del evento (max. 50 caracteres):</label> {{ miFormularioParametro.numero }}   </div>
+            <div class="mb-3"> <label  class="form-label">Introduzca el código postal:</label> {{ miFormularioParametro.codigoPostal }}  </div>
             
         </div>
         <div class="card-footer"> <button type="submit" class="btn btn-primary">Aceptar</button> </div> 

@@ -12,7 +12,8 @@ from sqlalchemy import event, DDL, func, CheckConstraint
 from sqlalchemy.orm import  aliased
 from werkzeug.security import check_password_hash
 
-from estructuradatos import miDiccionarioEventoYasistentesDatos;
+
+from estructuradatos import miVariableGlobalURL;
 
 db = SQLAlchemy();
 
@@ -53,8 +54,6 @@ class Administradores(db.Model):
         db.session.commit ();
     
 
-    # recorda que en el caso de que se le cambie la MAC de un robot en medio de que lo este controlando un robot se va a modificar la aplicacion y la BBDD. 1º. se tiene que hechar a ese asistente de ese robot. 2º. ademas se le tiene que dejar como esPrivilegiado
-    # 3º el robot pasara a dejar de estar ennn servicio, para que de esta forma, el administrador se de cuenta de que ha cambiado la MAC en medio de un uso del robot. 
     def funcion_modificarRobot (self, parametroIdRobot, parametroMacAddressDelRobot=None, parametroNombreDelRobot=None, parametroFotoDelRobot=None, parametroDescripcionDelRobot=None):
         miRobots = Robots.query.filter_by (_Robots__idRobot = parametroIdRobot).first();
         if (miRobots == None):
@@ -63,22 +62,7 @@ class Administradores(db.Model):
         if (parametroIdRobot != None) and (parametroIdRobot != miRobots.idRobot):
             miRobots.idRobot = parametroIdRobot;
 
-        # recordar que en el caso de que se le cambia la MAC a un robot, hay que comprobar que en ese momento este siendo manejado por un asistente, ya que esto implica que se hace modificaciones sobre dos tablas, Controla y Robots. 
         if (parametroMacAddressDelRobot != None) and (parametroMacAddressDelRobot != miRobots.macAddressDelRobot):
-            miControla = Controla.query.filter (Controla.robots_idRobot == parametroIdRobot, Controla.fechaTomaDelRobot <= datetime.now(), Controla.fechaAbandonoDelRobot >= datetime.now()).first ();
-            if (miControla):
-                miDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.robots_idRobot == parametroIdRobot, DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now()).first ();
-                idEvento = miDisponibleRobot.eventos_nombreDelEvento + miDisponibleRobot.eventos_fechaDeCreacionDelEvento.strftime("%Y-%m-%dT%H:%M:%S") + miDisponibleRobot.eventos_lugarDondeSeCelebra;
-                for indiceNumerico, i in enumerate (miDiccionarioEventoYasistentesDatos[idEvento]):
-                    #en este if he encontrado al asistente dentro de la matriz que se ha extraido del diccionario a partir del evento. 
-                    #Recordar que en el inidice cero es donde yo guardo el identificadorUniciAsistente. 
-                    if (miControla.asistentes_identificadorUnicoAsistente == i[0]):
-                        # a ese asistente, lo estoy poniendo  como privilegiado, recordar el inidice 2 es el valor de esPrivilegiado, este lo pongo en True. 
-                        miDiccionarioEventoYasistentesDatos[idEvento][indiceNumerico][2] = True;
-                        miControla.fechaAbandonoDelRobot = datetime.now ();
-                        db.session.commit ();
-                        break;
-
             miRobots.macAddressDelRobot = parametroMacAddressDelRobot;
             miRobots.disponible = False;
         
@@ -105,22 +89,12 @@ class Administradores(db.Model):
     
     #recordar que desactivar un robot, hace que se expulse al asistente del robot, es decir, que lo deje de controlar. 
     def funcion_activarOdesactivarRobot (self, parametroIdRobot, parametroEnServicio):
-        # solamente en el caso de que lo este quitando del servicio, es cuando tengo que ver si hay algun asistente que este controlando ese robot, y en el caso de que se asi, tengo que poner la fecha de abandono con la fecha actual, y 
-        # ademas ponerlo como esPrivilegiado = True. 
+        # solamente en el caso de que lo este quitando del servicio, es cuando tengo que ver si hay algun asistente que este controlando ese robot. 
         if (parametroEnServicio == False):
             miControla = Controla.query.filter (Controla.robots_idRobot == parametroIdRobot, Controla.fechaTomaDelRobot <= datetime.now(), Controla.fechaAbandonoDelRobot >= datetime.now()).first ();
             if (miControla):
-                miDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.robots_idRobot == parametroIdRobot, DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now()).first ();
-                idEvento = miDisponibleRobot.eventos_nombreDelEvento + miDisponibleRobot.eventos_fechaDeCreacionDelEvento.strftime("%Y-%m-%dT%H:%M:%S") + miDisponibleRobot.eventos_lugarDondeSeCelebra;
-                for indiceNumerico, i in enumerate (miDiccionarioEventoYasistentesDatos[idEvento]):
-                    #en este if he encontrado al asistente dentro de la matriz que se ha extraido del diccionario a partir del evento. 
-                    #Recordar que en el inidice cero es donde yo guardo el identificadorUniciAsistente. 
-                    if (miControla.asistentes_identificadorUnicoAsistente == i[0]):
-                        # a ese asistente, lo estoy poniendo  como privilegiado, recordar el inidice 2 es el valor de esPrivilegiado, este lo pongo en True. 
-                        miDiccionarioEventoYasistentesDatos[idEvento][indiceNumerico][2] = True;
-                        miControla.fechaAbandonoDelRobot = datetime.now ();
-                        db.session.commit ();
-                        break;
+                miControla.fechaAbandonoDelRobot = datetime.now ();
+                db.session.commit ();
 
         miRobots = Robots.query.filter_by (_Robots__idRobot=parametroIdRobot).first();
         miRobots.disponible = parametroEnServicio;
@@ -196,16 +170,45 @@ class Administradores(db.Model):
             miVerdadVerSiEseRobotEstaEnAlmenosUnEvento = True;
         return miVerdadVerSiEseRobotEstaEnAlmenosUnEvento;
 
+    def funcion_conseguirRobotsQueUsoEnEventosAdministrador (self):
+        miListaEventos = Eventos.query.filter_by (_Eventos__administradores_correoElectronico = self.__correoElectronico).all();
+        miListaRobots = [];
+        for i in miListaEventos:
+            miListaDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento == i.nombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento == i.fechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra == i.lugarDondeSeCelebra).all();
+            for j in miListaDisponibleRobot:
+                miRobots = Robots.query.filter_by (_Robots__idRobot = j.robots_idRobot).first ();
+                if (miRobots not in miListaRobots):
+                    miListaRobots.append (miRobots);
+        return miListaRobots;
+
+    def funcion_conseguirRobotsQueUsoEnEventosAdministradorSinServicioActualmente (self):
+        miListaEventos = Eventos.query.filter_by (_Eventos__administradores_correoElectronico = self.__correoElectronico).all();
+        miListaRobots = [];
+        for i in miListaEventos:
+            miListaDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento == i.nombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento == i.fechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra == i.lugarDondeSeCelebra,
+                                                                   DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now()).all();
+            for j in miListaDisponibleRobot:
+                miRobots = Robots.query.filter_by (_Robots__idRobot = j.robots_idRobot).first ();
+                if (miRobots not in miListaRobots) and (miRobots.disponible == False):
+                    miListaRobots.append (miRobots);
+        return miListaRobots;
+
+    def funcion_conseguirRobotsSinServicioEnElSistema (self):
+        return  Robots.query.filter_by (_Robots__disponible = False).all ();
+
 
 
 ##### funciones que menejan el evento  ######################################################################################################################################################################################################################
     def funcion_conseguirEventoPorClavePrimaria (self, parametroNombreDelEvento, parametroFechaDeCreacionDelEvento, parametroLugarDondeSeCelebra):
         return Eventos.query.filter (Eventos._Eventos__nombreDelEvento == parametroNombreDelEvento, Eventos._Eventos__fechaDeCreacionDelEvento == parametroFechaDeCreacionDelEvento, Eventos._Eventos__lugarDondeSeCelebra == parametroLugarDondeSeCelebra).first ();
 
-    def funcion_crearEvento (self, parametroNombreDelEvento, parametroLugarDondeSeCelebra, parametroCalle = None, parametroNumero = None, parametroCodigoPostal = None):
-        miFechaDeCreaacionDelEvento = datetime.now();
-        miCodigoQR =  "http://127.0.0.1:5000/" + parametroNombreDelEvento +"/" +miFechaDeCreaacionDelEvento.strftime("%Y-%m-%dT%H:%M:%S") +"/" +parametroLugarDondeSeCelebra;  
-        miEventos = Eventos (nombreDelEvento=parametroNombreDelEvento, fechaDeCreacionDelEvento=miFechaDeCreaacionDelEvento.strftime("%Y-%m-%dT%H:%M:%S"), lugarDondeSeCelebra=parametroLugarDondeSeCelebra, codigoQR=miCodigoQR, administradores_correoElectronico=self.__correoElectronico, calle=parametroCalle, numero=parametroNumero,  codigoPostal=parametroCodigoPostal);
+    def funcion_crearEvento (self, parametroNombreDelEvento, parametroLugarDondeSeCelebra, parametroCodigoQR=None, parametroCalle = None, parametroNumero = None, parametroCodigoPostal = None):
+        miFechaDeCreaacionDelEvento = datetime.now().strftime("%Y-%m-%dT%H:%M:%S");
+        if (parametroCodigoQR != None) and (parametroCodigoQR != ""):
+            codigoQR = parametroCodigoQR;
+        else:
+            codigoQR = parametroNombreDelEvento +miFechaDeCreaacionDelEvento +parametroLugarDondeSeCelebra;  
+        miEventos = Eventos (nombreDelEvento=parametroNombreDelEvento, fechaDeCreacionDelEvento=miFechaDeCreaacionDelEvento, lugarDondeSeCelebra=parametroLugarDondeSeCelebra, codigoQR=codigoQR, administradores_correoElectronico=self.__correoElectronico, calle=parametroCalle, numero=parametroNumero,  codigoPostal=parametroCodigoPostal);
         db.session.add (miEventos);
         db.session.commit ();
 
@@ -248,20 +251,28 @@ class Administradores(db.Model):
                 miListaDisponibleRobotQueActualmenteNoEstanEnElEvento.remove (i);
         return miListaDisponibleRobotQueActualmenteNoEstanEnElEvento;
 
-    def funcion_modificarDatosDelEvento (self, parametroAntiguoNombreDelEvento, parametroAntiguoFechaDeCreacionDelEvento, parametroAntiguoLugarDondeSeCelebra, parametroNombreDelEvento, parametroLugarDondeSeCelebra, parametroCalle=None, parametroNumero=None, parametroCodigoPostal=None):
-        miEventos = Eventos.query.filter (Eventos._Eventos__nombreDelEvento == parametroAntiguoNombreDelEvento, Eventos._Eventos__fechaDeCreacionDelEvento == parametroAntiguoFechaDeCreacionDelEvento, Eventos._Eventos__lugarDondeSeCelebra == parametroAntiguoLugarDondeSeCelebra).first ();
-        if (miEventos == None):
-            raise Exception ("exception. No se puede modificar el evento ya que ese evento no existe");
+    def funcion_modificarDatosDelEvento (self, parametroAntiguoNombreDelEvento, parametroAntiguoFechaDeCreacionDelEvento, parametroAntiguoLugarDondeSeCelebra, parametroNombreDelEvento, parametroLugarDondeSeCelebra, parametroCodigoQR=None, parametroCalle=None, parametroNumero=None, parametroCodigoPostal=None):
+        # en el caso de que el código QR recién modificado esté ya en la BBDD, devuelvo una exception. 
+        miEventos = None;
+        #miEventos = Eventos.query.filter_by (_Eventos__codigoQR = parametroCodigoQR).first ();
+        if (miEventos != None):
+            raise Exception ("exception. Esa URL para ese evento ya existe en la base de datos, recuerde que el link de cade evento debe de ser distinto. ");
         else:
-            miEventos.nombreDelEvento = parametroNombreDelEvento;
-            miEventos.lugarDondeSeCelebra = parametroLugarDondeSeCelebra;
-            if (parametroCalle != None):
-                miEventos.calle = parametroCalle;
-            if (parametroNumero != None):
-                miEventos.numero = parametroNumero;
-            if (parametroCodigoPostal != None):
-                miEventos.codigoPostal = parametroCodigoPostal;
-            db.session.commit ();
+            miEventos = Eventos.query.filter (Eventos._Eventos__nombreDelEvento == parametroAntiguoNombreDelEvento, Eventos._Eventos__fechaDeCreacionDelEvento == parametroAntiguoFechaDeCreacionDelEvento, Eventos._Eventos__lugarDondeSeCelebra == parametroAntiguoLugarDondeSeCelebra).first ();
+            if (miEventos == None):
+                raise Exception ("exception. No se puede modificar el evento ya que ese evento no existe");
+            else:
+                miEventos.nombreDelEvento = parametroNombreDelEvento;
+                miEventos.lugarDondeSeCelebra = parametroLugarDondeSeCelebra;
+                if (parametroCodigoQR != None) and (parametroCodigoQR != ""):
+                    miEventos.codigoQR =  parametroCodigoQR;
+                if (parametroCalle != None):
+                    miEventos.calle = parametroCalle;
+                if (parametroNumero != None):
+                    miEventos.numero = parametroNumero;
+                if (parametroCodigoPostal != None):
+                    miEventos.codigoPostal = parametroCodigoPostal;
+                db.session.commit ();
     
     def funcion_modificarRobotDelEvento (self, parametroNombreDelEvento, parametroFechaDeCreacionDelEvento, parametroLugarDondeSeCelebra, parametroRobot_idRobot, parametroFechaComienzoEnEvento, parametroFechaFinEnEvento, parametroNuevaFechaComienzoEnEvento, parametroNuevaFechaFinEnEvento):
         miDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento==parametroNombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento==parametroFechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra==parametroLugarDondeSeCelebra, 
@@ -307,13 +318,13 @@ class Administradores(db.Model):
             db.session.commit();
 
     # con esta funcion lo que hago es comprobar si el administrdor que ha pulsado en el evento, es o no el administrador, lo que pasa es que a un administrador nunca se le van a mostrar los eventos que no son suyos, pero en el caso de que 
-    #conozca el idDvento de un evento que no es suyo, los que va a pasar es que si el lo pone en la URL, va a poder hacer modificaciones sobre este evento, y eso es algo que yo no quiero, por lo tanto cada vez que se vaya  a conseguir un 
+    #conozca el nombre, la fecha y el lugar de un evento que no es suyo, lo que va a pasar es que si el lo pone en la URL, va a poder hacer modificaciones sobre este evento, y eso es algo que yo no quiero, por lo tanto cada vez que se vaya  a conseguir un 
     # evento, lo que voy a hacer aqu es comprobar si ese evento es o no de ese administrador. 
     def funcion_verSiEseEventoEsDeEseAdministrador (self, parametroNombreDelEvento, parametroFechaDeCreacionDelEvento, parametroLugarDondeSeCelebra):
         miVerdadVerSiEseEventoEsDeEseAdministrador = True; 
         miEventos = Eventos.query.filter (Eventos._Eventos__nombreDelEvento == parametroNombreDelEvento, Eventos._Eventos__fechaDeCreacionDelEvento == parametroFechaDeCreacionDelEvento, Eventos._Eventos__lugarDondeSeCelebra == parametroLugarDondeSeCelebra, Eventos._Eventos__administradores_correoElectronico == self.__correoElectronico).first(); 
         if (miEventos == None):
-            miVerdadVerSiEseEventoEsDeEseAdministrador = True; 
+            miVerdadVerSiEseEventoEsDeEseAdministrador = False; 
         return miVerdadVerSiEseEventoEsDeEseAdministrador;
 
 
@@ -326,6 +337,46 @@ class Administradores(db.Model):
         miAdministradores = Administradores.query.filter_by (_Administradores__correoElectronico = parametroCorreoElectronico).first ();
         db.session.delete (miAdministradores);
         db.session.commit ();
+
+##### funciones que menejan los asistentes de los eventos  ##############################################################################################################################################################################################
+
+    def funcion_conseguirTodosLosAsistentesDelSistema (self):
+        return Asistentes.query.all ();
+
+    def funcion_conseguirTodosLosAsistentesDelAdministrador (self):
+        miListaEventos = Eventos.query.filter_by (_Eventos__administradores_correoElectronico = self.__correoElectronico).all ();
+        miListaAsistentes = [];
+        for i in miListaEventos:
+            miListaVincula = Vincula.query.filter (Vincula.eventos_nombreDelEvento == i.nombreDelEvento, Vincula.eventos_fechaDeCreacionDelEvento == i.fechaDeCreacionDelEvento, Vincula.eventos_lugarDondeSeCelebra == i.lugarDondeSeCelebra).all();
+            for j in miListaVincula: 
+                if (j.asistentes_identificadorUnicoAsistente not in miListaAsistentes):
+                    miListaAsistentes.append (j.asistentes_identificadorUnicoAsistente);
+        return miListaAsistentes;
+
+    def funcion_conseguirPorcentajeAsistentesQueSiHanControladoUnRobot (self, parametroNombreDelEvento, parametroFechaDeCreacionDelEvento, parametroLugarDondeSeCelebra):
+        miPorcentajeAsistentesQueSiHanControladoUnRobot = 0;
+        miListaAsistentesQueSiHanControladoUnRobot = [];
+        miListaVincula = Vincula.query.filter (Vincula.eventos_nombreDelEvento == parametroNombreDelEvento, Vincula.eventos_fechaDeCreacionDelEvento == parametroFechaDeCreacionDelEvento, Vincula.eventos_lugarDondeSeCelebra == parametroLugarDondeSeCelebra).all();
+        miListaDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento == parametroNombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento == parametroFechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra == parametroLugarDondeSeCelebra).all();
+        for i in miListaVincula:
+            miListaControla = Controla.query.filter_by (asistentes_identificadorUnicoAsistente =i.asistentes_identificadorUnicoAsistente).all ();
+            for j in miListaControla: 
+                for k in miListaDisponibleRobot:
+                    # en este momento compruebo que ese asistenete que esta en la tabla controla, su controla se corresponde con algun disponibleRobot de la lista que se ha extraido con ese evento, entonces determino que sí ha controlado al menos un robot
+                    # en algún determinado momento. 
+                    if (j.robots_idRobot == k.robots_idRobot) and (j.fechaTomaDelRobot >= k.fechaComienzoEnEvento) and (j.fechaAbandonoDelRobot <= k.fechaFinEnEvento):
+                        miListaAsistentesQueSiHanControladoUnRobot.append (i.asistentes_identificadorUnicoAsistente);
+                        break;
+        
+        miPorcentajeAsistentesQueSiHanControladoUnRobot = len (miListaAsistentesQueSiHanControladoUnRobot) / len (miListaVincula);
+        miPorcentajeAsistentesQueSiHanControladoUnRobot = miPorcentajeAsistentesQueSiHanControladoUnRobot * 100;
+        miPorcentajeAsistentesQueSiHanControladoUnRobot = round (miPorcentajeAsistentesQueSiHanControladoUnRobot, 2);
+
+        return miPorcentajeAsistentesQueSiHanControladoUnRobot;
+
+    def funcion_conseguirTodosLosAsistentesVinculadosAlEvento (self, parametroNombreDelEvento, parametroFechaDeCreacionDelEvento, parametroLugarDondeSeCelebra):
+        return Vincula.query.filter (Vincula.eventos_nombreDelEvento == parametroNombreDelEvento, Vincula.eventos_fechaDeCreacionDelEvento == parametroFechaDeCreacionDelEvento, Vincula.eventos_lugarDondeSeCelebra == parametroLugarDondeSeCelebra).all();
+
 
 ##### Fin de la clase administradores.  ######################################################################################################################################################################################################################
 

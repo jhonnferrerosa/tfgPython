@@ -47,7 +47,7 @@
                                                 </td>
                                                 <td>{{ iteracion.lugarDondeSeCelebra }}</td>
                                                 <td>
-                                                    <div>{{ iteracion.codigoQR }}</div>
+                                                    <div>{{ parametroURL }}{{ iteracion.codigoQR }}</div>
                                                     <div><a href="{{ url_for ('funcionGenerarCodigoQR', url=iteracion.codigoQR ) }}" class="btn btn-success"> Generar CodigoQR </a></div>
                                                 </td>
                                                 <td>{{ iteracion.calle }}</td>

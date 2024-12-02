@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script type="text/javascript" src="{{ url_for('static', filename='llamaendpointcierranavegador.js') }}"></script>
     <title>robotlisto</title>
 </head>
 <body>
@@ -15,9 +14,9 @@
 
     <nav>
         <p> su robot esta listo. </p>
-        <a href="{{ url_for('funcion_aceptarRobot', idRobot=miRobotParametro.idRobot, nombreDelEvento=miParametroMiEventoNombreDelEvento, fechaDeCreacionDelEvento=miParametroFechaDeCreacionDelEvento, lugarDondeSeCelebra=miParametroLugarDondeSeCelebra, identificadorUnicoAsistente=miParametroIdentificadorUnicoAsistente) }}"> Aceptar robot para controlarlo. </a>
+        <a href="{{ url_for('funcion_aceptarRobot', idRobot=miRobotParametro.idRobot, codigoQR=miParametroCodigoQR, identificadorUnicoAsistente=miParametroIdentificadorUnicoAsistente) }}"> Aceptar robot para controlarlo. </a>
         <br>
-        <a href="{{ url_for('funcion_rechazarRobot', idRobot=miRobotParametro.idRobot, nombreDelEvento=miParametroMiEventoNombreDelEvento, fechaDeCreacionDelEvento=miParametroFechaDeCreacionDelEvento, lugarDondeSeCelebra=miParametroLugarDondeSeCelebra, identificadorUnicoAsistente=miParametroIdentificadorUnicoAsistente) }}"> Rechazar uso del robot </a>
+        <a href="{{ url_for('funcion_rechazarRobot', idRobot=miRobotParametro.idRobot, codigoQR=miParametroCodigoQR ,identificadorUnicoAsistente=miParametroIdentificadorUnicoAsistente) }}"> Rechazar uso del robot </a>
     </nav>
 
 
