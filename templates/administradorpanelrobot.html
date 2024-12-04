@@ -49,9 +49,9 @@
                   
                   {% for iteracion in miListaDeEventosParametro %}
                   <li class="nav-item">
-                    <a href="{{ url_for('funcionAdministradorPanelRobot', nombreDelEvento=iteracion.nombreDelEvento, fechaDeCreacionDelEvento=iteracion.fechaDeCreacionDelEvento, lugarDondeSeCelebra=iteracion.lugarDondeSeCelebra) }}"  class="nav-link">
+                    <a href="{{ url_for('funcionAdministradorPanelRobot', nombreDelEvento=iteracion._nombreDelEvento, fechaDeCreacionDelEvento=iteracion._fechaDeCreacionDelEvento, lugarDondeSeCelebra=iteracion._lugarDondeSeCelebra) }}"  class="nav-link">
                       <i class="far fa-circle nav-icon"></i>
-                      <p>{{ iteracion.nombreDelEvento }} - {{iteracion.fechaDeCreacionDelEvento}} - {{iteracion.lugarDondeSeCelebra}}</p>
+                      <p>{{ iteracion._nombreDelEvento }} - {{iteracion._fechaDeCreacionDelEvento}} - {{iteracion._lugarDondeSeCelebra}}</p>
                     </a>
                   </li>
                   {% endfor %}
@@ -104,13 +104,13 @@
                                         {% for iteracion in miListaRobotsParametro %}
                                         <tbody>
                                             <tr class="align-middle">
-                                                <td>{{ iteracion.idRobot }}</td>
-                                                <td>{{ iteracion.macAddressDelRobot }}</td>
-                                                <td>{{ iteracion.nombreDelRobot }} </td>
-                                                <td>{{ iteracion.descripcionDelRobot }}</td>
+                                                <td>{{ iteracion._idRobot }}</td>
+                                                <td>{{ iteracion._macAddressDelRobot }}</td>
+                                                <td>{{ iteracion._nombreDelRobot }} </td>
+                                                <td>{{ iteracion._descripcionDelRobot }}</td>
                                                 <td>
-                                                    {% if iteracion.fotoDelRobot != None %}
-                                                        <img src="{{ url_for('funcionCapturarImagenRobot', idRobot=iteracion.idRobot) }}" style="max-width: 200px; max-height: 200px; width: auto; height: auto;">
+                                                    {% if iteracion._fotoDelRobot != None %}
+                                                        <img src="{{ url_for('funcionCapturarImagenRobot', idRobot=iteracion._idRobot) }}" style="max-width: 200px; max-height: 200px; width: auto; height: auto;">
                                                     {% else %}
                                                         <p> No hay foto del robot</p>
                                                     {% endif %}
@@ -118,8 +118,8 @@
                                                 {% if miParametroMostrarRobotsNingunEvento == True %}
                                                 <td> 
                                                     <ol class="list-unstyled">
-                                                        <li class="mb-2"> <a href="{{ url_for('funcionAdministradorPanelRobotModificar', idRobot=iteracion.idRobot) }}" class="btn btn-primary">Modificar robot </a></li>
-                                                        <li class="mb-2"> <a href="{{ url_for('funcionAdministradorPanelRobotBorrar', idRobot=iteracion.idRobot) }}" class="btn btn-primary">Borrar robot</a></li>
+                                                        <li class="mb-2"> <a href="{{ url_for('funcionAdministradorPanelRobotModificar', idRobot=iteracion._idRobot) }}" class="btn btn-primary">Modificar robot </a></li>
+                                                        <li class="mb-2"> <a href="{{ url_for('funcionAdministradorPanelRobotBorrar', idRobot=iteracion._idRobot) }}" class="btn btn-primary">Borrar robot</a></li>
                                                     </ol>
                                                 </td>
                                                 {% endif %}

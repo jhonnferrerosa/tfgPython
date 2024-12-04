@@ -75,23 +75,23 @@
                                         {% for iteracion in miListaEventosParametro %}
                                         <tbody>
                                             <tr class="align-middle">
-                                                <td>{{ iteracion.nombreDelEvento }}</td>
+                                                <td>{{ iteracion._nombreDelEvento }}</td>
                                                 <td>
-                                                    {{ iteracion.fechaDeCreacionDelEvento }}
+                                                    {{ iteracion._fechaDeCreacionDelEvento }}
                                                 </td>
-                                                <td>{{ iteracion.lugarDondeSeCelebra }}</td>
+                                                <td>{{ iteracion._lugarDondeSeCelebra }}</td>
                                                 <td>
-                                                    <div>{{ parametroURL }}{{ iteracion.codigoQR }}</div>
-                                                    <div><a href="{{ url_for ('funcionGenerarCodigoQR', url=iteracion.codigoQR ) }}" class="btn btn-success"> Generar CodigoQR </a></div>
+                                                    <div>{{ parametroURL }}{{ iteracion._codigoQR }}</div>
+                                                    <div><a href="{{ url_for ('funcionGenerarCodigoQR', url=iteracion._codigoQR ) }}" class="btn btn-success"> Generar CodigoQR </a></div>
                                                 </td>
-                                                <td>{{ iteracion.calle }}</td>
-                                                <td>{{ iteracion.numero }}</td>
-                                                <td> {{ iteracion.codigoPostal }}</td>
+                                                <td>{{ iteracion._calle }}</td>
+                                                <td>{{ iteracion._numero }}</td>
+                                                <td> {{ iteracion._codigoPostal }}</td>
                                                 <td>
                                                     <ol class="list-unstyled">
-                                                    <li class="mb-2"> <a href="{{ url_for('funcionAdministradorModificarDatosEvento', nombreDelEvento=iteracion.nombreDelEvento, fechaDeCreacionDelEvento=iteracion.fechaDeCreacionDelEvento, lugarDondeSeCelebra=iteracion.lugarDondeSeCelebra) }}" class="btn btn-primary">Modificar datos del evento</a></li>
-                                                    <li class="mb-2"> <a href="{{ url_for('funcionAdministradorModificarRobotsEvento', nombreDelEvento=iteracion.nombreDelEvento, fechaDeCreacionDelEvento=iteracion.fechaDeCreacionDelEvento, lugarDondeSeCelebra=iteracion.lugarDondeSeCelebra) }}" class="btn btn-primary">Modificar robots del evento</a></li>
-                                                    <li class="mb-2"> <a href="{{ url_for('funcionAdministradorPanelEventoBorrar', nombreDelEvento=iteracion.nombreDelEvento, fechaDeCreacionDelEvento=iteracion.fechaDeCreacionDelEvento, lugarDondeSeCelebra=iteracion.lugarDondeSeCelebra) }}" class="btn btn-primary" id="botonborrarevento{{ loop.index}}">Borrar evento</a></li>
+                                                    <li class="mb-2"> <a href="{{ url_for('funcionAdministradorModificarDatosEvento', nombreDelEvento=iteracion._nombreDelEvento, fechaDeCreacionDelEvento=iteracion._fechaDeCreacionDelEvento, lugarDondeSeCelebra=iteracion._lugarDondeSeCelebra) }}" class="btn btn-primary">Modificar datos del evento</a></li>
+                                                    <li class="mb-2"> <a href="{{ url_for('funcionAdministradorModificarRobotsEvento', nombreDelEvento=iteracion._nombreDelEvento, fechaDeCreacionDelEvento=iteracion._fechaDeCreacionDelEvento, lugarDondeSeCelebra=iteracion._lugarDondeSeCelebra) }}" class="btn btn-primary">Modificar robots del evento</a></li>
+                                                    <li class="mb-2"> <a href="{{ url_for('funcionAdministradorPanelEventoBorrar', nombreDelEvento=iteracion._nombreDelEvento, fechaDeCreacionDelEvento=iteracion._fechaDeCreacionDelEvento, lugarDondeSeCelebra=iteracion._lugarDondeSeCelebra) }}" class="btn btn-primary" id="botonborrarevento{{ loop.index}}">Borrar evento</a></li>
                                                     </ol>
                                                 </td>
                                             </tr>

@@ -55,47 +55,48 @@ def index ():
 @app.route ("/index2")
 def index2 ():
     contrasnaHasheda = generate_password_hash ("james")
-    miAdmin1 = Administradores (correoElectronico="jhon@gmail.com", contrasena=contrasnaHasheda);
-    miAdmin2 = Administradores (correoElectronico="ana@gmail.com", contrasena=contrasnaHasheda);
-    miAdmin3 = Administradores (correoElectronico="alberto@gmail.com", contrasena=contrasnaHasheda);
+    miAdmin1 = Administradores (_correoElectronico="jhon@gmail.com", _contrasena=contrasnaHasheda);
+    miAdmin2 = Administradores (_correoElectronico="ana@gmail.com", _contrasena=contrasnaHasheda);
+    miAdmin3 = Administradores (_correoElectronico="alberto@gmail.com", _contrasena=contrasnaHasheda);
+
     db.session.add (miAdmin1);
     db.session.add (miAdmin2);
     db.session.add (miAdmin3);
     db.session.commit ();
 
-    miEvento1 = Eventos (nombreDelEvento="aula1", fechaDeCreacionDelEvento='2024-10-01', lugarDondeSeCelebra="ifema1", codigoQR="miQR1", administradores_correoElectronico="jhon@gmail.com");
-    miEvento2 = Eventos (nombreDelEvento="puertas abiertas1", fechaDeCreacionDelEvento='2024-10-01', lugarDondeSeCelebra="alcala", codigoQR="miQR2", administradores_correoElectronico="jhon@gmail.com");
-    miEvento3 = Eventos (nombreDelEvento="eurobot2042", fechaDeCreacionDelEvento='2024-11-27 11:19:48', lugarDondeSeCelebra="ifema2042", codigoQR="eurobot20422024-11-27T11:19:48ifema2042", administradores_correoElectronico="jhon@gmail.com");
-    miEvento4 = Eventos (nombreDelEvento="simo2025", fechaDeCreacionDelEvento='2024-10-01', lugarDondeSeCelebra="torrejon", codigoQR="simo20252024-10-01torrejon", administradores_correoElectronico="ana@gmail.com");
+    miEvento1 = Eventos (_nombreDelEvento="aula1", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="ifema1", _codigoQR="miQR1", _administradores_correoElectronico="jhon@gmail.com");
+    miEvento2 = Eventos (_nombreDelEvento="puertas abiertas1", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="alcala", _codigoQR="miQR2", _administradores_correoElectronico="jhon@gmail.com");
+    miEvento3 = Eventos (_nombreDelEvento="eurobot2042", _fechaDeCreacionDelEvento='2024-11-27 11:19:48', _lugarDondeSeCelebra="ifema2042", _codigoQR="eurobot20422024-11-27T11:19:48ifema2042", _administradores_correoElectronico="jhon@gmail.com");
+    miEvento4 = Eventos (_nombreDelEvento="simo2025", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="torrejon", _codigoQR="simo20252024-10-01torrejon", _administradores_correoElectronico="ana@gmail.com");
     db.session.add (miEvento1);
     db.session.add (miEvento2);
     db.session.add (miEvento3);
     db.session.add (miEvento4);
     db.session.commit ();
 
-    miAsistente1 = Asistentes (identificadorUnicoAsistente="IUA1", apodoAsistente="apodo1", eventos_nombreDelEvento="aula1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="ifema1");
-    miAsistente2 = Asistentes (identificadorUnicoAsistente="IUA2", apodoAsistente="apodo2", eventos_nombreDelEvento="aula1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="ifema1");
-    miAsistente3 = Asistentes (identificadorUnicoAsistente="IUA3", apodoAsistente="apodo3", eventos_nombreDelEvento="aula1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="ifema1");
-    miAsistente4 = Asistentes (identificadorUnicoAsistente="IUA4", apodoAsistente="apodo4", eventos_nombreDelEvento="puertas abiertas1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="alcala");
+    miAsistente1 = Asistentes (_identificadorUnicoAsistente="IUA1", _apodoAsistente="apodo1");
+    miAsistente2 = Asistentes (_identificadorUnicoAsistente="IUA2", _apodoAsistente="apodo2");
+    miAsistente3 = Asistentes (_identificadorUnicoAsistente="IUA3", _apodoAsistente="apodo3");
+    miAsistente4 = Asistentes (_identificadorUnicoAsistente="IUA4", _apodoAsistente="apodo4");
     db.session.add (miAsistente1);
     db.session.add (miAsistente2);
     db.session.add (miAsistente3);
     db.session.add (miAsistente4);
     db.session.commit  ();
 
-    miRobot1 = Robots (idRobot=101, macAddressDelRobot="00:00:00:00:00:00", nombreDelRobot="robot1", disponible=True, fotoDelRobot=None, descripcionDelRobot=None);
-    miRobot2 = Robots (idRobot=102, macAddressDelRobot="11:11:11:11:11:11", nombreDelRobot="robot2", disponible=True, fotoDelRobot=None, descripcionDelRobot=None);
-    miRobot3 = Robots (idRobot=103, macAddressDelRobot="22:22:22:22:22:22", nombreDelRobot="robot3", disponible=True, fotoDelRobot=None, descripcionDelRobot=None);
-    miRobot4 = Robots (idRobot=104, macAddressDelRobot="33:33:33:33:33:33", nombreDelRobot="robot4", disponible=True, fotoDelRobot=None, descripcionDelRobot=None);
-    miRobot5 = Robots (idRobot=105, macAddressDelRobot="44:44:44:44:44:44", nombreDelRobot="robot5", disponible=True, fotoDelRobot=None, descripcionDelRobot=None);
-    miRobot6 = Robots (idRobot=106, macAddressDelRobot="55:55:55:55:55:55", nombreDelRobot="robot6", disponible=True, fotoDelRobot=None, descripcionDelRobot=None);
-    miRobot7 = Robots (idRobot=107, macAddressDelRobot="66:66:66:66:66:66", nombreDelRobot="robot7", disponible=True, fotoDelRobot=None, descripcionDelRobot=None);
-    miRobot8 = Robots (idRobot=108, macAddressDelRobot="77:77:77:77:77:77", nombreDelRobot="robot8", disponible=True, fotoDelRobot=None, descripcionDelRobot=None);
-    miRobot9 = Robots (idRobot=109, macAddressDelRobot="88:88:88:88:88:88", nombreDelRobot="robot9", disponible=True, fotoDelRobot=None, descripcionDelRobot=None);
-    miRobot10 = Robots (idRobot=110, macAddressDelRobot="99:99:99:99:99:99", nombreDelRobot="robot10", disponible=False, fotoDelRobot=None, descripcionDelRobot=None);
-    miRobot11 = Robots (idRobot=111, macAddressDelRobot="AA:AA:AA:AA:AA:AA", nombreDelRobot="robot11", disponible=True, fotoDelRobot=None, descripcionDelRobot=None);
-    miRobot12 = Robots (idRobot=112, macAddressDelRobot="BB:BB:BB:BB:BB:BB", nombreDelRobot="robot12", disponible=False, fotoDelRobot=None, descripcionDelRobot=None);
-    miRobot13 = Robots (idRobot=113, macAddressDelRobot="CC:CC:CC:CC:CC:CC", nombreDelRobot="robot13", disponible=True, fotoDelRobot=None, descripcionDelRobot=None);
+    miRobot1 = Robots (_idRobot=101, _macAddressDelRobot="00:00:00:00:00:00", _nombreDelRobot="robot1", _disponible=True, _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot2 = Robots (_idRobot=102, _macAddressDelRobot="11:11:11:11:11:11", _nombreDelRobot="robot2", _disponible=True, _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot3 = Robots (_idRobot=103, _macAddressDelRobot="22:22:22:22:22:22", _nombreDelRobot="robot3", _disponible=True, _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot4 = Robots (_idRobot=104, _macAddressDelRobot="33:33:33:33:33:33", _nombreDelRobot="robot4", _disponible=True, _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot5 = Robots (_idRobot=105, _macAddressDelRobot="44:44:44:44:44:44", _nombreDelRobot="robot5", _disponible=True, _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot6 = Robots (_idRobot=106, _macAddressDelRobot="55:55:55:55:55:55", _nombreDelRobot="robot6", _disponible=True, _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot7 = Robots (_idRobot=107, _macAddressDelRobot="66:66:66:66:66:66", _nombreDelRobot="robot7", _disponible=True, _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot8 = Robots (_idRobot=108, _macAddressDelRobot="77:77:77:77:77:77", _nombreDelRobot="robot8", _disponible=True, _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot9 = Robots (_idRobot=109, _macAddressDelRobot="88:88:88:88:88:88", _nombreDelRobot="robot9", _disponible=True, _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot10 = Robots (_idRobot=110, _macAddressDelRobot="99:99:99:99:99:99", _nombreDelRobot="robot10", _disponible=False, _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot11 = Robots (_idRobot=111, _macAddressDelRobot="AA:AA:AA:AA:AA:AA", _nombreDelRobot="robot11", _disponible=True, _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot12 = Robots (_idRobot=112, _macAddressDelRobot="BB:BB:BB:BB:BB:BB", _nombreDelRobot="robot12", _disponible=False, _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot13 = Robots (_idRobot=113, _macAddressDelRobot="CC:CC:CC:CC:CC:CC", _nombreDelRobot="robot13", _disponible=True, _fotoDelRobot=None, _descripcionDelRobot=None);
     db.session.add (miRobot1);
     db.session.add (miRobot2);
     db.session.add (miRobot3);
@@ -183,7 +184,7 @@ def miFuncionAntesDeLaPeticion ():
     print  ("miFuncionAntesDeLaPeticion() --- este es el endpoint: ", request.endpoint); 
     miVariablePermitirAccesoSinCorreoElectronico = True;
 
-    if (request.endpoint == 'index2') or (request.endpoint == None) or (request.endpoint == 'funcionAdministradorsignup') or (request.endpoint == 'funcion_aceptarRobot') or (request.endpoint == 'funcion_rechazarRobot') or (request.endpoint == 'funcion_registrarAsistente') or (request.endpoint == 'static') or (request.endpoint == 'funcionAdministradorLogin'):
+    if (request.endpoint == 'index2') or (request.endpoint == None) or (request.endpoint == 'funcionAdministradorsignup') or (request.endpoint == 'funcion_aceptarRobot') or (request.endpoint == 'funcion_rechazarRobot') or (request.endpoint == 'funcion_registrarAsistente') or (request.endpoint == 'static') or (request.endpoint == 'funcionAdministradorLogin') or (request.endpoint == 'funcionError404'):
         miVariablePermitirAccesoSinCorreoElectronico = False;
 
     # en el caso de que el correoElectronico no este en la sesion y ademas la URL que yo he puesto no sea de las permitidas, me voy al loggin.  
@@ -193,22 +194,27 @@ def miFuncionAntesDeLaPeticion ():
 
 
 
-@app.errorhandler (404)  # esto es para sacar el HTML que contiene el mensaje de error, para los casos en los que 
-# la aplicacion caiga en algun error. 
+@app.errorhandler (404)  # esto es para sacar el HTML que contiene el mensaje de error, para los casos en los que la aplicacion caiga en algun error. 
 def miPaginaNoEncntradaError (e):
 	return render_template ("404.html"), 404; 
+
+@app.route ('/error404/<mensajeerror>')
+def funcionError404 (mensajeerror = None):
+    print ("funcionError404()----")
+    return render_template ("404.html", parametroMensajeError = mensajeerror);
+
 
 # este endpoint es necesario para la representacion de las imagenes en el HTML. Ya en la base dde datos la imagen se alamecena codificada, lo que hago aqui es decodificarla y darsela al HTML 
 @app.route ('/capturarimagenrobot/<int:idRobot>')
 def funcionCapturarImagenRobot (idRobot):
-    miRobot = Robots.query.filter_by (_Robots__idRobot=idRobot).first();
-    return send_file (BytesIO(miRobot.fotoDelRobot), mimetype='image/jpeg');
+    miRobot = Robots.query.filter_by (_idRobot=idRobot).first();
+    return send_file (BytesIO(miRobot._fotoDelRobot), mimetype='image/jpeg');
 
 def crearApodoUnico ():
     miListaDeAnimales = ["TigreValiente", "DelfínSonriente", "BúhoSabio", "LeónCorajoso", "MariposaMágica", "PandaTierno", "ÁguilaLibre", "ZorroAstuto", "TortugaLenta", "LoboFeroz"];
     miApodoCreado = random.choice (miListaDeAnimales)  +"#"  + os.urandom(2).hex();
     #mientras ese apodo que me cabo de inventar, este en la BBDD, lo que hago es volver a generarlo.  Asi hasta que obtenga uno que no este en la tabla Asistentes, porque recordar que es clava candidata. 
-    while (Asistentes.query.filter_by (_Asistentes__apodoAsistente = miApodoCreado).first() != None):
+    while (Asistentes.query.filter_by (_apodoAsistente = miApodoCreado).first() != None):
         miApodoCreado = random.choice (miListaDeAnimales) + os.urandom(2).hex();
     return miApodoCreado;
 
@@ -224,6 +230,7 @@ def funcionGenerarCodigoQR (url):
     # Esto es obligatorio hacerlo por que cuando se escribe en el objeto BytesIO, hay un puntero que indice el principio del archivo y una vez que se ha escrito, este ppuntero indica
     # el principio del archivo, al final de este, por lo tanto hay que volver este puntero al principio del objeto para saber en donde empieza. 
     miPreparacionImagen.seek(0);
+    # esto as_attachment lo que indica es que se obtendrá como un descargable. 
     return send_file(miPreparacionImagen, mimetype='image/png', as_attachment=True, download_name=miVariableGlobalURL + url + ".png");
 
 
@@ -232,35 +239,35 @@ def funcionGenerarCodigoQR (url):
 
 @app.route ("/<codigoQR>") 
 def funcion_registrarAsistente (codigoQR):
-    miEventos = Eventos.query.filter (Eventos._Eventos__codigoQR == codigoQR).first();
+    miEventos = Eventos.query.filter (Eventos._codigoQR == codigoQR).first();
     if (miEventos == None):
         return "<p> funcion_registrarAsistente () --- error, el evento que se ha pasado por parametro, no existe. </p>";
     else:
         if (('token' in session) == False):
             session['token'] = os.urandom(24).hex(); 
-            miAsistentes = Asistentes (identificadorUnicoAsistente = session['token'], apodoAsistente=crearApodoUnico(), eventos_nombreDelEvento=miEventos.nombreDelEvento, eventos_fechaDeCreacionDelEvento= miEventos.fechaDeCreacionDelEvento, eventos_lugarDondeSeCelebra=miEventos.lugarDondeSeCelebra);
+            miAsistentes = Asistentes (_identificadorUnicoAsistente = session['token'], _apodoAsistente=crearApodoUnico());
             db.session.add (miAsistentes);
             db.session.commit ();
-            miVincula = Vincula (asistentes_identificadorUnicoAsistente=session['token'], eventos_nombreDelEvento=miEventos.nombreDelEvento, eventos_fechaDeCreacionDelEvento=miEventos.fechaDeCreacionDelEvento, eventos_lugarDondeSeCelebra=miEventos.lugarDondeSeCelebra, fechaAcceso=datetime.now(), fechaSalida=datetime.now() + timedelta(hours=1));
+            miVincula = Vincula (asistentes_identificadorUnicoAsistente=session['token'], eventos_nombreDelEvento=miEventos._nombreDelEvento, eventos_fechaDeCreacionDelEvento=miEventos._fechaDeCreacionDelEvento, eventos_lugarDondeSeCelebra=miEventos._lugarDondeSeCelebra, fechaAcceso=datetime.now(), fechaSalida=datetime.now() + timedelta(hours=1));
             db.session.add (miVincula);
             db.session.commit ();
         else: 
             # esta parte de aqui la hago porque puede haber clientes que almacenen su identificadorUnnicoAsistente, pero en otro momento se puede haber reseteado la aplicacion y la BBDD. 
-            miAsistentes = Asistentes.query.filter_by (_Asistentes__identificadorUnicoAsistente= session['token']).first ();
+            miAsistentes = Asistentes.query.filter_by (_identificadorUnicoAsistente= session['token']).first ();
             if (miAsistentes == None):
-                miAsistentes = Asistentes (identificadorUnicoAsistente = session['token'], apodoAsistente=crearApodoUnico(), eventos_nombreDelEvento=miEventos.nombreDelEvento, eventos_fechaDeCreacionDelEvento= miEventos.fechaDeCreacionDelEvento, eventos_lugarDondeSeCelebra=miEventos.lugarDondeSeCelebra);
+                miAsistentes = Asistentes (_identificadorUnicoAsistente = session['token'], _apodoAsistente=crearApodoUnico());
                 db.session.add (miAsistentes);
                 db.session.commit ();
-                miVincula = Vincula (asistentes_identificadorUnicoAsistente=session['token'], eventos_nombreDelEvento=miEventos.nombreDelEvento, eventos_fechaDeCreacionDelEvento=miEventos.fechaDeCreacionDelEvento, eventos_lugarDondeSeCelebra=miEventos.lugarDondeSeCelebra, fechaAcceso=datetime.now(), fechaSalida=datetime.now() + timedelta(hours=1));
+                miVincula = Vincula (asistentes_identificadorUnicoAsistente=session['token'], eventos_nombreDelEvento=miEventos._nombreDelEvento, eventos_fechaDeCreacionDelEvento=miEventos._fechaDeCreacionDelEvento, eventos_lugarDondeSeCelebra=miEventos._lugarDondeSeCelebra, fechaAcceso=datetime.now(), fechaSalida=datetime.now() + timedelta(hours=1));
                 db.session.add (miVincula);
                 db.session.commit ();
             else: 
-                miVincula = Vincula.query.filter (Vincula.asistentes_identificadorUnicoAsistente == session['token'], Vincula.eventos_nombreDelEvento == miEventos.nombreDelEvento, Vincula.eventos_fechaDeCreacionDelEvento == miEventos.fechaDeCreacionDelEvento, Vincula.eventos_lugarDondeSeCelebra == miEventos.lugarDondeSeCelebra).first();
+                miVincula = Vincula.query.filter (Vincula.asistentes_identificadorUnicoAsistente == session['token'], Vincula.eventos_nombreDelEvento == miEventos._nombreDelEvento, Vincula.eventos_fechaDeCreacionDelEvento == miEventos._fechaDeCreacionDelEvento, Vincula.eventos_lugarDondeSeCelebra == miEventos._lugarDondeSeCelebra).first();
                 # en el caso de que haya token de sesion y este en la tabla Asistentes, pero no este vinculado a este evento (segun la BBDD), entonces lo vinculo a este otro evento nuevo, digo otro nuevo porque sí o sí este asistente para que exista, tiene que estar vinculado a un evento. Pongo esto 
                 # porque me puedo llegar a imaginar que la aplicacion de Kodular funciona de la siguiente manera: Un asistente maneja robots un día, y quizás una semana después aunque la aplicación se haya caido, la aplicación cliente de Kodular guarda el sesion token para esa URL, y por lo tanto el 
                 # asistente sí tiene token de sesion, está en la tabla asistente, pero con este nuevo evento, no está en la tabla vincula. 
                 if (miVincula == None):
-                    miVincula = Vincula (asistentes_identificadorUnicoAsistente=session['token'], eventos_nombreDelEvento=miEventos.nombreDelEvento, eventos_fechaDeCreacionDelEvento=miEventos.fechaDeCreacionDelEvento, eventos_lugarDondeSeCelebra=miEventos.lugarDondeSeCelebra, fechaAcceso=datetime.now(), fechaSalida=datetime.now() + timedelta(hours=6));
+                    miVincula = Vincula (asistentes_identificadorUnicoAsistente=session['token'], eventos_nombreDelEvento=miEventos._nombreDelEvento, eventos_fechaDeCreacionDelEvento=miEventos._fechaDeCreacionDelEvento, eventos_lugarDondeSeCelebra=miEventos._lugarDondeSeCelebra, fechaAcceso=datetime.now(), fechaSalida=datetime.now() + timedelta(hours=6));
                     db.session.add (miVincula);
                     db.session.commit ();
         
@@ -278,15 +285,15 @@ def funcion_registrarAsistente (codigoQR):
                 miDiccionarioAsistentesYestadoControlandoRobot[session['token']] = False;
 
         # ahora consigo los robots y ver que cantidad de robots rechazados ese token en ese evento tiene, para de esta manera no mostrarle los robot que  están rechazados. 
-        miListaDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento==miEventos.nombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento==miEventos.fechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra==miEventos.lugarDondeSeCelebra, DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now()).all();
+        miListaDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento==miEventos._nombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento==miEventos._fechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra==miEventos._lugarDondeSeCelebra, DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now()).all();
     
         # hay 2 pasos para conseguir un robot.
         # Paso1. esta es la parte que analiza la cantidad de robots que estan en servicio. 
         #aqui lo que hago es quitar elementos de la lista que acabo de obtener de la BBDD en funcion de si el roobot esta en servicio o no. 
         # con esto lo que hago es recorrer una copia de la lista, ya que la original la voy a modificcar: miListaDisponibleRobot[:]:
         for i in miListaDisponibleRobot[:]:
-            miRobots = Robots.query.filter_by (_Robots__idRobot = i.robots_idRobot).first ();
-            if (miRobots.disponible == False):
+            miRobots = Robots.query.filter_by (_idRobot = i.robots_idRobot).first ();
+            if (miRobots._disponible == False):
                 miListaDisponibleRobot.remove (i);
 
         # paso2. de todos los robots que esten en servicio, voy a eliminar los que ya esten siendo usados. 
@@ -299,11 +306,11 @@ def funcion_registrarAsistente (codigoQR):
         # en el caso de que la lista este vacia, es decir que no tenga ningun robot, entonces le devolvere un mensaje de que esta esperando por un robot. 
         if (not miListaDisponibleRobot):
             miListaRobots = [];
-            miListaDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento==miEventos.nombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento==miEventos.fechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra==miEventos.lugarDondeSeCelebra, DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now()).all();
+            miListaDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento==miEventos._nombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento==miEventos._fechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra==miEventos._lugarDondeSeCelebra, DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now()).all();
             for miDisponibleRobotObjeto in miListaDisponibleRobot: 
-                miRobots = Robots.query.filter_by (_Robots__idRobot=miDisponibleRobotObjeto.robots_idRobot).first ();
+                miRobots = Robots.query.filter_by (_idRobot=miDisponibleRobotObjeto.robots_idRobot).first ();
                 miListaRobots.append (miRobots);
-            return (render_template("registrarasistente.html", miParametroMiEventoNombreDelEvento=miEventos.nombreDelEvento, miListaRobotsParametro=miListaRobots, miParametroApodoAsistente=miAsistentes.apodoAsistente));
+            return (render_template("registrarasistente.html", miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miListaRobotsParametro=miListaRobots, miParametroApodoAsistente=miAsistentes._apodoAsistente));
         else:
             # por ultimo lo que hago es la lógica de los robots rechazados. 
             miVariabletokenDeSesionYeventoQR = session ['token'] +"-" +codigoQR;
@@ -313,22 +320,22 @@ def funcion_registrarAsistente (codigoQR):
                 miRobots = None;
                 for miDisponibleRobotObjeto in miListaDisponibleRobot:
                     if (miDisponibleRobotObjeto.robots_idRobot not in miDiccionarioGlobalTokensListaDeRobotsRechazados[miVariabletokenDeSesionYeventoQR]):
-                        miRobots = Robots.query.filter_by (_Robots__idRobot=miDisponibleRobotObjeto.robots_idRobot).first();
+                        miRobots = Robots.query.filter_by (_idRobot=miDisponibleRobotObjeto.robots_idRobot).first();
                         break;
                 # en este caso si no he conseguido ningún robot, eso significa que he pasado todos, voy a olvidarme de todos los que he rechazado. 
                 if (miRobots == None):
                     miDiccionarioGlobalTokensListaDeRobotsRechazados[miVariabletokenDeSesionYeventoQR].clear ();
-                    miRobots = Robots.query.filter_by (_Robots__idRobot=miListaDisponibleRobot[0].robots_idRobot).first();
-                return render_template ("robotlisto.html", miRobotParametro=miRobots, miParametroCodigoQR=codigoQR, miParametroApodoAsistente=miAsistentes.apodoAsistente);
+                    miRobots = Robots.query.filter_by (_idRobot=miListaDisponibleRobot[0].robots_idRobot).first();
+                return render_template ("robotlisto.html", miRobotParametro=miRobots, miParametroCodigoQR=codigoQR, miParametroApodoAsistente=miAsistentes._apodoAsistente);
            # en este caso que ese token con ese evento, no está en el miDiccionarioGlobalTokensListaDeRobotsRechazados  entonces eso significa que ese asistente, nunca ha rechazado un robot, por tanto le propongo el primer robot que encuentre. 
             else:
-                miRobots = Robots.query.filter_by (_Robots__idRobot=miListaDisponibleRobot[0].robots_idRobot).first(); 
-                return render_template ("robotlisto.html", miRobotParametro=miRobots, miParametroCodigoQR=codigoQR, miParametroApodoAsistente=miAsistentes.apodoAsistente);
+                miRobots = Robots.query.filter_by (_idRobot=miListaDisponibleRobot[0].robots_idRobot).first(); 
+                return render_template ("robotlisto.html", miRobotParametro=miRobots, miParametroCodigoQR=codigoQR, miParametroApodoAsistente=miAsistentes._apodoAsistente);
 
 
 @app.route ('/aceptarrobot/<int:idRobot>/<codigoQR>')
 def funcion_aceptarRobot (idRobot, codigoQR):
-    miEventos = Eventos.query.filter (Eventos._Eventos__codigoQR == codigoQR).first();
+    miEventos = Eventos.query.filter (Eventos._codigoQR == codigoQR).first();
     if (miEventos == None):
         return "<p> funcion_registrarAsistente () --- error, el evento que se ha pasado por parametro, no existe. </p>";
     else:
@@ -336,11 +343,11 @@ def funcion_aceptarRobot (idRobot, codigoQR):
             return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR)); 
         else:
             #en el caso de que no ese asistente no exista en la BBDD, lo delvuelvo a funcion_registrarAsistente. 
-            miAsistentes = Asistentes.query.filter_by (_Asistentes__identificadorUnicoAsistente = session['token']).first ();
+            miAsistentes = Asistentes.query.filter_by (_identificadorUnicoAsistente = session['token']).first ();
             if (miAsistentes == None):
                 return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR)); 
             else:
-                miVincula = Vincula.query.filter (Vincula.asistentes_identificadorUnicoAsistente == session['token'], Vincula.eventos_nombreDelEvento == miEventos.nombreDelEvento, Vincula.eventos_fechaDeCreacionDelEvento == miEventos.fechaDeCreacionDelEvento, Vincula.eventos_lugarDondeSeCelebra == miEventos.lugarDondeSeCelebra).first();
+                miVincula = Vincula.query.filter (Vincula.asistentes_identificadorUnicoAsistente == session['token'], Vincula.eventos_nombreDelEvento == miEventos._nombreDelEvento, Vincula.eventos_fechaDeCreacionDelEvento == miEventos._fechaDeCreacionDelEvento, Vincula.eventos_lugarDondeSeCelebra == miEventos._lugarDondeSeCelebra).first();
                 if (miVincula == None):
                     return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR)); 
 
@@ -348,19 +355,19 @@ def funcion_aceptarRobot (idRobot, codigoQR):
         miVincula.fechaSalida = datetime.now() + timedelta (hours=1);
         db.session.commit ();
 
-    miControla = Controla.query.filter (Controla.asistentes_identificadorUnicoAsistente == miAsistentes.identificadorUnicoAsistente, Controla.fechaTomaDelRobot <=datetime.now(), Controla.fechaAbandonoDelRobot >= datetime.now()).first ();
+    miControla = Controla.query.filter (Controla.asistentes_identificadorUnicoAsistente == miAsistentes._identificadorUnicoAsistente, Controla.fechaTomaDelRobot <=datetime.now(), Controla.fechaAbandonoDelRobot >= datetime.now()).first ();
     # en este momento el asistente esta controlando un robot. 
     if (miControla):
         # en este caso solicito el objeto Asistentes, ya que el es el que tiene los métodos para consultar eventos y consultar robots. 
         miRobots = miAsistentes.funcion_consultaRobot (miControla.robots_idRobot); 
         miEventos = miAsistentes.funcion_consultaEvento (miControla.robots_idRobot);
-        return render_template ("robotmanejando.html", miRobotParametro=miRobots, miParametroMiEventoNombreDelEvento=miEventos.nombreDelEvento, miParametroIdentificadorUnicoAsistente=miAsistentes.identificadorUnicoAsistente, miParametroApodoAsistente=miAsistentes.apodoAsistente);
+        return render_template ("robotmanejando.html", miRobotParametro=miRobots, miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miParametroIdentificadorUnicoAsistente=miAsistentes._identificadorUnicoAsistente, miParametroApodoAsistente=miAsistentes._apodoAsistente);
     else:
         # de esta forma prevengo el fallo de que si la aplicacion se cae, que a kodeular no le de error, ya que cuando la aplcacion empieza a ejecutarse, ningun diccionario esta inicializado. 
-        if (miAsistentes.identificadorUnicoAsistente not in miDiccionarioAsistentesYestadoControlandoRobot):
+        if (miAsistentes._identificadorUnicoAsistente not in miDiccionarioAsistentesYestadoControlandoRobot):
             return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR)); 
         else:
-            if (miDiccionarioAsistentesYestadoControlandoRobot[miAsistentes.identificadorUnicoAsistente] == True):
+            if (miDiccionarioAsistentesYestadoControlandoRobot[miAsistentes._identificadorUnicoAsistente] == True):
                 return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR)); 
             else:
                 miControla = Controla.query.filter (Controla.robots_idRobot ==idRobot, Controla.fechaTomaDelRobot <=datetime.now(), Controla.fechaAbandonoDelRobot >= datetime.now()).first();
@@ -374,35 +381,35 @@ def funcion_aceptarRobot (idRobot, codigoQR):
                         return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR));     
                     else: 
                         # aqui lo que hago es comprobar si el robot esta o no en servicio, en el caso de que no lo este, entonces lo mando a la  funcion_registrarAsistente para que consiga otro robot. 
-                        if (miRobots.disponible == False):
+                        if (miRobots._disponible == False):
                             return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR)); 
                         else:
-                            miAsistentes.pasarAcontrolarRobot (miAsistentes.identificadorUnicoAsistente, idRobot);
+                            miAsistentes.pasarAcontrolarRobot (miAsistentes._identificadorUnicoAsistente, idRobot);
                             miEventos = miAsistentes.funcion_consultaEvento (idRobot);
-                            miDiccionarioAsistentesYestadoControlandoRobot[miAsistentes.identificadorUnicoAsistente] = True;
+                            miDiccionarioAsistentesYestadoControlandoRobot[miAsistentes._identificadorUnicoAsistente] = True;
                             # como ya es definitivo que paso a controlar un robot, lo que hago es que la lista del diccionario que almecena los robots que han sido rechazados, no tenga ningun elemento, para que cuando quiera elegir de nuevo un robot,
                             # (despues de que haya acabado el tiempo de utilizar uno o le haya expulsado un administradir) que no haya ningun problema. 
-                            miVariabletokenDeSesionYeventoQR = miAsistentes.identificadorUnicoAsistente +"-" +codigoQR;
+                            miVariabletokenDeSesionYeventoQR = miAsistentes._identificadorUnicoAsistente +"-" +codigoQR;
                             # este if lo tengo porque unas veces el asistente no rechaza un robot, por lo tanto nunca se mete en este diccionario, entonces lo que estoy haciendo es ver primero si esta.
                             if (miVariabletokenDeSesionYeventoQR in miDiccionarioGlobalTokensListaDeRobotsRechazados):
                                 miDiccionarioGlobalTokensListaDeRobotsRechazados[miVariabletokenDeSesionYeventoQR].clear (); 
-                            return (render_template ("robotmanejando.html", miRobotParametro=miRobots, miParametroMiEventoNombreDelEvento=miEventos.nombreDelEvento, miParametroIdentificadorUnicoAsistente=miAsistentes.identificadorUnicoAsistente, miParametroApodoAsistente=miAsistentes.apodoAsistente));
+                            return (render_template ("robotmanejando.html", miRobotParametro=miRobots, miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miParametroIdentificadorUnicoAsistente=miAsistentes._identificadorUnicoAsistente, miParametroApodoAsistente=miAsistentes._apodoAsistente));
 
 
 @app.route ('/rechazarrobot/<int:idRobot>/<codigoQR>')
 def funcion_rechazarRobot (idRobot, codigoQR):
-    miEventos = Eventos.query.filter (Eventos._Eventos__codigoQR == codigoQR).first();
+    miEventos = Eventos.query.filter (Eventos._codigoQR == codigoQR).first();
     if (miEventos == None):
         return "<p> funcion_registrarAsistente () --- error, el evento que se ha pasado por parametro, no existe. </p>";
     else:
         if (('token' in session) == False):
             return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR)); 
         else:
-            miAsistentes = Asistentes.query.filter_by (_Asistentes__identificadorUnicoAsistente = session['token']).first ();
+            miAsistentes = Asistentes.query.filter_by (_identificadorUnicoAsistente = session['token']).first ();
             if (miAsistentes == None):
                 return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR)); 
             else:
-                miVincula = Vincula.query.filter (Vincula.asistentes_identificadorUnicoAsistente == session['token'], Vincula.eventos_nombreDelEvento == miEventos.nombreDelEvento, Vincula.eventos_fechaDeCreacionDelEvento == miEventos.fechaDeCreacionDelEvento, Vincula.eventos_lugarDondeSeCelebra == miEventos.lugarDondeSeCelebra).first();
+                miVincula = Vincula.query.filter (Vincula.asistentes_identificadorUnicoAsistente == session['token'], Vincula.eventos_nombreDelEvento == miEventos._nombreDelEvento, Vincula.eventos_fechaDeCreacionDelEvento == miEventos._fechaDeCreacionDelEvento, Vincula.eventos_lugarDondeSeCelebra == miEventos._lugarDondeSeCelebra).first();
                 if (miVincula == None):
                     return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR)); 
 
@@ -412,7 +419,7 @@ def funcion_rechazarRobot (idRobot, codigoQR):
 
     # aqui lo que hago es dejar preparada la calve del diccionario miDiccionarioGlobalTokensListaDeRobotsRechazados para que su clave  sea el token y el codigoQR, para que este elemento sea unico, lo que voy a dejar en el valor va a ser una lista de
     #idRobot para saber que estos son los que se han rechazado. 
-    miVariabletokenDeSesionYeventoQR = miAsistentes.identificadorUnicoAsistente +"-" +codigoQR;
+    miVariabletokenDeSesionYeventoQR = miAsistentes._identificadorUnicoAsistente +"-" +codigoQR;
 
     # en el caso de que ese token con evento, no este en la clave del diccionrio, lo que hago es inicializarlo como lista, que recordar que ahi van a ir los robots que han sido rechazados.
     if (miVariabletokenDeSesionYeventoQR not in miDiccionarioGlobalTokensListaDeRobotsRechazados): 
@@ -429,12 +436,13 @@ def funcionAdministradorsignup ():
     miFormulario = formulario.FormularioAcceder (request.form);
     if (request.method == 'POST'):
         if (miFormulario.contrasena.data != miFormulario.confirmarContrasena.data):
-            raise Exception ("administradorsignup --- las contarseñas no coinciden. ");
-        miContrasenaHaseada = generate_password_hash (miFormulario.contrasena.data);
-        miAdministradores = Administradores (correoElectronico=miFormulario.correoElectronico.data, contrasena=miContrasenaHaseada);
-        db.session.add (miAdministradores);
-        db.session.commit ();
-        return redirect (url_for ('funcionAdministradorLogin'));
+            return redirect (url_for ('funcionError404', mensajeerror="administradorsignup --- las contarseñas no coinciden. "));  
+        else:
+            miContrasenaHaseada = generate_password_hash (miFormulario.contrasena.data);
+            miAdministradores = Administradores (_correoElectronico=miFormulario.correoElectronico.data, _contrasena=miContrasenaHaseada);
+            db.session.add (miAdministradores);
+            db.session.commit ();
+            return redirect (url_for ('funcionAdministradorLogin'));
 
     return (render_template ("administradorsignup.html", miFormularioParametro=miFormulario));
 
@@ -444,10 +452,10 @@ def funcionAdministradorLogin ():
     miVariableUsuarioIncorrecto = False;
     miVariableContrasenaIncorrecta = False;
     if (request.method == 'POST'):
-        miAdministradores = Administradores.query.filter_by (_Administradores__correoElectronico=miFormulario.correoElectronico.data).first ();
+        miAdministradores = Administradores.query.filter_by (_correoElectronico=miFormulario.correoElectronico.data).first ();
         if (miAdministradores != None):
             if (miAdministradores.validarContrasena (miFormulario.contrasena.data)):
-                session['correoElectronico'] = miAdministradores.correoElectronico;
+                session['correoElectronico'] = miAdministradores._correoElectronico;
                 return redirect (url_for ('funcionAdministradorHome'));
             else:
                 # en este caso la contraseña pasada, no coincide con el HASH, por lo tanto contraseña incorrecta. 
@@ -466,7 +474,7 @@ def funcionAdministradorCerrarSesion ():
 
 @app.route('/administradorhome')   
 def funcionAdministradorHome():
-    miAdministradores = Administradores.query.filter_by (_Administradores__correoElectronico=session['correoElectronico']).first ();
+    miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
 
     miVariableCantidadDeEventosDelAdminstrador = len (miAdministradores.funcion_conseguirTodosLosEventosDeEseAdministrador());
     miVariableCantidadDeAsistentesDelAdministrador = len(miAdministradores.funcion_conseguirTodosLosAsistentesDelAdministrador());
@@ -480,14 +488,14 @@ def funcionAdministradorHome():
 
     return (render_template ("administradorhome.html", parametroCantidadDeEventosDelAdministrador=miVariableCantidadDeEventosDelAdminstrador, parametroCantidadDeAsistentesDelAdministrador=miVariableCantidadDeAsistentesDelAdministrador, parametroCantidadRobotsDelAdminstrador=miVariableCantidadRobotsQueUsoEnEventosAdministrador,
     parametroRobotsQueUsoEnEventosAdministradorSinServicioActualmente=miVariableCantidadRobotsQueUsoEnEventosAdministradorSinServicioActualmente, parametroCantidadDeEventosEnElSistema=miVariableCantidadDeEventosEnElSistema, parametroCantidadAsistentesEnElSistema=miVariableCantidadAsistentensEnElSistema, 
-    parametroCantidadDeRobotsEnElSistema=miVariableCantidadRobotsEnElSistema, parametroCantidadRobotsSinServicioEnElSistema = miVariableCantidadRobotsSinServicioEnElSistema, parametroCorreoElectronico = miAdministradores.correoElectronico));
+    parametroCantidadDeRobotsEnElSistema=miVariableCantidadRobotsEnElSistema, parametroCantidadRobotsSinServicioEnElSistema = miVariableCantidadRobotsSinServicioEnElSistema, parametroCorreoElectronico = miAdministradores._correoElectronico));
    
 
 
 @app.route ('/administradorpanelrobot/<nombreDelEvento>/<fechaDeCreacionDelEvento>/<lugarDondeSeCelebra>')
 @app.route ('/administradorpanelrobot')
 def funcionAdministradorPanelRobot (nombreDelEvento = None, fechaDeCreacionDelEvento = None, lugarDondeSeCelebra = None):
-    miAdministradores = Administradores.query.filter_by (_Administradores__correoElectronico=session['correoElectronico']).first ();
+    miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
 
     miListaDeEventos = miAdministradores.funcion_conseguirTodosLosEventos ();
     miMostrarRobotsNingunEvento = False;
@@ -512,9 +520,9 @@ def funcionAdministradorPanelRobot (nombreDelEvento = None, fechaDeCreacionDelEv
 @app.route ('/adminstradorpanelrobotborrar/<int:idRobot>/<nombreDelEvento>/<fechaDeCreacionDelEvento>/<lugarDondeSeCelebra>')
 @app.route ('/adminstradorpanelrobotborrar/<int:idRobot>')
 def funcionAdministradorPanelRobotBorrar (idRobot, nombreDelEvento=None, fechaDeCreacionDelEvento=None, lugarDondeSeCelebra=None):
-    miAdministradores = Administradores.query.filter_by (_Administradores__correoElectronico=session['correoElectronico']).first ();
+    miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
     if (miAdministradores.funcion_verSiPuedoBorrarRobot (idRobot) == False):
-        raise Exception ("administradorpaneleventoborrar.html --- ese administrador, no puede eliminar ese robot.");
+        return redirect (url_for ('funcionError404', mensajeerror="administradorpaneleventoborrar.html --- ese administrador, no puede eliminar ese robot."));  
 
     miAdministradores.funcion_borrarRobot (idRobot);
 
@@ -525,7 +533,7 @@ def funcionAdministradorPanelRobotBorrar (idRobot, nombreDelEvento=None, fechaDe
 
 @app.route ('/administradorcrearrobot', methods = ['GET', 'POST'])
 def funcionAdministradorCrearRobot ():
-    miAdministradores = Administradores.query.filter_by (_Administradores__correoElectronico=session['correoElectronico']).first ();
+    miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
     miFormulario = formulario.FormularioCreaRobot (request.form);
     # ya que administradorcrearrobot.html lo utilizo en crear robot, modificar roboot y en modificar robot cuando estoy dentro del evento, el nombreDelEvento, fechaDeCreacionDelEvento y lugarDondeSeCelebra se establecen en Null,
     # para saber que desde este endpint administradorcrearrobot, después de que se cree, no se tiene que volver a ningun evvento. 
@@ -565,10 +573,10 @@ def funcionAdministradorCrearRobot ():
 @app.route ('/adminstradorpanelrobotmodificar/<int:idRobot>', methods = ['GET', 'POST'])
 @app.route ('/adminstradorpanelrobotmodificar/<int:idRobot>/<nombreDelEvento>/<fechaDeCreacionDelEvento>/<lugarDondeSeCelebra>', methods = ['GET', 'POST'])
 def funcionAdministradorPanelRobotModificar (idRobot, nombreDelEvento = None, fechaDeCreacionDelEvento = None, lugarDondeSeCelebra = None):
-    miAdministradores = Administradores.query.filter_by (_Administradores__correoElectronico=session['correoElectronico']).first ();
+    miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
     miFormulario = formulario.FormularioCreaRobot (request.form);
 
-    miRobot = miAdministradores.funcion_conseguirRobotPorIdRobot (idRobot);
+    miRobots = miAdministradores.funcion_conseguirRobotPorIdRobot (idRobot);
     if (request.method == 'POST'):
         if (miFormulario.validate()):
             fotoRecibidaDelFormulario = request.files['fotoDelRobot'];
@@ -584,30 +592,33 @@ def funcionAdministradorPanelRobotModificar (idRobot, nombreDelEvento = None, fe
         else:
             # en el caso de que no se valide el formulario, lo que hago es que devuelvo el formulario con los datos que se acaban de rellenar por el request.form y en este ya está almacenado el error. 
             return render_template ("administradorcrearrobot.html", miFormularioParametro=miFormulario, miParametroAccionHtml="modificar", miParametroNombreDelEvento=nombreDelEvento, miParametroFechaDeCreacionDelEvento= fechaDeCreacionDelEvento, miParametroLugarDondeSeCelebra= lugarDondeSeCelebra,
-                                    parametroMACaddressDelRobot=miRobot.macAddressDelRobot);
+                                    parametroMACaddressDelRobot=miRobots._macAddressDelRobot);
     else:
         #en el caso de que un administrador vea un robot, sabiendo que esta en la tabla de disponible, pero que ademas ese robot lo estan utilizando actualmente, entonces no se le va a mostrar la opcion de modificar, pero lo que pasa es que si el pone en la URL
         # a este robot, entonecs sí que lo puede modificar, por lo tanto hago este if que vuelve a comprobar si ese administrador lo puede o no modificar, en el caso de que no pueda, le mando un error. 
         if (miAdministradores.funcion_verSiPuedoModificarRobot (idRobot) == False):
             raise Exception ("administradorpaneleventoborrar.html --- ese administrador, no puede modificcar ese robot, ya que otro adminsitrador lo esta usando actualmente. ");
         else:
-            miFormulario = formulario.FormularioCreaRobot(obj=miRobot);
+            miFormulario.macAddressDelRobot.data = miRobots._macAddressDelRobot; 
+            miFormulario.nombreDelRobot.data = miRobots._nombreDelRobot; 
+            miFormulario.descripcionDelRobot.data = miRobots._descripcionDelRobot; 
+
             return render_template ("administradorcrearrobot.html", miFormularioParametro=miFormulario, miParametroAccionHtml="modificar", miParametroNombreDelEvento=nombreDelEvento, miParametroFechaDeCreacionDelEvento= fechaDeCreacionDelEvento, miParametroLugarDondeSeCelebra= lugarDondeSeCelebra, 
-                                    parametroMACaddressDelRobot=miRobot.macAddressDelRobot);
+                                    parametroMACaddressDelRobot=miRobots._macAddressDelRobot);
 
 ########################### endpoints Administrador con los eventos #####################################################################################################################################################################################
 
 @app.route ('/administradorpanelevento/<int:miVerdadErrorDeEventoInexistente>')
 @app.route ('/administradorpanelevento')
 def funcionAdministradorPanelEvento (miVerdadErrorDeEventoInexistente = 0):
-    miAdministradores = Administradores.query.filter_by (_Administradores__correoElectronico=session['correoElectronico']).first ();
+    miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
     miListaEventos = miAdministradores.funcion_conseguirTodosLosEventosDeEseAdministrador ();
     return render_template ("administradorpanelevento.html", parametroURL = miVariableGlobalURL, miListaEventosParametro=miListaEventos, miParametroVerdadErrorDeEventoInexistente=miVerdadErrorDeEventoInexistente);
 
 
 @app.route ('/administradorpaneleventoborrar/<nombreDelEvento>/<fechaDeCreacionDelEvento>/<lugarDondeSeCelebra>')
 def funcionAdministradorPanelEventoBorrar (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra):
-    miAdministradores = Administradores.query.filter_by (_Administradores__correoElectronico=session['correoElectronico']).first ();
+    miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
     if (miAdministradores.funcion_verSiEseEventoEsDeEseAdministrador  (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra)):
         miAdministradores.funcion_borrarEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra);
         return redirect (url_for ('funcionAdministradorPanelEvento'));
@@ -617,7 +628,7 @@ def funcionAdministradorPanelEventoBorrar (nombreDelEvento, fechaDeCreacionDelEv
 
 @app.route ('/administradorcrearevento', methods = ['GET', 'POST'])
 def funcionAdministradorCrearEvento ():
-    miAdministradores = Administradores.query.filter_by (_Administradores__correoElectronico=session['correoElectronico']).first ();
+    miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
     miFormulario = formulario.FormularioCrearEvento (request.form);
 
     if (request.method == 'POST') and (miFormulario.validate ()): 
@@ -628,7 +639,7 @@ def funcionAdministradorCrearEvento ():
 
 @app.route ('/administradormodificardatosevento/<nombreDelEvento>/<fechaDeCreacionDelEvento>/<lugarDondeSeCelebra>', methods = ['GET', 'POST'])
 def funcionAdministradorModificarDatosEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra):
-    miAdministradores = Administradores.query.filter_by (_Administradores__correoElectronico=session['correoElectronico']).first ();
+    miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
     miFormulario = formulario.FormularioCrearEvento (request.form);
 
     if (request.method == 'POST'):
@@ -641,13 +652,20 @@ def funcionAdministradorModificarDatosEvento (nombreDelEvento, fechaDeCreacionDe
         if (miAdministradores.funcion_verSiEseEventoEsDeEseAdministrador  (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra)):
             miEventos = miAdministradores.funcion_conseguirEventoPorClavePrimaria (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra);
             miFormulario = formulario.FormularioCrearEvento (obj=miEventos);
+            miFormulario.nombreDelEvento.data = miEventos._nombreDelEvento;
+            miFormulario.fechaDeCreacionDelEvento.data = miEventos._fechaDeCreacionDelEvento;
+            miFormulario.lugarDondeSeCelebra.data = miEventos._lugarDondeSeCelebra;
+            miFormulario.codigoQR.data = miEventos._codigoQR;
+            miFormulario.calle.data = miEventos._calle;
+            miFormulario.numero.data = miEventos._numero;
+            miFormulario.codigoPostal.data = miEventos._codigoPostal;
             return render_template ("administradorcrearevento.html", parametroURL = miVariableGlobalURL, miFormularioParametro = miFormulario, miParametroAccionHtml = "modificar");
         else:
             return redirect(url_for('funcionAdministradorPanelEvento', miVerdadErrorDeEventoInexistente=1));
 
 @app.route ('/administradormodificarrobotsevento/<nombreDelEvento>/<fechaDeCreacionDelEvento>/<lugarDondeSeCelebra>', methods = ['GET', 'POST'])
 def funcionAdministradorModificarRobotsEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra):
-    miAdministradores = Administradores.query.filter_by (_Administradores__correoElectronico=session['correoElectronico']).first ();
+    miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
 
     if (request.method == 'POST'):
         if ('nameformulariomodificar' in request.form):
@@ -687,8 +705,8 @@ def funcionAdministradorModificarRobotsEvento (nombreDelEvento, fechaDeCreacionD
             miDiccionarioRobotsActualmenteEstanEnEvento[miRobot].append (miDisponibleRobotObjeto);  
         #este for es para rellenar en el diccionario que almacena los robots de la tabla 1, par que el diccionario tenga tambien de cada uno de los robots en conocimiento de si debe mostrar los botones de borrar, modificar y enServicio. 
         for clave in miDiccionarioRobotsActualmenteEstanEnEvento:
-            miVariablePuedoeliminar = miAdministradores.funcion_verSiPuedoBorrarRobot (clave.idRobot);
-            miVariableQueBotonEnServicioEs = not(clave.disponible);
+            miVariablePuedoeliminar = miAdministradores.funcion_verSiPuedoBorrarRobot (clave._idRobot);
+            miVariableQueBotonEnServicioEs = not(clave._disponible);
             miDiccionarioRobotsActualmenteEstanEnEvento[clave] = {"subclaveListas":miDiccionarioRobotsActualmenteEstanEnEvento[clave], "subclavePuedoeliminar": miVariablePuedoeliminar, "subclaveQueBotonEnServicioEs": miVariableQueBotonEnServicioEs};
     
         # esto me vale para rellenar la tabla2. 
@@ -700,15 +718,15 @@ def funcionAdministradorModificarRobotsEvento (nombreDelEvento, fechaDeCreacionD
                 miDiccionarioRobotsActualmenteNoEstanEnEvento[miRobot] = [];
             miDiccionarioRobotsActualmenteNoEstanEnEvento[miRobot].append (miDisponibleRobotObjeto);  
         for clave in miDiccionarioRobotsActualmenteNoEstanEnEvento:
-            miVariablePuedoeliminar = miAdministradores.funcion_verSiPuedoBorrarRobot (clave.idRobot);
-            miVariablePuedoModificar = miAdministradores.funcion_verSiPuedoModificarRobot (clave.idRobot);
-            miVariableQueBotonEnServicioEs = not(clave.disponible);
+            miVariablePuedoeliminar = miAdministradores.funcion_verSiPuedoBorrarRobot (clave._idRobot);
+            miVariablePuedoModificar = miAdministradores.funcion_verSiPuedoModificarRobot (clave._idRobot);
+            miVariableQueBotonEnServicioEs = not(clave._disponible);
             miDiccionarioRobotsActualmenteNoEstanEnEvento[clave] = {"subclaveListas":miDiccionarioRobotsActualmenteNoEstanEnEvento[clave], "subclavePuedoModificar": miVariablePuedoModificar, "subclavePuedoeliminar": miVariablePuedoeliminar, "subclaveQueBotonEnServicioEs": miVariableQueBotonEnServicioEs};
 
         # este for me vale para rellenar los formularios de los robots que no estan en ese evento. tabla 3. (la de abajo del todo).
         miListaDeSumarRobot = [];
         for miRobotObjeto in miAdministradores.funcion_conseguirTodosLosRobotsQueNoSonDeEseEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra): 
-            miListaDeSumarRobot.append ([miRobotObjeto.idRobot, miRobotObjeto.macAddressDelRobot]);
+            miListaDeSumarRobot.append ([miRobotObjeto._idRobot, miRobotObjeto._macAddressDelRobot]);
         miVariablePorcentajeAsistentesQueSiHanControladoUnRobot = miAdministradores.funcion_conseguirPorcentajeAsistentesQueSiHanControladoUnRobot (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra);
         miVariableCantidadDeAsistentesVinculadosEnElEvento = len (miAdministradores.funcion_conseguirTodosLosAsistentesVinculadosAlEvento(nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra));
         return render_template ("administradormodificarrobotsevento.html", miDiccionarioRobotsActualmenteEstanEnEvetoParametro=miDiccionarioRobotsActualmenteEstanEnEvento, miDiccionarioRobotsActualmenteNoEstanEnEvetoParametro=miDiccionarioRobotsActualmenteNoEstanEnEvento,
@@ -720,7 +738,7 @@ def funcionAdministradorModificarRobotsEvento (nombreDelEvento, fechaDeCreacionD
 
 @app.route ('/adminstradorpanelrobotponerservicio/<int:idRobot>/<int:robotEnServicio>/<nombreDelEvento>/<fechaDeCreacionDelEvento>/<lugarDondeSeCelebra>')
 def funcionAdministradorPanelRobotPonerServicio (idRobot, robotEnServicio, nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra): 
-    miAdministradores = Administradores.query.filter_by (_Administradores__correoElectronico=session['correoElectronico']).first(); 
+    miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first(); 
     # este if lo pongo, ya que en el caso de que otro administrador conozca el idRoot y el evento en el que etá, puede modificar el servicio del robot, por lo tanto para evitar eseo, copruebo que es el dueño del robot
     #el que esta modificando el servicio del robot. 
     if (miAdministradores.funcion_verSiPuedoModificarRobot (idRobot) == False):
@@ -734,18 +752,18 @@ def funcionAdministradorPanelRobotPonerServicio (idRobot, robotEnServicio, nombr
 ########################### endpoints Administrador con las cuentas #####################################################################################################################################################################################
 @app.route ('/administradorpaneladministradorgestioncuentas')
 def funcionAdministradorGestioncuentas ():
-    miAdministradores = Administradores.query.filter_by (_Administradores__correoElectronico=session['correoElectronico']).first();
+    miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first();
     miListaAdministradores = miAdministradores.funcion_conseguirTodasLasCuentasMenosLaInstanciada ();
     miDiccionarioAdministradores = {};
     miListaDeEventos = [];
     for i in miListaAdministradores:
-        miListaDeEventos = miAdministradores.funcion_conseguirTodosLosEventosPorCorreoElectronico (i.correoElectronico);
-        miDiccionarioAdministradores[i.correoElectronico] = miListaDeEventos;
+        miListaDeEventos = miAdministradores.funcion_conseguirTodosLosEventosPorCorreoElectronico (i._correoElectronico);
+        miDiccionarioAdministradores[i._correoElectronico] = miListaDeEventos;
     return render_template ("administradorpanelgestioncuentas.html", miParametroDiccionarioAdministradores = miDiccionarioAdministradores);
 
 @app.route ('/administradorborrarcuentaadministrador/<correoelectronico>')
 def funcionAdministradorBorrarCuentaAdministrador (correoelectronico):
-    miAdministradores = Administradores.query.filter_by (_Administradores__correoElectronico=session['correoElectronico']).first ();
+    miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
     miAdministradores.funcion_borrarCuentaAdministrador (correoelectronico);
     return redirect (url_for ('funcionAdministradorGestioncuentas'));
 
