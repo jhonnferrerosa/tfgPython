@@ -245,22 +245,29 @@ def funcion_registrarAsistente (codigoQR):
     else:
         if (('token' in session) == False):
             session['token'] = os.urandom(24).hex(); 
-            miAsistentes = Asistentes (_identificadorUnicoAsistente = session['token'], _apodoAsistente=crearApodoUnico());
-            db.session.add (miAsistentes);
-            db.session.commit ();
-            miVincula = Vincula (asistentes_identificadorUnicoAsistente=session['token'], eventos_nombreDelEvento=miEventos._nombreDelEvento, eventos_fechaDeCreacionDelEvento=miEventos._fechaDeCreacionDelEvento, eventos_lugarDondeSeCelebra=miEventos._lugarDondeSeCelebra, fechaAcceso=datetime.now(), fechaSalida=datetime.now() + timedelta(hours=1));
-            db.session.add (miVincula);
-            db.session.commit ();
+            try:
+                miAsistentes = Asistentes (_identificadorUnicoAsistente = session['token'], _apodoAsistente=crearApodoUnico());
+                db.session.add (miAsistentes);
+                miVincula = Vincula (asistentes_identificadorUnicoAsistente=session['token'], eventos_nombreDelEvento=miEventos._nombreDelEvento, eventos_fechaDeCreacionDelEvento=miEventos._fechaDeCreacionDelEvento, eventos_lugarDondeSeCelebra=miEventos._lugarDondeSeCelebra, fechaAcceso=datetime.now(), fechaSalida=datetime.now() + timedelta(hours=1));
+                db.session.add (miVincula);
+                db.session.commit ();
+            except Exception as e:
+                db.session.rollback();
+                raise Exception ("Error en la transaccioón de la base de datos: ", e);
         else: 
             # esta parte de aqui la hago porque puede haber clientes que almacenen su identificadorUnnicoAsistente, pero en otro momento se puede haber reseteado la aplicacion y la BBDD. 
             miAsistentes = Asistentes.query.filter_by (_identificadorUnicoAsistente= session['token']).first ();
             if (miAsistentes == None):
-                miAsistentes = Asistentes (_identificadorUnicoAsistente = session['token'], _apodoAsistente=crearApodoUnico());
-                db.session.add (miAsistentes);
-                db.session.commit ();
-                miVincula = Vincula (asistentes_identificadorUnicoAsistente=session['token'], eventos_nombreDelEvento=miEventos._nombreDelEvento, eventos_fechaDeCreacionDelEvento=miEventos._fechaDeCreacionDelEvento, eventos_lugarDondeSeCelebra=miEventos._lugarDondeSeCelebra, fechaAcceso=datetime.now(), fechaSalida=datetime.now() + timedelta(hours=1));
-                db.session.add (miVincula);
-                db.session.commit ();
+                try:
+                    miAsistentes = Asistentes (_identificadorUnicoAsistente = session['token'], _apodoAsistente=crearApodoUnico());
+                    db.session.add (miAsistentes);
+                    db.session.commit ();
+                    miVincula = Vincula (asistentes_identificadorUnicoAsistente=session['token'], eventos_nombreDelEvento=miEventos._nombreDelEvento, eventos_fechaDeCreacionDelEvento=miEventos._fechaDeCreacionDelEvento, eventos_lugarDondeSeCelebra=miEventos._lugarDondeSeCelebra, fechaAcceso=datetime.now(), fechaSalida=datetime.now() + timedelta(hours=1));
+                    db.session.add (miVincula);
+                    db.session.commit ();
+                except Exception as e:
+                    db.session.rollback();
+                    raise Exception ("Error en la transaccioón de la base de datos: ", e);
             else: 
                 miVincula = Vincula.query.filter (Vincula.asistentes_identificadorUnicoAsistente == session['token'], Vincula.eventos_nombreDelEvento == miEventos._nombreDelEvento, Vincula.eventos_fechaDeCreacionDelEvento == miEventos._fechaDeCreacionDelEvento, Vincula.eventos_lugarDondeSeCelebra == miEventos._lugarDondeSeCelebra).first();
                 # en el caso de que haya token de sesion y este en la tabla Asistentes, pero no este vinculado a este evento (segun la BBDD), entonces lo vinculo a este otro evento nuevo, digo otro nuevo porque sí o sí este asistente para que exista, tiene que estar vinculado a un evento. Pongo esto 
