@@ -11,72 +11,101 @@
 {% endblock %}
 
 
-
 {% block content%}
-    <nav> 
-        <ol class="list-unstyled">
-            <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorPanelEvento') }}" class="btn btn-primary"> Volver a adminstrar eventos </a></li>
-            <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorHome') }}" class="btn btn-primary">Volver al home </a></li>
-        </ol>
-    </nav>
 
-    {% if miParametroVariableNoSeHaRellenadoFormularioCorrectamente == False%}
-        <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">No se ha rellenada ningún robot, debe rellenar alguno para poder crear el evento.</nav>
-    {% endif %}
+
+<div class="wrapper" style="align-items: center;">
+
+    <aside class="main-sidebar sidebar-dark-primary elevation-4"  style="height: 800px;">
+      <!-- Brand Logo -->
+        <h4 style="color: white; border: 7px solid rgba(124, 137, 140, 0.582);" > 
+            {% if miParametroAccionHtml == "crear"%}
+                Crear evento
+            {% else %}
+                Modificar evento
+            {% endif %}
+        </h4>
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+          <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <!-- Add icons to the links using the .nav-icon class
+                 with font-awesome or any other icon font library -->
+    
+                <li class="nav-item">
+                  <a href="{{ url_for ('funcionAdministradorPanelEvento') }}" class="nav-link">
+                    <i class="nav-icon far fa-circle text-primary"></i>
+                    <p>Volver a adminstrar eventos</p>
+                  </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{ url_for ('funcionAdministradorHome') }}" class="nav-link">
+                      <i class="nav-icon far fa-circle text-primary"></i>
+                      <p>Volver al home </p>
+                    </a>
+                  </li>
+
+              </ul>
+            </li>
+        </nav>
+        <!-- /.sidebar-menu -->
+      </div></div></div><div class="os-scrollbar os-scrollbar-horizontal os-scrollbar-unusable os-scrollbar-auto-hidden"><div class="os-scrollbar-track"><div class="os-scrollbar-handle" style="width: 100%; transform: translate(0px);"></div></div></div><div class="os-scrollbar os-scrollbar-vertical os-scrollbar-auto-hidden"><div class="os-scrollbar-track"><div class="os-scrollbar-handle" style="height: 63.429%; transform: translate(0px, 14.5312px);"></div></div></div><div class="os-scrollbar-corner"></div></div>
+      <!-- /.sidebar -->
+    </aside>
+    
+    
+    <div class="content-wrapper" style="min-height: 800px; max-width: 1600px;">
+    
+
+
+
+
+{% if miFormularioParametro.codigoQR.errors %}
+    {% for error in miFormularioParametro.codigoQR.errors %}
+        <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">Error: {{ error }} </nav>
+    {% endfor %}
+{% endif%}
 
 
 <div class="container">
     
 
 <div class="card card-primary mt-5">
- <!--begin::Header-->
-<div class="card-header">
-<div class="card-title">
-    {% if miParametroAccionHtml == "crear"%}
-        <p> Escriba los datos del nuevo evento: </p>
-    {% else %}
-        <p> Modifique los datos del evento: </p>
-    {% endif %}
- </div>
-</div> <!--end::Header--> <!--begin::Form-->
-<form  method="POST"> <!--begin::Body-->
-<div class="card-body">
-<div class="mb-3"> <label class="form-label">Introduzca el id del evento (recordar que es con lo que se crea el QR)*</label> {{ miFormularioParametro.idEvento }}
-</div>
-<div class="mb-3"> <label  class="form-label">Introdzca el nombre del evento (max. 50 caracteres)*:</label> {{ miFormularioParametro.nombreDelEvento }} </div>
-<div class="mb-3"> <label  class="form-label">Introdzca la calle del evento (max. 50 caracteres):</label> {{ miFormularioParametro.calle }} </div>
-<div class="mb-3"> <label  class="form-label">Introdzca el número de la calle del evento (max. 50 caracteres):</label> {{ miFormularioParametro.numero }}   </div>
-<div class="mb-3"> <label  class="form-label">Introdzca el código postal:</label> {{ miFormularioParametro.codigoPostal }}  </div>
-<div class="mb-3"> <label  class="form-label">Introdzca el edicifio donde se celebra el evento (max. 50 caracteres):</label> {{ miFormularioParametro.edificioDondeSeCelebra }} </div>
-
-
-
-</div>
-
+    <!--begin::Header-->
+    <div class="card-header">
+        <div class="card-title">
             {% if miParametroAccionHtml == "crear"%}
-<!---  loop.index con esto consigo en cada una de las iteraciones el número de iteración -->
-            <input name="cantidadDeRobots" type="hidden" value="{{ miListaRobotsParametro|length }}">
-            {% for iteracion in miListaRobotsParametro %}
-                <p>MAC: {{ iteracion.macAddressDelRobot }} - - - Id del robot: {{ iteracion.idRobot }}</p> 
-                <label for="idFechaComienzoEnEvento">Fecha de comienzo en el evento: </label>
-                <input type="date" id="idFechaComienzoEnEvento" name="fechaComienzoEnEvento{{ loop.index }}">
-                <input type="time" id="idFechaComienzoEnEvento" name="fechaComienzoEnEventoHora{{ loop.index }}">
-                <label for="idFechaFinEnEvento">Fecha de fin en el evento: </label>
-                <input type="date" id="idFechaFinEnEvento" name="fechaFinEnEvento{{ loop.index }}">
-                <input type="time" id="idFechaFinEnEvento" name="fechaFinEnEventoHora{{ loop.index }}">
-                <input name="robot_idRobot{{ loop.index }}" type="hidden" value="{{ iteracion.idRobot }}">
-            {% endfor %}
+                <p> Escriba los datos del nuevo evento: </p>
+            {% else %}
+                <p> Modifique los datos del evento: </p>
             {% endif %}
-            <div class="card-footer"> <button type="submit" class="btn btn-primary">Aceptar</button> </div> 
-        </form>
-    </div>
+        </div>
+    </div> <!--end::Header--> <!--begin::Form-->
 
 
+    <form  method="POST"> <!--begin::Body-->
+        <div class="card-body">
+            {{ miFormularioParametro.fechaDeCreacionDelEvento }}
+            <div class="mb-3"> <label  class="form-label">Introduzca el nombre del evento (max. 50 caracteres)*:</label> {{ miFormularioParametro.nombreDelEvento }}  </div>
+            <div class="mb-3"> <label  class="form-label">Introduzca el lugar donde se celebra el evento (max. 50 caracteres)*:</label> {{ miFormularioParametro.lugarDondeSeCelebra }} </div>
+            <div class="mb-3"> <label  class="form-label">Introduzca una URL personalizada para el evento {{ parametroURL }}:</label> {{ miFormularioParametro.codigoQR }} </div>
+            <div class="mb-3"> <label  class="form-label">Introduzca la calle del evento (max. 50 caracteres):</label> {{ miFormularioParametro.calle }} </div>
+            <div class="mb-3"> <label  class="form-label">Introduzca el número de la calle del evento (max. 50 caracteres):</label> {{ miFormularioParametro.numero }}   </div>
+            <div class="mb-3"> <label  class="form-label">Introduzca el código postal:</label> {{ miFormularioParametro.codigoPostal }}  </div>
+            
+        </div>
+        <div class="card-footer"> <button type="submit" class="btn btn-primary">Aceptar</button> </div> 
+    </form>
 </div> <!--end::Body--> <!--begin::Footer-->
  <!--end::Form-->
-</div>                           
 
-    
+
+
+</div>      
+
+
+</div>
+</div>
 
 {% endblock %}
 

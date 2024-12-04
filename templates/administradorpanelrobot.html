@@ -4,42 +4,84 @@
 
 {% block title %}
     <title>administradorpanelrobot</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='administradorPanelRobot.css') }}">
 {% endblock %}
 
 
 {% block content %}
-<nav>
-    <ol class="list-group">
-        <li class="mb-2">
-            <a href="{{ url_for('funcionAdministradorCrearRobot') }}" class="btn btn-primary">Dar de alta un robot en el sistema. </a>
-        </li>
-        <li class="mb-2">
-            <a href="{{ url_for('funcionAdministradorHome') }}" class="btn btn-primary">Volver al home </a>
-        </li>
-    </ol>
-</nav>
+
+<div class="wrapper" style="align-items: center;">
+
+
+    <aside class="main-sidebar sidebar-dark-primary elevation-4"  style="min-height: 800px;">
+        <!-- Brand Logo -->
+          <h4 style="color: white; border: 7px solid rgba(124, 137, 140, 0.582);" >Panel de los robots</h4>
+          <!-- Sidebar Menu -->
+          <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+              <!-- Add icons to the links using the .nav-icon class
+                   with font-awesome or any other icon font library -->
+      
+                  <li class="nav-item">
+                    <a href="{{ url_for('funcionAdministradorCrearRobot') }}" class="nav-link">
+                        <i class="nav-icon far fa-circle text-primary"></i>
+                      <p>Dar de alta un robot en el sistema</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{ url_for('funcionAdministradorHome') }}" class="nav-link">
+                        <i class="nav-icon far fa-circle text-primary"></i>
+                      <p>Volver al home</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{ url_for('funcionAdministradorPanelRobot') }}" class="nav-link">
+                        <i class="nav-icon far fa-circle text-success"></i>
+                      <p>Robots que no están en ningún evento</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{ url_for('funcionAdministradorPanelRobot', nombreDelEvento='todosLosRobots', fechaDeCreacionDelEvento='todosLosRobots', lugarDondeSeCelebra='todosLosRobots') }}" class="nav-link">
+                        <i class="nav-icon far fa-circle text-success"></i>
+                      <p>Todos los robots</p>
+                    </a>
+                  </li>
+                  
+                  {% for iteracion in miListaDeEventosParametro %}
+                  <li class="nav-item">
+                    <a href="{{ url_for('funcionAdministradorPanelRobot', nombreDelEvento=iteracion._nombreDelEvento, fechaDeCreacionDelEvento=iteracion._fechaDeCreacionDelEvento, lugarDondeSeCelebra=iteracion._lugarDondeSeCelebra) }}"  class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>{{ iteracion._nombreDelEvento }} - {{iteracion._fechaDeCreacionDelEvento}} - {{iteracion._lugarDondeSeCelebra}}</p>
+                    </a>
+                  </li>
+                  {% endfor %}
+
+
+                </ul>
+              </li>
+          </nav>
+          <!-- /.sidebar-menu -->
+        </div></div></div><div class="os-scrollbar os-scrollbar-horizontal os-scrollbar-unusable os-scrollbar-auto-hidden"><div class="os-scrollbar-track"><div class="os-scrollbar-handle" style="width: 100%; transform: translate(0px);"></div></div></div><div class="os-scrollbar os-scrollbar-vertical os-scrollbar-auto-hidden"><div class="os-scrollbar-track"><div class="os-scrollbar-handle" style="height: 63.429%; transform: translate(0px, 14.5312px);"></div></div></div><div class="os-scrollbar-corner"></div></div>
+        <!-- /.sidebar -->
+      </aside>
 
 
 
 
 
-<nav>
-    <ol class="list-unstyled">
-        <li class="mb-2" style="float:left; margin-left: 20px;">
-            <a href="{{ url_for('funcionAdministradorPanelRobot', idEvento=-1) }}" class="btn btn-success">Robots que no están en ningún evento</a>
-        </li>
-        <li class="mb-2" style="float:left; margin-left: 20px;">
-            <a href="{{ url_for('funcionAdministradorPanelRobot', idEvento=0) }}" class="btn btn-success">Todos los robots </a>
-        </li>
 
-        {% for iteracion in miListaDeEventosEnLosQueHayRobotsParametro %}
-        <li class="mb-2" style="float:left; margin-left: 20px;">
-            <a href="{{ url_for('funcionAdministradorPanelRobot', idEvento=iteracion.idEvento) }}" class="btn btn-danger">{{ iteracion.nombreDelEvento }}</a>
-        {% endfor %}
-        </li>
-    </ol>
-</nav>
 
+
+<div class="content-wrapper" style="min-height: 800px; max-width: 1600px;">
+
+
+
+<section style="padding-left: 10px;">
+
+
+{% if miParametroVerdadErrorDeRobotInexistente == 1 %}
+  <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">Ese robot no existe, ha dejado de existir o es de otro administrador.</nav>
+{% endif %}
 
 <div class="card mb-4" style="clear: both;">
                                 <div class="card-header">
@@ -62,13 +104,13 @@
                                         {% for iteracion in miListaRobotsParametro %}
                                         <tbody>
                                             <tr class="align-middle">
-                                                <td>{{ iteracion.idRobot }}</td>
-                                                <td>{{ iteracion.macAddressDelRobot }}</td>
-                                                <td>{{ iteracion.nombreDelRobot }} </td>
-                                                <td>{{ iteracion.descripcionDelRobot }}</td>
+                                                <td>{{ iteracion._idRobot }}</td>
+                                                <td>{{ iteracion._macAddressDelRobot }}</td>
+                                                <td>{{ iteracion._nombreDelRobot }} </td>
+                                                <td>{{ iteracion._descripcionDelRobot }}</td>
                                                 <td>
-                                                    {% if iteracion.fotoDelRobot != None %}
-                                                        <img src="{{ url_for('funcionCapturarImagenRobot', idRobot=iteracion.idRobot) }}" style="max-width: 200px; max-height: 200px; width: auto; height: auto;">
+                                                    {% if iteracion._fotoDelRobot != None %}
+                                                        <img src="{{ url_for('funcionCapturarImagenRobot', idRobot=iteracion._idRobot) }}" style="max-width: 200px; max-height: 200px; width: auto; height: auto;">
                                                     {% else %}
                                                         <p> No hay foto del robot</p>
                                                     {% endif %}
@@ -76,8 +118,8 @@
                                                 {% if miParametroMostrarRobotsNingunEvento == True %}
                                                 <td> 
                                                     <ol class="list-unstyled">
-                                                        <li class="mb-2"> <a href="{{ url_for('funcionAdministradorPanelRobotModificar', idRobot=iteracion.idRobot) }}" class="btn btn-primary">Modificar robot </a></li>
-                                                        <li class="mb-2"> <a href="{{ url_for('funcionAdministradorPanelRobotBorrar', idRobot=iteracion.idRobot) }}" class="btn btn-primary">Borrar robot</a></li>
+                                                        <li class="mb-2"> <a href="{{ url_for('funcionAdministradorPanelRobotModificar', idRobot=iteracion._idRobot) }}" class="btn btn-primary">Modificar robot </a></li>
+                                                        <li class="mb-2"> <a href="{{ url_for('funcionAdministradorPanelRobotBorrar', idRobot=iteracion._idRobot) }}" class="btn btn-primary">Borrar robot</a></li>
                                                     </ol>
                                                 </td>
                                                 {% endif %}
@@ -94,10 +136,11 @@
 {% endif %}
 
 
+</section>
 
-    
 
-
+</div>
+</div>
 {% endblock %}
 
 

@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script type="text/javascript" src="{{ url_for('static', filename='llamaendpointcierranavegador.js') }}"></script>
     <title>robotlisto</title>
 </head>
 
@@ -12,6 +11,8 @@
 <body>
     <header> 
         <div> Demostraciones robóticas: {{ miParametroMiEventoNombreDelEvento }}</div>
+        <div> Demostraciones robóticas: {{ miParametroIdentificadorUnicoAsistente }}</div>
+        <div> Demostraciones robóticas: {{ miParametroApodoAsistente }}</div>
     </header>
 
     <nav>
@@ -23,9 +24,9 @@
         <p> Robot asignado: </p>
 
         <p> ++++++++++ </p>
-        <p> Este es el ID:  {{ miRobotParametro.idRobot }}</p>
-        <p> Esta es la MAC: {{ miRobotParametro.macAddressDelRobot }}</p>
-        <p> Este es el nombre:  {{ miRobotParametro.nombreDelRobot }}</p>
+        <p> Este es el ID:  {{ miRobotParametro._idRobot }}</p>
+        <p> Esta es la MAC: {{ miRobotParametro._macAddressDelRobot }}</p>
+        <p> Este es el nombre:  {{ miRobotParametro._nombreDelRobot }}</p>
         <p> ---------</p>
 
 

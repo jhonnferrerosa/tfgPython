@@ -1,14 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>error 404</title>
-</head>
-<body>
-    <h3>  Error 404, esa URL no existe. </h3>
 
-    
-    
-</body>
-</html>
+
+
+
+
+{% extends "baseadministrador.html" %}
+
+
+{% block title %}
+{% endblock %}
+
+
+{% block content %}
+    <h1>  Error 404 </h1>
+    {% if parametroMensajeError != None %}
+        <h3> {{ parametroMensajeError }}</h3>
+    {% endif %}
+{% endblock %}
+
+
+
+

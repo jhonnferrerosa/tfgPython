@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script type="text/javascript" src="{{ url_for('static', filename='llamaendpointcierranavegador.js') }}"></script>
     <title>robotlisto</title>
 </head>
 <body>
 	<header> 
 		<div> Demostraciones robóticas: {{ miParametroMiEventoNombreDelEvento }}</div>
+        <div> Demostraciones robóticas: {{ miParametroApodoAsistente }}</div>
 	</header>
 
     <nav>
         <p> su robot esta listo. </p>
-        <a href="{{ url_for('funcion_aceptarRobot', idRobot=miRobotParametro.idRobot, idEvento=miParametroMiEventoIdEvento) }}"> Aceptar robot para controlarlo. </a>
+        <a href="{{ url_for('funcion_aceptarRobot', idRobot=miRobotParametro._idRobot, codigoQR=miParametroCodigoQR) }}"> Aceptar robot para controlarlo. </a>
         <br>
-        <a href="{{ url_for('funcion_rechazarRobot', idRobot=miRobotParametro.idRobot, idEvento=miParametroMiEventoIdEvento) }}"> Rechazar uso del robot </a>
+        <a href="{{ url_for('funcion_rechazarRobot', idRobot=miRobotParametro._idRobot, codigoQR=miParametroCodigoQR) }}"> Rechazar uso del robot </a>
     </nav>
 
 
@@ -23,9 +23,9 @@
         <p> Robot asignado: </p>
 
         <p> ++++++++++ </p>
-        <p> Este es el ID:  {{ miRobotParametro.idRobot }}</p>
-        <p> Esta es la MAC: {{ miRobotParametro.macAddressDelRobot }}</p>
-        <p> Este es el nombre:  {{ miRobotParametro.nombreDelRobot }}</p>
+        <p> Este es el ID:  {{ miRobotParametro._idRobot }}</p>
+        <p> Esta es la MAC: {{ miRobotParametro._macAddressDelRobot }}</p>
+        <p> Este es el nombre:  {{ miRobotParametro._nombreDelRobot }}</p>
         <p> ---------</p>
 
 

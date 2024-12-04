@@ -1,0 +1,11 @@
+
+
+
+
+img:hover{ /*estado hover del objeto img pero solo los que se encuentren en las etiquetas figure*/
+	-moz-transform:scale(1.5);
+    -webkit-transform: scale(1.5);
+    -ms-transform: scale(1.5);
+    transform: scale(1.5);
+    transition:transform 0.3s ease-in-out 0.1s; 
+}

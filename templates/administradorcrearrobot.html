@@ -11,17 +11,68 @@
 {% endblock %}
 
 {% block content%}
-<nav> 
-    <ol class="list-unstyled">
-        {% if miParametroIdEvento > 0 %}
-            <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorModificarRobotsEvento', idEvento=miParametroIdEvento) }}" class="btn btn-primary"> Volver a adminstrar robots del evento</a></li>
-            <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorPanelEvento') }}" class="btn btn-primary"> Volver a adminstrar eventos</a></li>
-        {% else %}
-            <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorPanelRobot') }}" class="btn btn-primary"> Volver a administrar robots</a></li>
-        {% endif%}
-        <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorHome') }}" class="btn btn-primary">Volver al home</a></li>
-    </ol>
-</nav>
+
+
+<div class="wrapper" style="align-items: center;">
+
+    <aside class="main-sidebar sidebar-dark-primary elevation-4"  style="height: 800px;">
+      <!-- Brand Logo -->
+        <h4 style="color: white; border: 7px solid rgba(124, 137, 140, 0.582);" > 
+          {% if miParametroAccionHtml == "crear"%}
+            Crear robot
+          {% else %}
+            Modificar robot
+          {% endif %}
+        </h4>
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+          <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <!-- Add icons to the links using the .nav-icon class
+                 with font-awesome or any other icon font library -->
+
+                 {% if miParametroNombreDelEvento != None and miParametroFechaDeCreacionDelEvento!= None and miParametroLugarDondeSeCelebra!=None %}
+                 <li class="nav-item">
+                    <a href="{{ url_for ('funcionAdministradorModificarRobotsEvento', nombreDelEvento=miParametroNombreDelEvento, fechaDeCreacionDelEvento=miParametroFechaDeCreacionDelEvento, lugarDondeSeCelebra=miParametroLugarDondeSeCelebra) }}" class="nav-link">
+                      <i class="nav-icon far fa-circle text-primary"></i>
+                      <p>Volver a adminstrar robots del evento</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{ url_for ('funcionAdministradorPanelEvento') }}" class="nav-link">
+                      <i class="nav-icon far fa-circle text-primary"></i>
+                      <p>Volver a adminstrar eventos</p>
+                    </a>
+                  </li>
+
+                 {% else %}
+
+                 <li class="nav-item">
+                    <a href="{{ url_for ('funcionAdministradorPanelRobot') }}"  class="nav-link">
+                      <i class="nav-icon far fa-circle text-primary"></i>
+                      <p>Volver a administrar robots</p>
+                    </a>
+                  </li>
+
+
+                 {% endif %}
+
+                 <li class="nav-item">
+                    <a href="{{ url_for ('funcionAdministradorHome') }}" class="nav-link">
+                      <i class="nav-icon far fa-circle text-primary"></i>
+                      <p>Volver al home</p>
+                    </a>
+                  </li>
+
+            </li>
+        </nav>
+        <!-- /.sidebar-menu -->
+      </div></div></div><div class="os-scrollbar os-scrollbar-horizontal os-scrollbar-unusable os-scrollbar-auto-hidden"><div class="os-scrollbar-track"><div class="os-scrollbar-handle" style="width: 100%; transform: translate(0px);"></div></div></div><div class="os-scrollbar os-scrollbar-vertical os-scrollbar-auto-hidden"><div class="os-scrollbar-track"><div class="os-scrollbar-handle" style="height: 63.429%; transform: translate(0px, 14.5312px);"></div></div></div><div class="os-scrollbar-corner"></div></div>
+      <!-- /.sidebar -->
+    </aside>
+    
+    
+    <div class="content-wrapper" style="min-height: 800px; max-width: 1600px;">
+
 
 {% if miFormularioParametro.macAddressDelRobot.errors %}
     {% for error in miFormularioParametro.macAddressDelRobot.errors %}
@@ -45,10 +96,15 @@
 </div> <!--end::Header--> <!--begin::Form-->
 <form  method="POST" enctype="multipart/form-data"> <!--begin::Body-->
 <div class="card-body">
-<div class="mb-3"> <label class="form-label">Introduzca la MAC del robot:</label> {{ miFormularioParametro.macAddressDelRobot }}
+{% if miParametroNombreDelEvento != None and miParametroFechaDeCreacionDelEvento!= None and miParametroLugarDondeSeCelebra!=None %}
+  <label style="display: none;"> {{ miFormularioParametro.macAddressDelRobot }} </label>
+  <div class="mb-3"> <label class="form-label">Esta es la MAC del robot:</label>   <label>{{ parametroMACaddressDelRobot }} </label>
+{% else %}
+  <div class="mb-3"> <label class="form-label">Introduzca la MAC del robot*:</label> {{ miFormularioParametro.macAddressDelRobot }}
+{% endif %}
 </div>
 
-<div class="mb-3"> <label  class="form-label">Introduzca el nombre del robot: </label> {{ miFormularioParametro.nombreDelRobot }} </div>
+<div class="mb-3"> <label  class="form-label">Introduzca el nombre del robot*: </label> {{ miFormularioParametro.nombreDelRobot }} </div>
 <div class="mb-3"> <label  class="form-label">Introduzca el una descripcion del robot: </label> {{ miFormularioParametro.descripcionDelRobot }} </div>
 <div class="mb-3"> <label  class="form-label">Suba una foto del robot:</label> {{ miFormularioParametro.fotoDelRobot }}   </div>
 
@@ -62,6 +118,9 @@
 
 
     
+</div>
+
+</div>
 </div>
 
 

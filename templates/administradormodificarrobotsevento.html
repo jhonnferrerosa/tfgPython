@@ -5,7 +5,7 @@
     <!---  Lo primero que hago es importar la libreria Jquery para que la pueda usar en mi JS. -->
     <script src="{{ url_for('static', filename='adminlte/plugins/jquery/jquery.js') }}"></script>
 
-    <script type="text/javascript" src="{{ url_for('static', filename='administradorcreaevento.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='administradormodificarobotsenevento.js') }}"></script>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='adminlte/plugins/jquery-ui/jquery-ui.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='adminlte/plugins/jquery-ui/jquery-ui.structure.css') }}">
@@ -32,12 +32,85 @@
 {% endblock %}
 
 {% block content%}
-    <nav> 
-        <ol class="list-unstyled">
-            <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorPanelEvento') }}" class="btn btn-primary"> Volver a adminstrar eventos </a></li>
-            <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorHome') }}" class="btn btn-primary">Volver al home </a></li>
-        </ol>
+
+
+<div class="wrapper" style="align-items: center;">
+
+    <aside class="main-sidebar sidebar-dark-primary elevation-4"  style="height: 800px;">
+      <!-- Brand Logo -->
+        <h4 style="color: white; border: 7px solid rgba(124, 137, 140, 0.582);" > Panel modificar robots del evento</h4>
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+          <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <!-- Add icons to the links using the .nav-icon class
+                 with font-awesome or any other icon font library -->
+    
+                <li class="nav-item">
+                  <a href="{{ url_for ('funcionAdministradorPanelEvento') }}" class="nav-link">
+                    <i class="nav-icon far fa-circle text-primary"></i>
+                    <p>Volver a administrar eventos </p>
+                  </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{ url_for ('funcionAdministradorHome') }}" class="nav-link">
+                      <i class="nav-icon far fa-circle text-primary"></i>
+                      <p>Volver al home </p>
+                    </a>
+                  </li>
+                  
+
+              </ul>
+            </li>
+        </nav>
+        <!-- /.sidebar-menu -->
+      </div></div></div><div class="os-scrollbar os-scrollbar-horizontal os-scrollbar-unusable os-scrollbar-auto-hidden"><div class="os-scrollbar-track"><div class="os-scrollbar-handle" style="width: 100%; transform: translate(0px);"></div></div></div><div class="os-scrollbar os-scrollbar-vertical os-scrollbar-auto-hidden"><div class="os-scrollbar-track"><div class="os-scrollbar-handle" style="height: 63.429%; transform: translate(0px, 14.5312px);"></div></div></div><div class="os-scrollbar-corner"></div></div>
+      <!-- /.sidebar -->
+    </aside>
+    
+    
+    <div class="content-wrapper" style="min-height: 800px; max-width: 1600px;">
+
+    <nav class="row" style="padding-left: 10px;"> 
+
+
+        <div class="col-lg-3 col-6" style="margin-left: 50px; ">
+            <!-- small box -->
+                <div class="small-box bg-info">
+                    <div class="inner">     
+                        <h3>
+                            {{ miParametroPorcentajeAsistentesQueSiHanControladoUnRobot }}
+                            <sup style="font-size: 20px">%</sup>
+                        </h3>
+                        <p>Porcentaje Asistentes que sí han controlado un robot:</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-stats-bars"></i>
+                    </div>
+                </div>
+
+
+
+        </div>
+
+        <div class="col-lg-3 col-6" style="margin-left: 50px; float: left">
+            <!-- small box -->
+                <div class="small-box bg-info">
+                    <div class="inner">     
+                        <h3>
+                            {{ miParametroCantidadDeAsistentesVinculadosEnElEvento }}
+                        </h3>
+                        <p>Cantidad de asistentes vinculados al evento:</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-stats-bars"></i>
+                    </div>
+                </div>
+        </div>
+
+
     </nav>
+
 
 
     <section>
@@ -46,17 +119,17 @@
 {% for clave, valor in miDiccionarioRobotsActualmenteEstanEnEvetoParametro.items() %}
 <div class="card mb-4" style="clear: both;">
     <div class="card-header">
-        <h3 class="card-title">Id del robot: {{ clave.idRobot }} - Mac: {{ clave.macAddressDelRobot }} - Nombre del robot: {{ clave.nombreDelRobot }}</h3>
+        <h3 class="card-title">Id del robot: {{ clave._idRobot }} - Mac: {{ clave._macAddressDelRobot }} - Nombre del robot: {{ clave._nombreDelRobot }}</h3>
         <h3 class="card-title">
             <ol class="list-unstyled" style="margin-left: 30px;">
-                <li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotModificar', idRobot=clave.idRobot, idEvento=miParametroIdEvento) }}" class="btn btn-danger">Modificar robot </a></li>
+                <li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotModificar', idRobot=clave._idRobot, nombreDelEvento=miParametroNombreDelEvento, fechaDeCreacionDelEvento=miParametroFechaDeCreacionDelEvento, lugarDondeSeCelebra=miParametroLugarDondeSeCelebra ) }}" class="btn btn-danger">Modificar robot </a></li>
                     {% if valor["subclaveQueBotonEnServicioEs"] == True %}
-<li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=clave.idRobot, robotEnServicio=1, idEvento=miParametroIdEvento) }}" class="btn btn-danger">Activar robot</a></li>
+<li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=clave._idRobot, robotEnServicio=1, nombreDelEvento=miParametroNombreDelEvento, fechaDeCreacionDelEvento=miParametroFechaDeCreacionDelEvento, lugarDondeSeCelebra=miParametroLugarDondeSeCelebra) }}" class="btn btn-secondary">Activar robot</a></li>
                     {% else %}
-<li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=clave.idRobot, robotEnServicio=0, idEvento=miParametroIdEvento) }}" class="btn btn-danger">Desactivar robot</a></li>
+<li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=clave._idRobot, robotEnServicio=0, nombreDelEvento=miParametroNombreDelEvento, fechaDeCreacionDelEvento=miParametroFechaDeCreacionDelEvento, lugarDondeSeCelebra=miParametroLugarDondeSeCelebra) }}" class="btn btn-danger">Desactivar robot</a></li>
                     {% endif %}
                     {% if valor["subclavePuedoeliminar"] == True %}
-                    <li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotBorrar', idRobot=clave.idRobot, idEvento=miParametroIdEvento) }}" class="btn btn-danger">Borrar robot</a></li> 
+                    <li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotBorrar', idRobot=clave._idRobot, nombreDelEvento=miParametroNombreDelEvento, fechaDeCreacionDelEvento=miParametroFechaDeCreacionDelEvento, lugarDondeSeCelebra=miParametroLugarDondeSeCelebra) }}" class="btn btn-danger">Borrar robot</a></li> 
                     {% endif %}
             </ol>
         </h3>
@@ -75,23 +148,23 @@
                 <form  method="POST" >
                     <tr class="align-middle">
                         <td>
-                            <div class="input-group date" id="fechaComienzoEnEvento_{{ iteracion.robot_idRobot }}_{{ loop.index }}" data-target-input="nearest">
-                                <input type="text" name="fechaComienzoEnEvento" class="datetimepicker-input" data-target="#fechaComienzoEnEvento_{{ iteracion.robot_idRobot }}_{{ loop.index }}" placeholder="{{ iteracion.fechaComienzoEnEvento }}">
-                                <div class="input-group-append" data-target="#fechaComienzoEnEvento_{{ iteracion.robot_idRobot }}_{{ loop.index }}" data-toggle="datetimepicker">
+                            <div class="input-group date" id="fechaComienzoEnEvento_{{ iteracion.robots_idRobot }}_{{ loop.index }}" data-target-input="nearest">
+                                <input type="text" name="fechaComienzoEnEvento" class="datetimepicker-input" data-target="#fechaComienzoEnEvento_{{ iteracion.robots_idRobot }}_{{ loop.index }}" placeholder="{{ iteracion.fechaComienzoEnEvento }}">
+                                <div class="input-group-append" data-target="#fechaComienzoEnEvento_{{ iteracion.robots_idRobot }}_{{ loop.index }}" data-toggle="datetimepicker">
                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                 </div>
                         </td>
 
                         
                         <td> 
-                            <div class="input-group date" id="fechaFinEnEvento_{{ iteracion.robot_idRobot }}_{{ loop.index }}" data-target-input="nearest">
-                                <input type="text" name="fechaFinEnEvento" class="datetimepicker-input" data-target="#fechaFinEnEvento_{{ iteracion.robot_idRobot }}_{{ loop.index }}" placeholder="{{ iteracion.fechaFinEnEvento }}">
-                                <div class="input-group-append" data-target="#fechaFinEnEvento_{{ iteracion.robot_idRobot }}_{{ loop.index }}" data-toggle="datetimepicker">
+                            <div class="input-group date" id="fechaFinEnEvento_{{ iteracion.robots_idRobot }}_{{ loop.index }}" data-target-input="nearest">
+                                <input type="text" name="fechaFinEnEvento" class="datetimepicker-input" data-target="#fechaFinEnEvento_{{ iteracion.robots_idRobot }}_{{ loop.index }}" placeholder="{{ iteracion.fechaFinEnEvento }}">
+                                <div class="input-group-append" data-target="#fechaFinEnEvento_{{ iteracion.robots_idRobot }}_{{ loop.index }}" data-toggle="datetimepicker">
                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                 </div>
                             </div>                            
             
-                            <input name="robot_idRobot" type="hidden" value="{{ iteracion.robot_idRobot }}">
+                            <input name="robots_idRobot" type="hidden" value="{{ iteracion.robots_idRobot }}">
                             <input name="fechaComienzoEnEventoAntigua" type="hidden" value="{{ iteracion.fechaComienzoEnEvento }}">
                             <input name="fechaFinEnEventoAntigua" type="hidden" value="{{ iteracion.fechaFinEnEvento }}">
                             
@@ -106,7 +179,7 @@
             {% endfor %}
             <form  method="POST" >
                 <tr class="align-middle">
-                    <input type="hidden" value="{{ clave.idRobot }}" name="idRobot"/>
+                    <input type="hidden" value="{{ clave._idRobot }}" name="idRobot"/>
                     <td>
                         <input type="date" id="idFechaComienzoEnEvento" name="fechaComienzoEnEvento">
                         <input type="time" id="idFechaComienzoEnEvento" name="fechaComienzoEnEventoHora">
@@ -131,19 +204,19 @@
 {% for clave, valor in miDiccionarioRobotsActualmenteNoEstanEnEvetoParametro.items() %}
 <div class="card mb-4" style="clear: both;">
     <div class="card-header">
-        <h3 class="card-title">Id del robot: {{ clave.idRobot }} - Mac: {{ clave.macAddressDelRobot }} - Nombre del robot: {{ clave.nombreDelRobot }}</h3>
+        <h3 class="card-title">Id del robot: {{ clave._idRobot }} - Mac: {{ clave._macAddressDelRobot }} - Nombre del robot: {{ clave._nombreDelRobot }}</h3>
         <h3 class="card-title">
             <ol class="list-unstyled" style="margin-left: 30px;">
                 {% if valor["subclavePuedoModificar"] == True %}
-                <li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotModificar', idRobot=clave.idRobot, idEvento=miParametroIdEvento) }}" class="btn btn-danger">Modificar robot </a></li>
+                <li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotModificar', idRobot=clave._idRobot, nombreDelEvento=miParametroNombreDelEvento, fechaDeCreacionDelEvento=miParametroFechaDeCreacionDelEvento, lugarDondeSeCelebra=miParametroLugarDondeSeCelebra) }}" class="btn btn-danger">Modificar robot </a></li>
                     {% if valor["subclaveQueBotonEnServicioEs"] == True %}
-<li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=clave.idRobot, robotEnServicio=1, idEvento=miParametroIdEvento) }}" class="btn btn-danger">Activar robot</a></li>
+<li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=clave._idRobot, robotEnServicio=1, nombreDelEvento=miParametroNombreDelEvento, fechaDeCreacionDelEvento=miParametroFechaDeCreacionDelEvento, lugarDondeSeCelebra=miParametroLugarDondeSeCelebra) }}" class="btn btn-secondary">Activar robot</a></li>
                     {% else %}
-<li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=clave.idRobot, robotEnServicio=0, idEvento=miParametroIdEvento) }}" class="btn btn-danger">Desactivar robot</a></li>
+<li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=clave._idRobot, robotEnServicio=0, nombreDelEvento=miParametroNombreDelEvento, fechaDeCreacionDelEvento=miParametroFechaDeCreacionDelEvento, lugarDondeSeCelebra=miParametroLugarDondeSeCelebra) }}" class="btn btn-danger">Desactivar robot</a></li>
                     {% endif %}
                 {% endif %}
                 {% if valor["subclavePuedoeliminar"] == True %}
-                    <li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotBorrar', idRobot=clave.idRobot, idEvento=miParametroIdEvento) }}" class="btn btn-danger">Borrar robot</a></li> 
+                    <li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotBorrar', idRobot=clave._idRobot, nombreDelEvento=miParametroNombreDelEvento, fechaDeCreacionDelEvento=miParametroFechaDeCreacionDelEvento, lugarDondeSeCelebra=miParametroLugarDondeSeCelebra) }}" class="btn btn-danger">Borrar robot</a></li> 
                 {% endif %}
             </ol>
         </h3>
@@ -162,20 +235,20 @@
                 <form  method="POST" >
                     <tr class="align-middle">
                         <td>
-                            <div class="input-group date" id="fechaComienzoEnEvento_{{ iteracion.robot_idRobot }}_{{ loop.index }}" data-target-input="nearest">
-                                <input type="text" name="fechaComienzoEnEvento" class="datetimepicker-input" data-target="#fechaComienzoEnEvento_{{ iteracion.robot_idRobot }}_{{ loop.index }}" placeholder="{{ iteracion.fechaComienzoEnEvento }}">
-                                <div class="input-group-append" data-target="#fechaComienzoEnEvento_{{ iteracion.robot_idRobot }}_{{ loop.index }}" data-toggle="datetimepicker">
+                            <div class="input-group date" id="fechaComienzoEnEvento_{{ iteracion.robots_idRobot }}_{{ loop.index }}" data-target-input="nearest">
+                                <input type="text" name="fechaComienzoEnEvento" class="datetimepicker-input" data-target="#fechaComienzoEnEvento_{{ iteracion.robots_idRobot }}_{{ loop.index }}" placeholder="{{ iteracion.fechaComienzoEnEvento }}">
+                                <div class="input-group-append" data-target="#fechaComienzoEnEvento_{{ iteracion.robots_idRobot }}_{{ loop.index }}" data-toggle="datetimepicker">
                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                 </div>
                         </td>
                         <td>
-                            <div class="input-group date" id="fechaFinEnEvento_{{ iteracion.robot_idRobot }}_{{ loop.index }}" data-target-input="nearest">
-                                <input type="text" name="fechaFinEnEvento" class="datetimepicker-input" data-target="#fechaFinEnEvento_{{ iteracion.robot_idRobot }}_{{ loop.index }}" placeholder="{{ iteracion.fechaFinEnEvento }}">
-                                <div class="input-group-append" data-target="#fechaFinEnEvento_{{ iteracion.robot_idRobot }}_{{ loop.index }}" data-toggle="datetimepicker">
+                            <div class="input-group date" id="fechaFinEnEvento_{{ iteracion.robots_idRobot }}_{{ loop.index }}" data-target-input="nearest">
+                                <input type="text" name="fechaFinEnEvento" class="datetimepicker-input" data-target="#fechaFinEnEvento_{{ iteracion.robots_idRobot }}_{{ loop.index }}" placeholder="{{ iteracion.fechaFinEnEvento }}">
+                                <div class="input-group-append" data-target="#fechaFinEnEvento_{{ iteracion.robots_idRobot }}_{{ loop.index }}" data-toggle="datetimepicker">
                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                 </div>
                             </div>    
-                            <input name="robot_idRobot" type="hidden" value="{{ iteracion.robot_idRobot }}">
+                            <input name="robots_idRobot" type="hidden" value="{{ iteracion.robots_idRobot }}">
                             <input name="fechaComienzoEnEventoAntigua" type="hidden" value="{{ iteracion.fechaComienzoEnEvento }}">
                             <input name="fechaFinEnEventoAntigua" type="hidden" value="{{ iteracion.fechaFinEnEvento }}">
                         </td>
@@ -189,7 +262,7 @@
             {% endfor %}
             <form  method="POST" >
                 <tr class="align-middle">
-                    <input type="hidden" value="{{ clave.idRobot }}" name="idRobot"/>
+                    <input type="hidden" value="{{ clave._idRobot }}" name="idRobot"/>
                     <td>
                         <input type="date" id="idFechaComienzoEnEvento" name="fechaComienzoEnEvento">
                         <input type="time" id="idFechaComienzoEnEvento" name="fechaComienzoEnEventoHora">
@@ -232,6 +305,7 @@
             <tbody>
                 <form  method="POST" >
                     <!--  el {{ iteracion[0] }} es el numero del idRobot  -->
+                     <!--  el {{ iteracion[1] }} es el macAddressDelRobot  -->
                     <input type="hidden" value="{{ iteracion[0] }}" name="idRobot"/>
                     <tr class="align-middle">
                         <td>{{ iteracion[0] }}</td>
@@ -245,7 +319,7 @@
                             <input type="time" id="idFechaFinEnEvento" name="fechaFinEnEventoHora">
                         </td>
 
-                        <td><button type="submit" name="nameformulariosumarrobot"  class="btn btn-primary">Sumar robot</button></td>
+                        <td><button type="submit" name="nameformulariosumarrobot"  class="btn btn-primary">Añadir robot</button></td>
                 </form>
             </tbody>
 {% endfor %}
@@ -258,6 +332,10 @@
 
 
 </section>
+
+
+</div>
+</div>
 
 
 

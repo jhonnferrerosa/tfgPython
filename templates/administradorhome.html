@@ -6,47 +6,69 @@
 {% endblock %}
 
 {% block content %}
-<nav>
-<!--  Estos botones no los estoy sacando de Admin lte, si no que los estoy haciendo con boostrap.  -->
-<!-- class="list-group"  esto me vale para  la lista que cree por defecto con el ol, que no tengo los numeros. -->
- <!-- class="mb-2" esto me vale para aplicar un margin button de 16px o 32 px, depende de la pantalla. -->
-    <ol class="list-group">
-        <li class="mb-2">
-            <a href="{{ url_for('funcionAdministradorPanelRobot') }}" class="btn btn-primary">Administrar robots</a>
+
+<div class="wrapper" style="align-items: center;">
+
+<aside class="main-sidebar sidebar-dark-primary elevation-4"  style="height: 800px;">
+  <!-- Brand Logo -->
+    <h4 style="color: white; border: 7px solid rgba(124, 137, 140, 0.582);" > {{ parametroCorreoElectronico }}</h4>
+    <!-- Sidebar Menu -->
+    <nav class="mt-2">
+      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <!-- Add icons to the links using the .nav-icon class
+             with font-awesome or any other icon font library -->
+
+            <li class="nav-item">
+              <a href="{{ url_for('funcionAdministradorPanelRobot') }}" class="nav-link">
+                <i class="nav-icon far fa-circle text-primary"></i>
+                <p>Administrar robots</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ url_for('funcionAdministradorGestioncuentas') }}" class="nav-link">
+                <i class="nav-icon far fa-circle text-primary"></i>
+                <p>Administrar cuentas</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ url_for('funcionAdministradorPanelEvento') }}" class="nav-link">
+                <i class="nav-icon far fa-circle text-primary"></i>
+                <p>Administrar eventos</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ url_for('funcionAdministradorCerrarSesion') }}" class="nav-link">
+                <i class="nav-icon far fa-circle text-primary"></i>
+                <p>Cerrar sesión</p>
+              </a>
+            </li>
+          </ul>
         </li>
-        <li class="mb-2">
-            <a href="{{ url_for('funcionAdministradorGestioncuentas') }}" class="btn btn-primary">Administrar cuentas</a>
-        </li>
-        <li class="mb-2">
-            <a href="{{ url_for('funcionAdministradorPanelEvento') }}" class="btn btn-primary">Administrar eventos</a>
-        </li>
-        <li class="mb-2">
-            <a href="{{ url_for('funcionAdministradorCerrarSesion') }}" class="btn btn-primary">Cerrar sesión</a>
-        </li>
-    </ol>
-</nav>
+    </nav>
+    <!-- /.sidebar-menu -->
+  </div></div></div><div class="os-scrollbar os-scrollbar-horizontal os-scrollbar-unusable os-scrollbar-auto-hidden"><div class="os-scrollbar-track"><div class="os-scrollbar-handle" style="width: 100%; transform: translate(0px);"></div></div></div><div class="os-scrollbar os-scrollbar-vertical os-scrollbar-auto-hidden"><div class="os-scrollbar-track"><div class="os-scrollbar-handle" style="height: 63.429%; transform: translate(0px, 14.5312px);"></div></div></div><div class="os-scrollbar-corner"></div></div>
+  <!-- /.sidebar -->
+</aside>
 
 
+<div class="content-wrapper" style="min-height: 800px; max-width: 1600px;">
 
 
-{% if parametroVerdadHayEventos == False %}
-    <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">No se puede acceder a Eventos, ya que no hay robots en el sitema, debe crear un robot primero.</nav>
-{% endif%}
 
 <section>
 
 
 
-<div class="row">
+<div class="row" style="padding-left: 10px;">
 
 
 
 <div class="col-lg-3 col-6">
 <!-- small box -->
     <div class="small-box bg-success">
-        <div class="inner">
-            <h3>{{ parametroCantidadDeEventosTotales }}</h3>           
-            <p>Cantidad de eventos Totales:</p>
+        <div class="inner">  
+            <h3>{{ parametroCantidadDeEventosDelAdministrador }}</h3>       
+            <p>Mi cantidad de eventos a gestionar:</p>
         </div>
         <div class="icon">
             <i class="ion ion-stats-bars"></i>
@@ -58,9 +80,8 @@
             <!-- small box -->
             <div class="small-box bg-warning">
               <div class="inner">
-                <h3>{{ parametroCantidadAsistentesTotales }}</h3>
-
-                <p>Cantidad de asistentes:</p>
+                <h3>{{ parametroCantidadDeAsistentesDelAdministrador }}</h3>
+                <p>Cantidad de asistentes en mis eventos:</p>
               </div>
               <div class="icon">
                 <i class="ion ion-person-add"></i>
@@ -72,9 +93,8 @@
             <!-- small box -->
             <div class="small-box bg-danger">
               <div class="inner">
-                <h3>{{ parametroCantidadDeRobotsTotales }}</h3>
-
-                <p>Cantidad de robots totales: </p>
+                <h3>{{ parametroCantidadRobotsDelAdminstrador }}</h3>
+                <p>Cantidad de robots usando en mis eventos: </p>
               </div>
               <div class="icon">
                 <i class="ion ion-pie-graph"></i>
@@ -86,9 +106,8 @@
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
-                <h3>{{ parametroCantidadAsistentesEsperando }}</h3>
-
-                <p>cantida de personas que estan en cola:</p>
+                <h3>{{ parametroRobotsQueUsoEnEventosAdministradorSinServicioActualmente }}</h3>
+                <p>Cantidad de robots que no están en servicio en mis eventos celebrándose: </p>
               </div>
               <div class="icon">
                 <i class="ion ion-person-add"></i>
@@ -97,8 +116,79 @@
           </div>
 
 
+          
+
+
 </div>
+
+<!--- ---------------------otras tarjetas -------------------------->
+
+<div class="row" style="padding-left: 10px;">
+
+
+
+  <div class="col-lg-3 col-6">
+  <!-- small box -->
+      <div class="small-box bg-teal">
+          <div class="inner">
+              <h3>{{ parametroCantidadDeEventosEnElSistema }}</h3>           
+              <p>Cantidad de eventos en el sistema:</p>
+          </div>
+          <div class="icon">
+              <i class="ion ion-stats-bars"></i>
+          </div>
+      </div>
+  </div>
+  
+  <div class="col-lg-3 col-6">
+              <!-- small box -->
+              <div class="small-box bg-dark">
+                <div class="inner">
+                  <h3>{{ parametroCantidadAsistentesEnElSistema }}</h3>
+                  <p>Cantidad de asistentes en el sistema:</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-person-add"></i>
+                </div>
+              </div>
+            </div>
+  
+  <div class="col-lg-3 col-6">
+              <!-- small box -->
+              <div class="small-box bg-fuchsia">
+                <div class="inner">
+                  <h3>{{ parametroCantidadDeRobotsEnElSistema }}</h3>
+                  <p>Cantidad de robots en el sistema: </p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-pie-graph"></i>
+                </div>
+              </div>
+            </div>
+  
+  <div class="col-lg-3 col-6">
+              <!-- small box -->
+              <div class="small-box bg-secondary">
+                <div class="inner">
+                  <h3>{{ parametroCantidadRobotsSinServicioEnElSistema }}</h3>
+                  <p>Cantidad de robots que no están en servicio en el sistema:</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-person-add"></i>
+                </div>
+              </div>
+            </div>
+  
+  
+            
+  
+  
+  </div>
     
 </section>
+
+
+</div>  <!-- fin de los elementos de la derecha-->
+</div>  <!-- fin del envolvente que  hacer que se separe la barra negra con las tarjetas. -->
 {% endblock %}
 

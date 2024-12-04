@@ -8,13 +8,47 @@
 
 
 {% block content %}
-<nav> 
-    <ol class="list-unstyled">
-        <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorCrearEvento') }}" class="btn btn-primary"> nuevo evento </a></li>
-       <li class="mb-2"> <a href="{{ url_for ('funcionAdministradorHome') }}" class="btn btn-primary">Volver al home </a></li> 
-    </ol>
-</nav>
-<section> 
+
+<div class="wrapper" style="align-items: center;">
+
+    <aside class="main-sidebar sidebar-dark-primary elevation-4"  style="height: 800px;">
+      <!-- Brand Logo -->
+        <h4 style="color: white; border: 7px solid rgba(124, 137, 140, 0.582);" > Panel evento</h4>
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+          <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <!-- Add icons to the links using the .nav-icon class
+                 with font-awesome or any other icon font library -->
+    
+                <li class="nav-item">
+                  <a href="{{ url_for ('funcionAdministradorCrearEvento') }}" class="nav-link">
+                    <i class="nav-icon far fa-circle text-primary"></i>
+                    <p>Nuevo evento</p>
+                  </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{ url_for ('funcionAdministradorHome') }}" class="nav-link">
+                      <i class="nav-icon far fa-circle text-primary"></i>
+                      <p>Volver al home</p>
+                    </a>
+                  </li>
+
+              </ul>
+            </li>
+        </nav>
+        <!-- /.sidebar-menu -->
+      </div></div></div><div class="os-scrollbar os-scrollbar-horizontal os-scrollbar-unusable os-scrollbar-auto-hidden"><div class="os-scrollbar-track"><div class="os-scrollbar-handle" style="width: 100%; transform: translate(0px);"></div></div></div><div class="os-scrollbar os-scrollbar-vertical os-scrollbar-auto-hidden"><div class="os-scrollbar-track"><div class="os-scrollbar-handle" style="height: 63.429%; transform: translate(0px, 14.5312px);"></div></div></div><div class="os-scrollbar-corner"></div></div>
+      <!-- /.sidebar -->
+    </aside>
+    
+    
+    <div class="content-wrapper" style="min-height: 800px; max-width: 1600px;">
+    
+
+
+
+<section style="padding-left: 10px;"> 
 
 {% if miParametroVerdadErrorDeEventoInexistente == 1 %}
     <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">Ese evento no existe, ha dejado de existir o es de otro administrador.</nav>
@@ -28,33 +62,36 @@
                                     <table class="table table-sm">
                                         <thead>
                                             <tr>
-                                                <th style="width: 140px">Id del evento: </th>
-                                                <th>Nombre del evento:</th>
+                                                <th style="width: 140px">Nombre del evento:</th>
                                                 <th>Fecha creación del evento:</th>
+                                                <th>Lugar donde se celebra: </th>
+                                                <th style="width: 300px">CódigoQR: </th>
                                                 <th>Calle:</th>
                                                 <th>Numero: </th>
-                                                <th>Edificio donde se celebra: </th>
                                                 <th>Codigo postal:</th>
-                                                <th>Acciones: </th>
+                                                <th>Acciones para modificar el evento: </th>
                                             </tr>
                                         </thead>
                                         {% for iteracion in miListaEventosParametro %}
                                         <tbody>
                                             <tr class="align-middle">
-                                                <td>{{ iteracion.idEvento }}</td>
-                                                <td>{{ iteracion.nombreDelEvento }}</td>
+                                                <td>{{ iteracion._nombreDelEvento }}</td>
                                                 <td>
-                                                    {{ iteracion.fechaDeCreacionDelEvento.strftime("%Y-%m-%d-%H:%M") }}
+                                                    {{ iteracion._fechaDeCreacionDelEvento }}
                                                 </td>
-                                                <td>{{ iteracion.calle }}</td>
-                                                <td>{{ iteracion.numero }}</td>
-                                                <td>{{ iteracion.edificioDondeSeCelebra }}</td>
-                                                <td> {{ iteracion.codigoPostal }}</td>
+                                                <td>{{ iteracion._lugarDondeSeCelebra }}</td>
+                                                <td>
+                                                    <div>{{ parametroURL }}{{ iteracion._codigoQR }}</div>
+                                                    <div><a href="{{ url_for ('funcionGenerarCodigoQR', url=iteracion._codigoQR ) }}" class="btn btn-success"> Generar CodigoQR </a></div>
+                                                </td>
+                                                <td>{{ iteracion._calle }}</td>
+                                                <td>{{ iteracion._numero }}</td>
+                                                <td> {{ iteracion._codigoPostal }}</td>
                                                 <td>
                                                     <ol class="list-unstyled">
-                                                    <li class="mb-2"> <a href="{{ url_for('funcionAdministradorModificarDatosEvento', idEvento=iteracion.idEvento) }}" class="btn btn-primary">Modificar datos del evento</a></li>
-                                                    <li class="mb-2"> <a href="{{ url_for('funcionAdministradorModificarRobotsEvento', idEvento=iteracion.idEvento) }}" class="btn btn-primary">Modificar robots del evento</a></li>
-                                                    <li class="mb-2"> <a href="{{ url_for('funcionAdministradorPanelEventoBorrar', idEvento=iteracion.idEvento) }}" class="btn btn-primary" id="botonborrarevento{{ loop.index}}">Borrar evento</a></li>
+                                                    <li class="mb-2"> <a href="{{ url_for('funcionAdministradorModificarDatosEvento', nombreDelEvento=iteracion._nombreDelEvento, fechaDeCreacionDelEvento=iteracion._fechaDeCreacionDelEvento, lugarDondeSeCelebra=iteracion._lugarDondeSeCelebra) }}" class="btn btn-primary">Modificar datos del evento</a></li>
+                                                    <li class="mb-2"> <a href="{{ url_for('funcionAdministradorModificarRobotsEvento', nombreDelEvento=iteracion._nombreDelEvento, fechaDeCreacionDelEvento=iteracion._fechaDeCreacionDelEvento, lugarDondeSeCelebra=iteracion._lugarDondeSeCelebra) }}" class="btn btn-primary">Modificar robots del evento</a></li>
+                                                    <li class="mb-2"> <a href="{{ url_for('funcionAdministradorPanelEventoBorrar', nombreDelEvento=iteracion._nombreDelEvento, fechaDeCreacionDelEvento=iteracion._fechaDeCreacionDelEvento, lugarDondeSeCelebra=iteracion._lugarDondeSeCelebra) }}" class="btn btn-primary" id="botonborrarevento{{ loop.index}}">Borrar evento</a></li>
                                                     </ol>
                                                 </td>
                                             </tr>
@@ -76,16 +113,4 @@
 
  </section>
 {% endblock %}
-
-
-
-
-
-
-
-
-
-
-
-
 

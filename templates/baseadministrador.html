@@ -3,21 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <link rel="stylesheet" href="{{ url_for('static', filename='adminlte/dist/css/adminlte.css') }}">
-    <!-- Aparte del css del admin lte, necesito tambien utilizar los iconos con los que trabaja, por lo tanto tengo que irme a esta pagina web para sacarlos de ahi. -->
+    <!-- Aparte del css del admin lte, necesito tambien utilizar los iconos con los que trabaja, por lo tanto tengo que irme a esta pagina web para sacarlos de ahi. Son los iconos de las tarjetas.  -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-
-
-
-
+    <!---  estos son los iconos de los botones-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     {% block title %}
-    
     {% endblock %}
 </head>
 <body>
     <header>
-        <h1>Demostraciones robóticas</h1>
+        <h1 class="small-box bg-indigo text-center">Demostraciones robóticas UAH V1.0</h1>
     </header>
     {% block content %}
     {% endblock %}
@@ -31,3 +27,10 @@
 
 
 
+
+<head>
+    <!-- Otros enlaces de estilo que ya tienes -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- Añade este enlace para Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
