@@ -82,7 +82,8 @@
                                                 <td>{{ iteracion._lugarDondeSeCelebra }}</td>
                                                 <td>
                                                     <div>{{ parametroURL }}{{ iteracion._codigoQR }}</div>
-                                                    <div><a href="{{ url_for ('funcionGenerarCodigoQR', url=iteracion._codigoQR ) }}" class="btn btn-success"> Generar CodigoQR </a></div>
+                                                    <div><a href="{{ url_for ('funcionGenerarCodigoQR', url=iteracion._codigoQR ) }}" class="btn btn-success mb-2"> Generar CodigoQR asistentes </a></div>
+                                                    <div><a href="{{ url_for ('funcionGenerarCodigoQR', url=iteracion._codigoQR, correoelectronico=parametroCorreoElectronico ) }}" class="btn btn-warning mb-2"> Generar CodigoQR administradores</a></div>
                                                 </td>
                                                 <td>{{ iteracion._calle }}</td>
                                                 <td>{{ iteracion._numero }}</td>

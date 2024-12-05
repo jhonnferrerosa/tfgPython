@@ -59,7 +59,7 @@
         <table class="table table-sm">
             <thead>
                 <tr>
-                    <th style="width: 350px">Nombre del evento::</th>
+                    <th style="width: 350px">Nombre del evento:</th>
                     <th>Fecha de creación del evento:</th>
                     <th>Lugar del evento:</th>
                 </tr>
@@ -67,9 +67,9 @@
 {% for iteracion in valor %}
             <tbody>
                 <tr class="align-middle">
-                    <td>{{ iteracion.nombreDelEvento }}</td>
-                    <td>{{ iteracion.fechaDeCreacionDelEvento }}</td>
-                    <td>{{ iteracion.lugarDondeSeCelebra }}</td>
+                    <td>{{ iteracion._nombreDelEvento }}</td>
+                    <td>{{ iteracion._fechaDeCreacionDelEvento }}</td>
+                    <td>{{ iteracion._lugarDondeSeCelebra }}</td>
                 </tr>
             </tbody>
 {% endfor %}
