@@ -228,7 +228,7 @@ def funcionGenerarCodigoQR (url, correoelectronico = None):
     if (correoelectronico != None):
         miCodigoQR = qrcode.make (miVariableGlobalURL + url +"/" +correoelectronico);
     else:
-        miCodigoQR = qrcode.make (miVariableGlobalURL + url + correoelectronico);
+        miCodigoQR = qrcode.make (miVariableGlobalURL + url);
 
     # Con esto se crea una lista de bits para almacenar el codigo QR que genera la librería qrcode, para después envieárselo al cliente y no que el servidor se queda con la imagen. 
     # Es como un buffer que se prepara para el almacenamiento de archivos. 
@@ -262,7 +262,7 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
                 db.session.commit ();
             except Exception as e:
                 db.session.rollback();
-                raise Exception ("Error en la transaccioón de la base de datos: ", e);
+                return redirect (url_for ('funcionError404', mensajeerror=e));  
         else: 
             # esta parte de aqui la hago porque puede haber clientes que almacenen su identificadorUnnicoAsistente, pero en otro momento se puede haber reseteado la aplicacion y la BBDD. 
             miAsistentes = Asistentes.query.filter_by (_identificadorUnicoAsistente= session['token']).first ();
@@ -276,7 +276,7 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
                     db.session.commit ();
                 except Exception as e:
                     db.session.rollback();
-                    raise Exception ("Error en la transaccioón de la base de datos: ", e);
+                    return redirect (url_for ('funcionError404', mensajeerror=e));  
             else: 
                 miVincula = Vincula.query.filter (Vincula.asistentes_identificadorUnicoAsistente == session['token'], Vincula.eventos_nombreDelEvento == miEventos._nombreDelEvento, Vincula.eventos_fechaDeCreacionDelEvento == miEventos._fechaDeCreacionDelEvento, Vincula.eventos_lugarDondeSeCelebra == miEventos._lugarDondeSeCelebra).first();
                 # en el caso de que haya token de sesion y este en la tabla Asistentes, pero no este vinculado a este evento (segun la BBDD), entonces lo vinculo a este otro evento nuevo, digo otro nuevo porque sí o sí este asistente para que exista, tiene que estar vinculado a un evento. Pongo esto 
@@ -331,7 +331,7 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
             for miDisponibleRobotObjeto in miListaDisponibleRobot: 
                 miRobots = Robots.query.filter_by (_idRobot=miDisponibleRobotObjeto.robots_idRobot).first ();
                 miListaRobots.append (miRobots);
-            return (render_template("registrarasistente.html", miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miListaRobotsParametro=miListaRobots, miParametroApodoAsistente=miAsistentes._apodoAsistente, miParametroCorreoElectronicoDelAdministrador = miVariableCorreoElectronicoAdministrador));
+            return (render_template("registrarasistente.html", miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miParametroApodoAsistente=miAsistentes._apodoAsistente, miParametroIdRobot = None, miParametroMac = None, miParametroCorreoElectronicoDelAdministrador = miVariableCorreoElectronicoAdministrador, miParametroCodigoQR = codigoQR));
         else:
             # por ultimo lo que hago es la lógica de los robots rechazados. 
             miVariabletokenDeSesionYeventoQR = session ['token'] +"-" +codigoQR;
@@ -347,11 +347,11 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
                 if (miRobots == None):
                     miDiccionarioGlobalTokensListaDeRobotsRechazados[miVariabletokenDeSesionYeventoQR].clear ();
                     miRobots = Robots.query.filter_by (_idRobot=miListaDisponibleRobot[0].robots_idRobot).first();
-                return render_template ("robotlisto.html", miRobotParametro=miRobots, miParametroCodigoQR=codigoQR, miParametroApodoAsistente=miAsistentes._apodoAsistente, miParametroCorreoElectronicoDelAdministrador = miVariableCorreoElectronicoAdministrador);
+                return render_template ("robotlisto.html", miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miParametroApodoAsistente=miAsistentes._apodoAsistente, miParametroIdRobot=miRobots._idRobot, miParametroMac = miRobots._macAddressDelRobot, miParametroCorreoElectronicoDelAdministrador = miVariableCorreoElectronicoAdministrador, miParametroCodigoQR=codigoQR);
            # en este caso que ese token con ese evento, no está en el miDiccionarioGlobalTokensListaDeRobotsRechazados  entonces eso significa que ese asistente, nunca ha rechazado un robot, por tanto le propongo el primer robot que encuentre. 
             else:
                 miRobots = Robots.query.filter_by (_idRobot=miListaDisponibleRobot[0].robots_idRobot).first(); 
-                return render_template ("robotlisto.html", miRobotParametro=miRobots, miParametroCodigoQR=codigoQR, miParametroApodoAsistente=miAsistentes._apodoAsistente, miParametroCorreoElectronicoDelAdministrador = miVariableCorreoElectronicoAdministrador);
+                return render_template ("robotlisto.html", miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miParametroApodoAsistente=miAsistentes._apodoAsistente, miParametroIdRobot=miRobots._idRobot, miParametroMac = miRobots._macAddressDelRobot, miParametroCorreoElectronicoDelAdministrador = miVariableCorreoElectronicoAdministrador, miParametroCodigoQR=codigoQR);
 
 
 @app.route ('/aceptarrobot/<int:idRobot>/<codigoQR>')
@@ -362,6 +362,7 @@ def funcion_aceptarRobot (idRobot, codigoQR, correoelectronico = None):
         return "<p> funcion_registrarAsistente () --- error, el evento que se ha pasado por parametro, no existe. </p>";
     else:
         miVariableCorreoElectronicoAdministrador = None;
+        miAdministradores = None;
         if (correoelectronico != None):
             miAdministradores = Administradores.query.filter_by (_correoElectronico = correoelectronico).first ();
             if (miAdministradores):
@@ -379,51 +380,50 @@ def funcion_aceptarRobot (idRobot, codigoQR, correoelectronico = None):
                 if (miVincula == None):
                     return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR, correoelectronico = miVariableCorreoElectronicoAdministrador)); 
 
-    if (datetime.now() > miVincula.fechaSalida):
-        miVincula.fechaSalida = datetime.now() + timedelta (hours=1);
-        db.session.commit ();
+        if (datetime.now() > miVincula.fechaSalida):
+            miVincula.fechaSalida = datetime.now() + timedelta (hours=1);
+            db.session.commit ();
 
-    miControla = Controla.query.filter (Controla.asistentes_identificadorUnicoAsistente == miAsistentes._identificadorUnicoAsistente, Controla.fechaTomaDelRobot <=datetime.now(), Controla.fechaAbandonoDelRobot >= datetime.now()).first ();
-    # en este momento el asistente esta controlando un robot. 
-    if (miControla):
-        # en este caso solicito el objeto Asistentes, ya que el es el que tiene los métodos para consultar eventos y consultar robots. 
-        miRobots = miAsistentes.funcion_consultaRobot (miControla.robots_idRobot); 
-        miEventos = miAsistentes.funcion_consultaEvento (miControla.robots_idRobot);
-        return render_template ("robotmanejando.html", miRobotParametro=miRobots, miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miParametroIdentificadorUnicoAsistente=miAsistentes._identificadorUnicoAsistente, miParametroApodoAsistente=miAsistentes._apodoAsistente, miParametroCorreoElectronicoDelAdministrador = miVariableCorreoElectronicoAdministrador);
-    else:
-        # de esta forma prevengo el fallo de que si la aplicacion se cae, que a kodeular no le de error, ya que cuando la aplcacion empieza a ejecutarse, ningun diccionario esta inicializado. 
-        if (miAsistentes._identificadorUnicoAsistente not in miDiccionarioAsistentesYestadoControlandoRobot):
-            return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR, correoelectronico = miVariableCorreoElectronicoAdministrador)); 
+        miControla = Controla.query.filter (Controla.asistentes_identificadorUnicoAsistente == miAsistentes._identificadorUnicoAsistente, Controla.fechaTomaDelRobot <=datetime.now(), Controla.fechaAbandonoDelRobot >= datetime.now()).first ();
+        # en este momento el asistente esta controlando un robot. 
+        if (miControla):
+            # en este caso solicito el objeto Asistentes, ya que el es el que tiene los métodos para consultar eventos y consultar robots. 
+            miRobots = miAsistentes.funcion_consultaRobot (miControla.robots_idRobot); 
+            miEventos = miAsistentes.funcion_consultaEvento (miControla.robots_idRobot);
+            return render_template ("robotmanejando.html",  miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miParametroApodoAsistente=miAsistentes._apodoAsistente, miParametroIdRobot=miRobots._idRobot, miParametroMac = miRobots._macAddressDelRobot, miParametroCorreoElectronicoDelAdministrador = miVariableCorreoElectronicoAdministrador, miParametroCodigoQR=codigoQR);
         else:
-            if (miDiccionarioAsistentesYestadoControlandoRobot[miAsistentes._identificadorUnicoAsistente] == True):
+            # de esta forma prevengo el fallo de que si la aplicacion se cae, que a kodeular no le de error, ya que cuando la aplcacion empieza a ejecutarse, ningun diccionario esta inicializado. 
+            if (miAsistentes._identificadorUnicoAsistente not in miDiccionarioAsistentesYestadoControlandoRobot):
                 return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR, correoelectronico = miVariableCorreoElectronicoAdministrador)); 
             else:
-                miControla = Controla.query.filter (Controla.robots_idRobot ==idRobot, Controla.fechaTomaDelRobot <=datetime.now(), Controla.fechaAbandonoDelRobot >= datetime.now()).first();
-                # en el caso de que alguien se haya colado, y se ponga a controlar ese robot, lo que tengo que hacer es volver a funcion_registrarAsistente para conseguir otro robot. 
-                if (miControla):
+                if (miDiccionarioAsistentesYestadoControlandoRobot[miAsistentes._identificadorUnicoAsistente] == True):
                     return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR, correoelectronico = miVariableCorreoElectronicoAdministrador)); 
                 else:
-                    miRobots = miAsistentes.funcion_consultaRobot (idRobot); 
-                    # en el caso de que repentinamente el administrador haya borrado ese robot y no esta en la BBDD. 
-                    if (miRobots == None):
-                        return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR, correoelectronico = miVariableCorreoElectronicoAdministrador));     
-                    else: 
-                        # aqui lo que hago es comprobar si el robot esta o no en servicio, en el caso de que no lo este, entonces lo mando a la  funcion_registrarAsistente para que consiga otro robot. En el caso de que seas un administrador sigo el codigo para controlar un robot que no está en servicio. 
-                        miDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.robots_idRobot == idRobot, DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now()).first ();
-                        if (miDisponibleRobot.disponible == False) and (miAdministradores == None):
-                            return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR, correoelectronico = miVariableCorreoElectronicoAdministrador)); 
-                        else:
-                            miAsistentes.pasarAcontrolarRobot (miAsistentes._identificadorUnicoAsistente, idRobot);
-                            miEventos = miAsistentes.funcion_consultaEvento (idRobot);
-                            miDiccionarioAsistentesYestadoControlandoRobot[miAsistentes._identificadorUnicoAsistente] = True;
-                            # como ya es definitivo que paso a controlar un robot, lo que hago es que la lista del diccionario que almecena los robots que han sido rechazados, no tenga ningun elemento, para que cuando quiera elegir de nuevo un robot,
-                            # (despues de que haya acabado el tiempo de utilizar uno o le haya expulsado un administradir) que no haya ningun problema. 
-                            miVariabletokenDeSesionYeventoQR = miAsistentes._identificadorUnicoAsistente +"-" +codigoQR;
-                            # este if lo tengo porque unas veces el asistente no rechaza un robot, por lo tanto nunca se mete en este diccionario, entonces lo que estoy haciendo es ver primero si esta.
-                            if (miVariabletokenDeSesionYeventoQR in miDiccionarioGlobalTokensListaDeRobotsRechazados):
-                                miDiccionarioGlobalTokensListaDeRobotsRechazados[miVariabletokenDeSesionYeventoQR].clear (); 
-                            return (render_template ("robotmanejando.html", miRobotParametro=miRobots, miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miParametroIdentificadorUnicoAsistente=miAsistentes._identificadorUnicoAsistente, miParametroApodoAsistente=miAsistentes._apodoAsistente,
-                                                     miParametroCorreoElectronicoDelAdministrador = miVariableCorreoElectronicoAdministrador));
+                    miControla = Controla.query.filter (Controla.robots_idRobot ==idRobot, Controla.fechaTomaDelRobot <=datetime.now(), Controla.fechaAbandonoDelRobot >= datetime.now()).first();
+                    # en el caso de que alguien se haya colado, y se ponga a controlar ese robot, lo que tengo que hacer es volver a funcion_registrarAsistente para conseguir otro robot. 
+                    if (miControla):
+                        return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR, correoelectronico = miVariableCorreoElectronicoAdministrador)); 
+                    else:
+                        miRobots = miAsistentes.funcion_consultaRobot (idRobot); 
+                        # en el caso de que repentinamente el administrador haya borrado ese robot y no esta en la BBDD. 
+                        if (miRobots == None):
+                            return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR, correoelectronico = miVariableCorreoElectronicoAdministrador));     
+                        else: 
+                            # aqui lo que hago es comprobar si el robot esta o no en servicio, en el caso de que no lo este, entonces lo mando a la  funcion_registrarAsistente para que consiga otro robot. En el caso de que seas un administrador sigo el codigo para controlar un robot que no está en servicio. 
+                            miDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.robots_idRobot == idRobot, DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now()).first ();
+                            if (miDisponibleRobot.disponible == False) and (miAdministradores == None):
+                                return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR, correoelectronico = None)); 
+                            else:
+                                miAsistentes.pasarAcontrolarRobot (miAsistentes._identificadorUnicoAsistente, idRobot);
+                                miEventos = miAsistentes.funcion_consultaEvento (idRobot);
+                                miDiccionarioAsistentesYestadoControlandoRobot[miAsistentes._identificadorUnicoAsistente] = True;
+                                # como ya es definitivo que paso a controlar un robot, lo que hago es que la lista del diccionario que almecena los robots que han sido rechazados, no tenga ningun elemento, para que cuando quiera elegir de nuevo un robot,
+                                # (despues de que haya acabado el tiempo de utilizar uno o le haya expulsado un administradir) que no haya ningun problema. 
+                                miVariabletokenDeSesionYeventoQR = miAsistentes._identificadorUnicoAsistente +"-" +codigoQR;
+                                # este if lo tengo porque unas veces el asistente no rechaza un robot, por lo tanto nunca se mete en este diccionario, entonces lo que estoy haciendo es ver primero si esta.
+                                if (miVariabletokenDeSesionYeventoQR in miDiccionarioGlobalTokensListaDeRobotsRechazados):
+                                    miDiccionarioGlobalTokensListaDeRobotsRechazados[miVariabletokenDeSesionYeventoQR].clear (); 
+                                return render_template ("robotmanejando.html",  miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miParametroApodoAsistente=miAsistentes._apodoAsistente, miParametroIdRobot=miRobots._idRobot, miParametroMac = miRobots._macAddressDelRobot, miParametroCorreoElectronicoDelAdministrador = miVariableCorreoElectronicoAdministrador, miParametroCodigoQR=codigoQR);
 
 @app.route ('/rechazarrobot/<int:idRobot>/<codigoQR>')
 @app.route ('/rechazarrobot/<int:idRobot>/<codigoQR>/<correoelectronico>')
@@ -558,8 +558,12 @@ def funcionAdministradorPanelRobot (nombreDelEvento = None, fechaDeCreacionDelEv
 @app.route ('/adminstradorpanelrobotborrar/<int:idRobot>')
 def funcionAdministradorPanelRobotBorrar (idRobot, nombreDelEvento=None, fechaDeCreacionDelEvento=None, lugarDondeSeCelebra=None):
     miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
-    if (miAdministradores.funcion_verSiPuedoBorrarRobot (idRobot) == False):
-        return redirect (url_for ('funcionError404', mensajeerror="administradorpaneleventoborrar.html --- ese administrador, no puede eliminar ese robot."));  
+    miRobots = miAdministradores.funcion_conseguirRobotPorIdRobot (idRobot);
+    if (miRobots == None):
+        return redirect (url_for ('funcionError404', mensajeerror="exception. No se puede modificar el robot, ya que el robot que has puesto no existe en la BBDD ")); 
+    else: 
+        if (miAdministradores.funcion_verSiPuedoBorrarRobot (idRobot) == False):
+            return redirect (url_for ('funcionError404', mensajeerror="administradorpaneleventoborrar.html --- ese administrador, no puede eliminar ese robot."));  
 
     miAdministradores.funcion_borrarRobot (idRobot);
 
@@ -596,7 +600,7 @@ def funcionAdministradorCrearRobot ():
             miVerdadEsJPEG = bool(re.match (miExpresionRegularParaJPEG, fotoRecibidaDelFormulario.filename));
             miVerdadEsPNG = bool(re.match (miExpresionRegularParaPNG, fotoRecibidaDelFormulario.filename));
             if (miVerdadEsJPG == False) and (miVerdadEsJPEG == False) and (miVerdadEsPNG == False):
-                raise Exception ("administradorcrearrobot.html --- la extesión del archivo no es valida, las extensiones permitidas son .jpg .jpeg y .png");
+                return redirect (url_for ('funcionError404', mensajeerror="administradorcrearrobot.html --- la extesión del archivo no es valida, las extensiones permitidas son .jpg .jpeg y .png"));  
         
         miAdministradores.funcion_crearRobot (miFormulario.macAddressDelRobot.data, miFormulario.nombreDelRobot.data, binarioDeFoto, miFormulario.descripcionDelRobot.data);
         return redirect(url_for('funcionAdministradorPanelRobot'));
@@ -614,12 +618,24 @@ def funcionAdministradorPanelRobotModificar (idRobot, nombreDelEvento = None, fe
     miFormulario = formulario.FormularioCreaRobot (request.form);
 
     miRobots = miAdministradores.funcion_conseguirRobotPorIdRobot (idRobot);
+    if (miRobots == None):
+        return redirect (url_for ('funcionError404', mensajeerror="exception. No se puede modificar el robot, ya que el robot que has puesto no existe en la BBDD ")); 
     if (request.method == 'POST'):
         if (miFormulario.validate()):
             fotoRecibidaDelFormulario = request.files['fotoDelRobot'];
             binarioDeFoto = fotoRecibidaDelFormulario.read();
             if (len(binarioDeFoto) == 0):
                 binarioDeFoto = None;
+            else:
+                miExpresionRegularParaJPG = r".+\.jpg$";
+                miExpresionRegularParaJPEG = r".+\.jpeg$";
+                miExpresionRegularParaPNG = r".+\.png$";
+                miVerdadEsJPG = bool(re.match (miExpresionRegularParaJPG, fotoRecibidaDelFormulario.filename));
+                miVerdadEsJPEG = bool(re.match (miExpresionRegularParaJPEG, fotoRecibidaDelFormulario.filename));
+                miVerdadEsPNG = bool(re.match (miExpresionRegularParaPNG, fotoRecibidaDelFormulario.filename));
+                if (miVerdadEsJPG == False) and (miVerdadEsJPEG == False) and (miVerdadEsPNG == False):
+                    return redirect (url_for ('funcionError404', mensajeerror="administradorcrearrobot.html --- la extesión del archivo no es valida, las extensiones permitidas son .jpg .jpeg y .png")); 
+
             miAdministradores.funcion_modificarRobot (idRobot, miFormulario.macAddressDelRobot.data, miFormulario.nombreDelRobot.data, binarioDeFoto, miFormulario.descripcionDelRobot.data);
 
             if ((nombreDelEvento == None) and (fechaDeCreacionDelEvento == None) and (lugarDondeSeCelebra == None)):
@@ -634,7 +650,7 @@ def funcionAdministradorPanelRobotModificar (idRobot, nombreDelEvento = None, fe
         #en el caso de que un administrador vea un robot, sabiendo que esta en la tabla de disponible, pero que ademas ese robot lo estan utilizando actualmente, entonces no se le va a mostrar la opcion de modificar, pero lo que pasa es que si el pone en la URL
         # a este robot, entonecs sí que lo puede modificar, por lo tanto hago este if que vuelve a comprobar si ese administrador lo puede o no modificar, en el caso de que no pueda, le mando un error. 
         if (miAdministradores.funcion_verSiPuedoModificarRobot (idRobot) == False):
-            raise Exception ("administradorpaneleventoborrar.html --- ese administrador, no puede modificcar ese robot, ya que otro adminsitrador lo esta usando actualmente. ");
+            return redirect (url_for ('funcionError404', mensajeerror="administradorpaneleventoborrar.html --- ese administrador, no puede modificcar ese robot, ya que otro adminsitrador lo esta usando actualmente. ")); 
         else:
             miFormulario.macAddressDelRobot.data = miRobots._macAddressDelRobot; 
             miFormulario.nombreDelRobot.data = miRobots._nombreDelRobot; 
@@ -656,11 +672,15 @@ def funcionAdministradorPanelEvento (miVerdadErrorDeEventoInexistente = 0):
 @app.route ('/administradorpaneleventoborrar/<nombreDelEvento>/<fechaDeCreacionDelEvento>/<lugarDondeSeCelebra>')
 def funcionAdministradorPanelEventoBorrar (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra):
     miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
+    miEventos = miAdministradores.funcion_conseguirEventoPorClavePrimaria (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra);
+    if (miEventos == None):
+        return redirect (url_for ('funcionError404', mensajeerror="exception. No se puede borrar el evento, ya que no existe en la BBDD.")); 
+    
     if (miAdministradores.funcion_verSiEseEventoEsDeEseAdministrador  (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra)):
         miAdministradores.funcion_borrarEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra);
         return redirect (url_for ('funcionAdministradorPanelEvento'));
     else:
-        raise Exception ("administradorpaneleventoborrar.html --- para ese adminstrador, ese evento no existe")
+        return redirect (url_for ('funcionError404', mensajeerror="administradorpaneleventoborrar.html --- para ese adminstrador, ese evento no existe")); 
 
 
 @app.route ('/administradorcrearevento', methods = ['GET', 'POST'])
@@ -677,11 +697,18 @@ def funcionAdministradorCrearEvento ():
 @app.route ('/administradormodificardatosevento/<nombreDelEvento>/<fechaDeCreacionDelEvento>/<lugarDondeSeCelebra>', methods = ['GET', 'POST'])
 def funcionAdministradorModificarDatosEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra):
     miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
+    miEventos = miAdministradores.funcion_conseguirEventoPorClavePrimaria (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra);
+    if (miEventos == None):
+        return redirect (url_for ('funcionError404', mensajeerror="exception. No se puede modificar el evento ya que ese evento no existe")); 
+
     miFormulario = formulario.FormularioCrearEvento (request.form);
 
     if (request.method == 'POST'):
         if (miFormulario.validate()):
-            miAdministradores.funcion_modificarDatosDelEvento (nombreDelEvento, miFormulario.fechaDeCreacionDelEvento.data, lugarDondeSeCelebra, miFormulario.nombreDelEvento.data,  miFormulario.lugarDondeSeCelebra.data, miFormulario.codigoQR.data, miFormulario.calle.data, miFormulario.numero.data, miFormulario.codigoPostal.data);
+            miVariableMensajeDeError = None;
+            miVariableMensajeDeError = miAdministradores.funcion_modificarDatosDelEvento (nombreDelEvento, miFormulario.fechaDeCreacionDelEvento.data, lugarDondeSeCelebra, miFormulario.nombreDelEvento.data,  miFormulario.lugarDondeSeCelebra.data, miFormulario.codigoQR.data, miFormulario.calle.data, miFormulario.numero.data, miFormulario.codigoPostal.data);
+            if (miVariableMensajeDeError != None):
+                return redirect (url_for ('funcionError404', mensajeerror=miVariableMensajeDeError)); 
             return redirect(url_for('funcionAdministradorPanelEvento'));
         else:
             return render_template ("administradorcrearevento.html", parametroURL = miVariableGlobalURL, miFormularioParametro = miFormulario, miParametroAccionHtml = "modificar");
@@ -705,8 +732,11 @@ def funcionAdministradorModificarRobotsEvento (nombreDelEvento, fechaDeCreacionD
 
     if (request.method == 'POST'):
         if ('nameformulariomodificar' in request.form):
-            miAdministradores.funcion_modificarRobotDelEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra, request.form.get('robots_idRobot'), request.form.get('fechaComienzoEnEventoAntigua'), request.form.get('fechaFinEnEventoAntigua'), 
+            miVariableMensajeDeError = None;
+            miVariableMensajeDeError = miAdministradores.funcion_modificarRobotDelEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra, request.form.get('robots_idRobot'), request.form.get('fechaComienzoEnEventoAntigua'), request.form.get('fechaFinEnEventoAntigua'), 
                                                                request.form.get('fechaComienzoEnEvento'), request.form.get('fechaFinEnEvento'), request.form.get ('disponible'));
+            if (miVariableMensajeDeError != None):
+                return redirect (url_for ('funcionError404', mensajeerror=miVariableMensajeDeError)); 
         else:
             if ("nameformulariosumarrobot" in request.form):
                 miDisponibleRecibido = request.form.get ('disponible');
@@ -726,9 +756,12 @@ def funcionAdministradorModificarRobotsEvento (nombreDelEvento, fechaDeCreacionD
                 miAdministradores.funcion_sumarRobotAlEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra, miIdRobotRecibido, miFechaComienzoEnEventoRecibido, miFechaFinEnEventoRecibido, miDisponibleRecibido);
             else:
                 if ("nameformularioeliminar" in request.form):
-                    miAdministradores.funcion_eliminarRobotDelEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra, request.form.get('robots_idRobot'), request.form.get('fechaComienzoEnEventoAntigua'), request.form.get('fechaFinEnEventoAntigua'));
+                    miVariableMensajeDeError = None;
+                    miVariableMensajeDeError = miAdministradores.funcion_eliminarRobotDelEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra, request.form.get('robots_idRobot'), request.form.get('fechaComienzoEnEventoAntigua'), request.form.get('fechaFinEnEventoAntigua'));
+                    if (miVariableMensajeDeError != None):
+                        return redirect (url_for ('funcionError404', mensajeerror=miVariableMensajeDeError)); 
                 else:
-                    raise Exception ("administradormodificarrobotsevento.htmml --- formulario invalido.");
+                    return redirect (url_for ('funcionError404', mensajeerror="administradormodificarrobotsevento.htmml --- formulario invalido.")); 
     
     if (miAdministradores.funcion_verSiEseEventoEsDeEseAdministrador (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra)):
         miDiccionarioRobotsActualmenteEstanEnEvento = {};
@@ -780,7 +813,7 @@ def funcionAdministradorPanelRobotPonerServicio (idRobot, robotEnServicio, nombr
     # este if lo pongo, ya que en el caso de que otro administrador conozca el idRoot y el evento en el que etá, puede modificar el servicio del robot, por lo tanto para evitar eseo, copruebo que es el dueño del robot
     #el que esta modificando el servicio del robot. 
     if (miAdministradores.funcion_verSiPuedoModificarRobot (idRobot) == False):
-        raise Exception ("adminstradorpanelrobotponerservicio  --- ese administrador no puede modificar el servicio de ese robot, ya que actualmente la hora de trabajo de este robot no se corresponde con ningun evento de este administrador. ");
+        return redirect (url_for ('funcionError404', mensajeerror="adminstradorpanelrobotponerservicio  --- ese administrador no puede modificar el servicio de ese robot, ya que actualmente la hora de trabajo de este robot no se corresponde con ningun evento de este administrador. ")); 
     miAdministradores.funcion_activarOdesactivarRobot (idRobot, robotEnServicio);
     return redirect (url_for ('funcionAdministradorModificarRobotsEvento', nombreDelEvento=nombreDelEvento, fechaDeCreacionDelEvento=fechaDeCreacionDelEvento, lugarDondeSeCelebra=lugarDondeSeCelebra));
 

@@ -43,11 +43,6 @@ class Administradores(db.Model):
 
     def funcion_modificarRobot (self, parametroIdRobot, parametroMacAddressDelRobot=None, parametroNombreDelRobot=None, parametroFotoDelRobot=None, parametroDescripcionDelRobot=None):
         miRobots = Robots.query.filter_by (_idRobot = parametroIdRobot).first();
-        if (miRobots == None):
-            raise Exception ("exception. No se puede modificar el robot, ya que el robot que has puesto no existe en la BBDD ");
-        
-        if (parametroIdRobot != None) and (parametroIdRobot != miRobots._idRobot):
-            miRobots._idRobot = parametroIdRobot;
 
         if (parametroMacAddressDelRobot != None) and (parametroMacAddressDelRobot != miRobots._macAddressDelRobot):
             miRobots._macAddressDelRobot = parametroMacAddressDelRobot;
@@ -67,11 +62,8 @@ class Administradores(db.Model):
 
     def funcion_borrarRobot (self, parametroIdRobot):
         miRobots = Robots.query.filter_by (_idRobot=parametroIdRobot).first ();
-        if (miRobots == None):
-            raise Exception ("exception. No se puede borrar el robot, ya que el robot que has puesto no existe en la BBDD ");
-        else:
-            db.session.delete (miRobots);
-            db.session.commit ();
+        db.session.delete (miRobots);
+        db.session.commit ();
     
     #recordar que desactivar un robot, hace que se expulse al asistente del robot, es decir, que lo deje de controlar. 
     def funcion_activarOdesactivarRobot (self, parametroIdRobot, parametroEnServicio):
@@ -240,51 +232,63 @@ class Administradores(db.Model):
 
     def funcion_modificarDatosDelEvento (self, parametroAntiguoNombreDelEvento, parametroAntiguoFechaDeCreacionDelEvento, parametroAntiguoLugarDondeSeCelebra, parametroNombreDelEvento, parametroLugarDondeSeCelebra, parametroCodigoQR=None, parametroCalle=None, parametroNumero=None, parametroCodigoPostal=None):
         miEventos = Eventos.query.filter (Eventos._nombreDelEvento == parametroAntiguoNombreDelEvento, Eventos._fechaDeCreacionDelEvento == parametroAntiguoFechaDeCreacionDelEvento, Eventos._lugarDondeSeCelebra == parametroAntiguoLugarDondeSeCelebra).first ();
-        if (miEventos == None):
-            raise Exception ("exception. No se puede modificar el evento ya que ese evento no existe");
-        else:
-            if (miEventos._codigoQR != parametroCodigoQR):
-                # en el caso de que el código QR recién modificado esté ya en la BBDD, devuelvo una exception. 
-                if (Eventos.query.filter_by (_codigoQR = parametroCodigoQR).first ()):
-                    raise Exception ("exception. Esa URL para ese evento ya existe en la base de datos, recuerde que el link de cade evento debe de ser distinto. ");
-            miEventos._nombreDelEvento = parametroNombreDelEvento;
-            miEventos._lugarDondeSeCelebra = parametroLugarDondeSeCelebra
-            if (parametroCodigoQR != None) and (parametroCodigoQR != "") and (miEventos._codigoQR != parametroCodigoQR):
-                miEventos._codigoQR =  parametroCodigoQR;
-            if (parametroCalle != None) and (miEventos._calle != parametroCalle):
-                miEventos._calle = parametroCalle;
-            if (parametroNumero != None) and (miEventos._numero != parametroNumero):
-                miEventos._numero = parametroNumero;
-            if (parametroCodigoPostal != None) and (miEventos._codigoPostal != parametroCodigoPostal):
-                miEventos._codigoPostal = parametroCodigoPostal;
-            db.session.commit ();
+        miVariableMensajeDeError = None;
+        if (miEventos._codigoQR != parametroCodigoQR):
+            # en el caso de que el código QR recién modificado esté ya en la BBDD, devuelvo una exception. 
+            if (Eventos.query.filter_by (_codigoQR = parametroCodigoQR).first ()):
+                miVariableMensajeDeError = ("exception. Esa URL para ese evento ya existe en la base de datos, recuerde que el link de cade evento debe de ser distinto. ");
+                return miVariableMensajeDeError;
+        miEventos._nombreDelEvento = parametroNombreDelEvento;
+        miEventos._lugarDondeSeCelebra = parametroLugarDondeSeCelebra
+        if (parametroCodigoQR != None) and (parametroCodigoQR != "") and (miEventos._codigoQR != parametroCodigoQR):
+            miEventos._codigoQR =  parametroCodigoQR;
+        if (parametroCalle != None) and (miEventos._calle != parametroCalle):
+            miEventos._calle = parametroCalle;
+        if (parametroNumero != None) and (miEventos._numero != parametroNumero):
+            miEventos._numero = parametroNumero;
+        if (parametroCodigoPostal != None) and (miEventos._codigoPostal != parametroCodigoPostal):
+            miEventos._codigoPostal = parametroCodigoPostal;
+        db.session.commit ();
+        return miVariableMensajeDeError;
     
     def funcion_modificarRobotDelEvento (self, parametroNombreDelEvento, parametroFechaDeCreacionDelEvento, parametroLugarDondeSeCelebra, parametroRobot_idRobot, parametroFechaComienzoEnEvento, parametroFechaFinEnEvento, parametroNuevaFechaComienzoEnEvento=None, parametroNuevaFechaFinEnEvento=None, parametroEnServicio=None):
         miVariableDisponible = False;
+        miVariableMensajeDeError = None;
         if (parametroEnServicio == "on"):
             miVariableDisponible = True;
         
         miDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento==parametroNombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento==parametroFechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra==parametroLugarDondeSeCelebra, 
                                                           DisponibleRobot.robots_idRobot==parametroRobot_idRobot, DisponibleRobot.fechaComienzoEnEvento==parametroFechaComienzoEnEvento, DisponibleRobot.fechaFinEnEvento == parametroFechaFinEnEvento).first();
 
-        if (parametroNuevaFechaComienzoEnEvento != "") and (parametroNuevaFechaFinEnEvento != ""):
+        if (parametroNuevaFechaComienzoEnEvento != ""):
             # en el caso de que se modifique la fecha de un robot en el día enterior, entonces no dejo que se modifique la fecha de ese robot en ese evento.  
             if (parametroNuevaFechaComienzoEnEvento < (datetime.now().strftime ("%Y-%m-%d"))): 
-                raise Exception ("exception. No se puede modificar la fecha de ese robot en el evento, está estableciendo la fecha de comienzo en un día que ya pasó.  ");
+                miVariableMensajeDeError = ("exception. No se puede modificar la fecha de ese robot en el evento, está estableciendo la fecha de comienzo en un día que ya pasó.  ");
+                return miVariableMensajeDeError;
             else:
                 miDisponibleRobot.fechaComienzoEnEvento = parametroNuevaFechaComienzoEnEvento;
-                miDisponibleRobot.fechaFinEnEvento = parametroNuevaFechaFinEnEvento;
-
-
+                if (parametroNuevaFechaFinEnEvento != ""):
+                    miDisponibleRobot.fechaFinEnEvento = parametroNuevaFechaFinEnEvento;
+                else:
+                    miDisponibleRobot.fechaFinEnEvento = parametroFechaFinEnEvento;
+        else:
+            if (parametroNuevaFechaFinEnEvento != ""):
+                miDisponibleRobot.fechaComienzoEnEvento = parametroFechaDeCreacionDelEvento;
+                miDisponibleRobot.fechaFinEnEvento = parametroFechaFinEnEvento;
+        
         miDisponibleRobot.disponible = miVariableDisponible;
         db.session.commit ();
+        return miVariableMensajeDeError;
         
 
     
     def funcion_sumarRobotAlEvento (self, parametroNombreDelEvento, parametroFechaDeCreacionDelEvento, parametroLugarDondeSeCelebra, parametroRobot_idRobot, parametroFechaComienzoEnEvento, parametroFechaFinEnEvento, parametroEnServicio=None):
+        miVariableMensajeDeError = None;
+
         # en el caso de que se sume un robot en el día enterior, entonces no dejo que se meta ese robot en el evento. 
         if (parametroFechaComienzoEnEvento < (datetime.now().strftime ("%Y-%m-%d"))): 
-            raise Exception ("exception. No se puede sumar ese robot al evento, está simando ese robot al evento en un día pasado.  ");
+            miVariableMensajeDeError = ("exception. No se puede sumar ese robot al evento, está simando ese robot al evento en un día pasado.  ");
+            return miVariableMensajeDeError;
     
         miVariableDisponible = False;
         if (parametroEnServicio == "on"):
@@ -294,6 +298,7 @@ class Administradores(db.Model):
                                              robots_idRobot=parametroRobot_idRobot, fechaComienzoEnEvento = parametroFechaComienzoEnEvento, fechaFinEnEvento = parametroFechaFinEnEvento, disponible = miVariableDisponible);
         db.session.add (miDisponibleRobot);
         db.session.commit ();
+        return miVariableMensajeDeError;
     
     def funcion_eliminarRobotDelEvento (self, parametroNombreDelEvento, parametroFechaDeCreacionDelEvento, parametroLugarDondeSeCelebra, parametroRobot_idRobot, parametroFechaComienzoEnEvento, parametroFechaFinEnEvento):
         miDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento==parametroNombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento==parametroFechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra==parametroLugarDondeSeCelebra, 
@@ -303,11 +308,8 @@ class Administradores(db.Model):
     
     def funcion_borrarEvento (self, parametroNombreDelEvento, parametroFechaDeCreacionDelEvento, parametroLugarDondeSeCelebra):
         miEventos = Eventos.query.filter (Eventos._nombreDelEvento==parametroNombreDelEvento, Eventos._fechaDeCreacionDelEvento==parametroFechaDeCreacionDelEvento, Eventos._lugarDondeSeCelebra==parametroLugarDondeSeCelebra).first ();
-        if (miEventos == None):
-            raise Exception ("exception. No se puede borrar el evento, ya que no existe en la BBDD.");
-        else:
-            db.session.delete (miEventos);
-            db.session.commit();
+        db.session.delete (miEventos);
+        db.session.commit();
 
     # con esta funcion lo que hago es comprobar si el administrdor que ha pulsado en el evento, es o no el administrador, lo que pasa es que a un administrador nunca se le van a mostrar los eventos que no son suyos, pero en el caso de que 
     #conozca el nombre, la fecha y el lugar de un evento que no es suyo, lo que va a pasar es que si el lo pone en la URL, va a poder hacer modificaciones sobre este evento, y eso es algo que yo no quiero, por lo tanto cada vez que se vaya  a conseguir un 

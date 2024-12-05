@@ -10,7 +10,7 @@ function validarURL() {
     let miURL = document.getElementById ("codigoQR");
     miURL.addEventListener ("input", function (event){
         if (event.data != null){
-            if (/^[a-zA-Z0-9]+$/.test(event.data) == false){
+            if (/^[a-zA-Z0-9@.:\-]+$/.test(event.data) == false){
                 alert ("En la URL sólo se permite caracteres alfanuméricos");
                 miURL.value = miURLescritaAnterior;
             }

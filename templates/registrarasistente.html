@@ -7,31 +7,17 @@
 </head>
 <body>
 	<header> 
-		<div> Demostraciones robóticas: {{ miParametroMiEventoNombreDelEvento }}</div>
-        <div> Demostraciones robóticas: {{ miParametroApodoAsistente }}</div>
-        <div> Demostraciones robiticas correo administrador: {{ miParametroCorreoElectronicoDelAdministrador }}</div>
-
-		<h2> De momento estás esperando un robot. </h2>
+		<div> Nombre del evento: {{ miParametroMiEventoNombreDelEvento }}</div>
+        <div> Apodo asistente: {{ miParametroApodoAsistente }}</div>
+        <div> Estado propio: Esperando</div>
+        <div> Id del robot: {{ miParametroIdRobot }}</div>
+        <div> Mac del robot: {{ miParametroMac }}</div>
+        <div> Correo administrador: {{ miParametroCorreoElectronicoDelAdministrador }}</div>
+        <div> CodigoQR: {{ miParametroCodigoQR }}</div>
 	</header>
 
 
-	<section>
-		<P> Tabla de los robts en el evento:  </p>
-{% for iteracion in miListaRobotsParametro %}
-        <p> +++++++++++</p>
-        <p>Id del robot: {{ iteracion._idRobot }}</p>
-        <p> {{ iteracion._macAddressDelRobot }}</p>
-        <p> {{ iteracion._nombreDelRobot }}</p>
-        <p> ------------</p>
 
-
-{% else %}
-    <p> Actualmente no hay robots en el sistema. </p>
-{% endfor %}
-		
-	</section>
-
-	<footer>Los derechos del TFG son de Jhon James FERREROSA TRUQUE. </footer>
 </body>
 </html>
 

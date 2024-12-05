@@ -7,31 +7,24 @@
 </head>
 <body>
 	<header> 
-		<div> Demostraciones robóticas: {{ miParametroMiEventoNombreDelEvento }}</div>
-        <div> Demostraciones robóticas: {{ miParametroApodoAsistente }}</div>
-        <div> Demostraciones robiticas correo administrador: {{ miParametroCorreoElectronicoDelAdministrador }}</div>
+		<div> Nombre del evento:  {{ miParametroMiEventoNombreDelEvento }}</div>
+        <div> Apodo asistente: {{ miParametroApodoAsistente }}</div>
+        <div> Estado propio: Robot listo </div>
+        <div> Id del robot: {{ miParametroIdRobot }}</div>
+        <div> Mac del robot: {{ miParametroMac }}</div>
+        <div> Correo administrador: {{ miParametroCorreoElectronicoDelAdministrador }}</div>
+        <div> CodigoQR: {{ miParametroCodigoQR }}</div>
+
 	</header>
 
     <nav>
         <p> su robot esta listo. </p>
-        <a href="{{ url_for('funcion_aceptarRobot', idRobot=miRobotParametro._idRobot, codigoQR=miParametroCodigoQR, correoelectronico=miParametroCorreoElectronicoDelAdministrador) }}"> Aceptar robot para controlarlo. </a>
+        <a href="{{ url_for('funcion_aceptarRobot', idRobot=miParametroIdRobot, codigoQR=miParametroCodigoQR, correoelectronico=miParametroCorreoElectronicoDelAdministrador) }}"> Aceptar robot para controlarlo. </a>
         <br>
-        <a href="{{ url_for('funcion_rechazarRobot', idRobot=miRobotParametro._idRobot, codigoQR=miParametroCodigoQR, correoelectronico=miParametroCorreoElectronicoDelAdministrador) }}"> Rechazar uso del robot </a>
+        <a href="{{ url_for('funcion_rechazarRobot', idRobot=miParametroIdRobot, codigoQR=miParametroCodigoQR, correoelectronico=miParametroCorreoElectronicoDelAdministrador) }}"> Rechazar uso del robot </a>
     </nav>
 
 
-    <section>
-        <p> Robot asignado: </p>
 
-        <p> ++++++++++ </p>
-        <p> Este es el ID:  {{ miRobotParametro._idRobot }}</p>
-        <p> Esta es la MAC: {{ miRobotParametro._macAddressDelRobot }}</p>
-        <p> Este es el nombre:  {{ miRobotParametro._nombreDelRobot }}</p>
-        <p> ---------</p>
-
-
-    </section>
-
-    <footer>Los derechos del TFG son de Jhon James FERREROSA TRUQUE. </footer>
 </body>
 </html>

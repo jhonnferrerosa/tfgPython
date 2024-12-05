@@ -10,30 +10,19 @@
 
 <body>
     <header> 
-        <div> Demostraciones robóticas: {{ miParametroMiEventoNombreDelEvento }}</div>
-        <div> Demostraciones robóticas: {{ miParametroIdentificadorUnicoAsistente }}</div>
-        <div> Demostraciones robóticas: {{ miParametroApodoAsistente }}</div>
-        <div> Demostraciones robóticas: {{ miParametroCorreoElectronicoDelAdministrador }}</div>
+        <div> Nombre del evento:  {{ miParametroMiEventoNombreDelEvento }}</div>
+        <div> Apodo asistente: {{ miParametroApodoAsistente }}</div>
+        <div> Estado propio: Robot manejando </div>
+        <div> Id del robot: {{ miParametroIdRobot }}</div>
+        <div> Mac del robot: {{ miParametroMac }}</div>
+        <div> Correo administrador: {{ miParametroCorreoElectronicoDelAdministrador }}</div>
+        <div> CodigoQR: {{ miParametroCodigoQR }}</div>
+
+
     </header>
 
-    <nav>
-        <p> Ya esta controlando el robot </p>
-    </nav>
-
-
-    <section>
-        <p> Robot asignado: </p>
-
-        <p> ++++++++++ </p>
-        <p> Este es el ID:  {{ miRobotParametro._idRobot }}</p>
-        <p> Esta es la MAC: {{ miRobotParametro._macAddressDelRobot }}</p>
-        <p> Este es el nombre:  {{ miRobotParametro._nombreDelRobot }}</p>
-        <p> ---------</p>
-
-
-    </section>
 
 
 
-    <footer>Los derechos del TFG son de Jhon James FERREROSA TRUQUE. </footer>
+
 </body>

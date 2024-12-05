@@ -43,7 +43,7 @@ class FormularioCrearEvento (Form):
     def validate_codigoQR (form, field):
         miCampoCodigoQR = field.data;
         if (miCampoCodigoQR != "") and (miCampoCodigoQR != None):
-            miExpresionRegular = r"^[a-zA-Z0-9]+$";
+            miExpresionRegular = r"^[a-zA-Z0-9@.:\-]+$";
             miVerdadCodigoQRvalidado = bool (re.match (miExpresionRegular, miCampoCodigoQR));
             if (miVerdadCodigoQRvalidado == False):
                 raise validators.ValidationError ("Sólo se permite caracteres alfanuméricos en la URL. No vale espacios ni carecteres especiales. "); 
