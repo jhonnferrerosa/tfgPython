@@ -43,7 +43,7 @@ miDiccionarioAsistentesYestadoControlandoRobot = {}
 # en este diccionario la clave va a ser el token con el evento , para saber que asistenten en que evento hay rechazado un robot, para que de esta forma no se le muestre uno que el haya rechazado en el evento. 
 miDiccionarioGlobalTokensListaDeRobotsRechazados = {}
 
-miVariableGlobalURL = "http://localhost:5000/"; 
+miVariableGlobalURL = "http://localhost:5000/demostracionesroboticas/"; 
 
 
 
@@ -68,10 +68,12 @@ def index2 ():
     miEvento2 = Eventos (_nombreDelEvento="puertas abiertas1", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="alcala", _codigoQR="miQR2", _administradores_correoElectronico="jhon@gmail.com");
     miEvento3 = Eventos (_nombreDelEvento="eurobot2042", _fechaDeCreacionDelEvento='2024-11-27 11:19:48', _lugarDondeSeCelebra="ifema2042", _codigoQR="eurobot20422024-11-27T11:19:48ifema2042", _administradores_correoElectronico="jhon@gmail.com");
     miEvento4 = Eventos (_nombreDelEvento="simo2025", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="torrejon", _codigoQR="simo20252024-10-01torrejon", _administradores_correoElectronico="ana@gmail.com");
+    miEvento5 = Eventos (_nombreDelEvento="mobile week 2025", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="torrejon", _codigoQR="mlileWeek2025-10-01torrejon", _administradores_correoElectronico="ana@gmail.com");
     db.session.add (miEvento1);
     db.session.add (miEvento2);
     db.session.add (miEvento3);
     db.session.add (miEvento4);
+    db.session.add (miEvento5);
     db.session.commit ();
 
     miAsistente1 = Asistentes (_identificadorUnicoAsistente="IUA1", _apodoAsistente="apodo1");
@@ -84,19 +86,19 @@ def index2 ():
     db.session.add (miAsistente4);
     db.session.commit  ();
 
-    miRobot1 = Robots (_idRobot=101, _macAddressDelRobot="00:00:00:00:00:00", _nombreDelRobot="robot1", _disponible=True, _fotoDelRobot=None, _descripcionDelRobot=None);
-    miRobot2 = Robots (_idRobot=102, _macAddressDelRobot="11:11:11:11:11:11", _nombreDelRobot="robot2", _disponible=True, _fotoDelRobot=None, _descripcionDelRobot=None);
-    miRobot3 = Robots (_idRobot=103, _macAddressDelRobot="22:22:22:22:22:22", _nombreDelRobot="robot3", _disponible=True, _fotoDelRobot=None, _descripcionDelRobot=None);
-    miRobot4 = Robots (_idRobot=104, _macAddressDelRobot="33:33:33:33:33:33", _nombreDelRobot="robot4", _disponible=True, _fotoDelRobot=None, _descripcionDelRobot=None);
-    miRobot5 = Robots (_idRobot=105, _macAddressDelRobot="44:44:44:44:44:44", _nombreDelRobot="robot5", _disponible=True, _fotoDelRobot=None, _descripcionDelRobot=None);
-    miRobot6 = Robots (_idRobot=106, _macAddressDelRobot="55:55:55:55:55:55", _nombreDelRobot="robot6", _disponible=True, _fotoDelRobot=None, _descripcionDelRobot=None);
-    miRobot7 = Robots (_idRobot=107, _macAddressDelRobot="66:66:66:66:66:66", _nombreDelRobot="robot7", _disponible=True, _fotoDelRobot=None, _descripcionDelRobot=None);
-    miRobot8 = Robots (_idRobot=108, _macAddressDelRobot="77:77:77:77:77:77", _nombreDelRobot="robot8", _disponible=True, _fotoDelRobot=None, _descripcionDelRobot=None);
-    miRobot9 = Robots (_idRobot=109, _macAddressDelRobot="88:88:88:88:88:88", _nombreDelRobot="robot9", _disponible=True, _fotoDelRobot=None, _descripcionDelRobot=None);
-    miRobot10 = Robots (_idRobot=110, _macAddressDelRobot="99:99:99:99:99:99", _nombreDelRobot="robot10", _disponible=False, _fotoDelRobot=None, _descripcionDelRobot=None);
-    miRobot11 = Robots (_idRobot=111, _macAddressDelRobot="AA:AA:AA:AA:AA:AA", _nombreDelRobot="robot11", _disponible=True, _fotoDelRobot=None, _descripcionDelRobot=None);
-    miRobot12 = Robots (_idRobot=112, _macAddressDelRobot="BB:BB:BB:BB:BB:BB", _nombreDelRobot="robot12", _disponible=False, _fotoDelRobot=None, _descripcionDelRobot=None);
-    miRobot13 = Robots (_idRobot=113, _macAddressDelRobot="CC:CC:CC:CC:CC:CC", _nombreDelRobot="robot13", _disponible=True, _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot1 = Robots (_idRobot=101, _macAddressDelRobot="00:00:00:00:00:00", _nombreDelRobot="robot1", _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot2 = Robots (_idRobot=102, _macAddressDelRobot="11:11:11:11:11:11", _nombreDelRobot="robot2", _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot3 = Robots (_idRobot=103, _macAddressDelRobot="22:22:22:22:22:22", _nombreDelRobot="robot3", _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot4 = Robots (_idRobot=104, _macAddressDelRobot="33:33:33:33:33:33", _nombreDelRobot="robot4", _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot5 = Robots (_idRobot=105, _macAddressDelRobot="44:44:44:44:44:44", _nombreDelRobot="robot5", _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot6 = Robots (_idRobot=106, _macAddressDelRobot="55:55:55:55:55:55", _nombreDelRobot="robot6", _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot7 = Robots (_idRobot=107, _macAddressDelRobot="66:66:66:66:66:66", _nombreDelRobot="robot7", _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot8 = Robots (_idRobot=108, _macAddressDelRobot="77:77:77:77:77:77", _nombreDelRobot="robot8", _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot9 = Robots (_idRobot=109, _macAddressDelRobot="88:88:88:88:88:88", _nombreDelRobot="robot9", _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot10 = Robots (_idRobot=110, _macAddressDelRobot="99:99:99:99:99:99", _nombreDelRobot="robot10", _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot11 = Robots (_idRobot=111, _macAddressDelRobot="AA:AA:AA:AA:AA:AA", _nombreDelRobot="robot11", _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot12 = Robots (_idRobot=112, _macAddressDelRobot="BB:BB:BB:BB:BB:BB", _nombreDelRobot="robot12", _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot13 = Robots (_idRobot=113, _macAddressDelRobot="CC:CC:CC:CC:CC:CC", _nombreDelRobot="robot13", _fotoDelRobot=None, _descripcionDelRobot=None);
     db.session.add (miRobot1);
     db.session.add (miRobot2);
     db.session.add (miRobot3);
@@ -124,32 +126,33 @@ def index2 ():
     db.session.add (miVincula5);
     db.session.commit ();
 
-    miDisponibleRobot1 = DisponibleRobot (eventos_nombreDelEvento="aula1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="ifema1", robots_idRobot=101 , fechaComienzoEnEvento="2024-12-01", fechaFinEnEvento="2024-12-30 23:23:23");
-    miDisponibleRobot2 = DisponibleRobot (eventos_nombreDelEvento="puertas abiertas1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="alcala", robots_idRobot=102 , fechaComienzoEnEvento="2024-12-01", fechaFinEnEvento="2024-12-30 23:23:23");
-    miDisponibleRobot3 = DisponibleRobot (eventos_nombreDelEvento="puertas abiertas1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="alcala", robots_idRobot=103 , fechaComienzoEnEvento="2024-12-01", fechaFinEnEvento="2024-12-30 23:23:23");
+    miDisponibleRobot1 = DisponibleRobot (eventos_nombreDelEvento="aula1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="ifema1", robots_idRobot=101 , fechaComienzoEnEvento="2024-12-01", fechaFinEnEvento="2024-12-30 23:23:23", disponible=True);
+    miDisponibleRobot2 = DisponibleRobot (eventos_nombreDelEvento="puertas abiertas1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="alcala", robots_idRobot=102 , fechaComienzoEnEvento="2024-12-01", fechaFinEnEvento="2024-12-30 23:23:23", disponible=True);
+    miDisponibleRobot3 = DisponibleRobot (eventos_nombreDelEvento="puertas abiertas1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="alcala", robots_idRobot=103 , fechaComienzoEnEvento="2024-12-01", fechaFinEnEvento="2024-12-30 23:23:23", disponible=True);
 
-    miDisponibleRobot4 = DisponibleRobot (eventos_nombreDelEvento="aula1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="ifema1", robots_idRobot=101 , fechaComienzoEnEvento="2025-01-01", fechaFinEnEvento="2025-01-30 23:23:23");
-    miDisponibleRobot5 = DisponibleRobot (eventos_nombreDelEvento="aula1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="ifema1", robots_idRobot=103 , fechaComienzoEnEvento="2025-01-01", fechaFinEnEvento="2025-01-30 23:23:23");
-    miDisponibleRobot6 = DisponibleRobot (eventos_nombreDelEvento="simo2025", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="torrejon", robots_idRobot=105 , fechaComienzoEnEvento="2025-01-01", fechaFinEnEvento="2025-01-30 23:23:23");
+    miDisponibleRobot4 = DisponibleRobot (eventos_nombreDelEvento="aula1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="ifema1", robots_idRobot=101 , fechaComienzoEnEvento="2025-01-01", fechaFinEnEvento="2025-01-30 23:23:23", disponible=False);
+    miDisponibleRobot5 = DisponibleRobot (eventos_nombreDelEvento="aula1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="ifema1", robots_idRobot=103 , fechaComienzoEnEvento="2025-01-01", fechaFinEnEvento="2025-01-30 23:23:23", disponible=True);
+    miDisponibleRobot6 = DisponibleRobot (eventos_nombreDelEvento="simo2025", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="torrejon", robots_idRobot=105 , fechaComienzoEnEvento="2025-01-01", fechaFinEnEvento="2025-01-30 23:23:23", disponible=True);
 
-    miDisponibleRobot7 = DisponibleRobot (eventos_nombreDelEvento="aula1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="ifema1", robots_idRobot=105 , fechaComienzoEnEvento="2025-02-01", fechaFinEnEvento="2025-02-28 23:23:23");
-    miDisponibleRobot8 = DisponibleRobot (eventos_nombreDelEvento="aula1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="ifema1", robots_idRobot=106 , fechaComienzoEnEvento="2024-12-01", fechaFinEnEvento="2024-12-30 23:23:23");
-    miDisponibleRobot9 = DisponibleRobot (eventos_nombreDelEvento="puertas abiertas1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="alcala", robots_idRobot=101 , fechaComienzoEnEvento="2025-02-01", fechaFinEnEvento="2025-02-28 23:23:23");
+    miDisponibleRobot7 = DisponibleRobot (eventos_nombreDelEvento="aula1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="ifema1", robots_idRobot=105 , fechaComienzoEnEvento="2025-02-01", fechaFinEnEvento="2025-02-28 23:23:23", disponible=True);
+    miDisponibleRobot8 = DisponibleRobot (eventos_nombreDelEvento="aula1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="ifema1", robots_idRobot=106 , fechaComienzoEnEvento="2024-12-01", fechaFinEnEvento="2024-12-30 23:23:23", disponible=False);
+    miDisponibleRobot9 = DisponibleRobot (eventos_nombreDelEvento="puertas abiertas1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="alcala", robots_idRobot=101 , fechaComienzoEnEvento="2025-02-01", fechaFinEnEvento="2025-02-28 23:23:23", disponible=True);
 
-    miDisponibleRobot10 = DisponibleRobot (eventos_nombreDelEvento="aula1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="ifema1", robots_idRobot=107 , fechaComienzoEnEvento="2024-12-01", fechaFinEnEvento="2024-12-30 23:23:23");
-    miDisponibleRobot11 = DisponibleRobot (eventos_nombreDelEvento="aula1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="ifema1", robots_idRobot=101 , fechaComienzoEnEvento="2025-03-01", fechaFinEnEvento="2025-03-28 23:23:23");
-    miDisponibleRobot12 = DisponibleRobot (eventos_nombreDelEvento="simo2025", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="torrejon", robots_idRobot=108 , fechaComienzoEnEvento="2025-01-01", fechaFinEnEvento="2025-01-30 23:23:23");
+    miDisponibleRobot10 = DisponibleRobot (eventos_nombreDelEvento="aula1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="ifema1", robots_idRobot=107 , fechaComienzoEnEvento="2024-12-01", fechaFinEnEvento="2024-12-30 23:23:23", disponible=True);
+    miDisponibleRobot11 = DisponibleRobot (eventos_nombreDelEvento="aula1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="ifema1", robots_idRobot=101 , fechaComienzoEnEvento="2025-03-01", fechaFinEnEvento="2025-03-28 23:23:23", disponible=False);
+    miDisponibleRobot12 = DisponibleRobot (eventos_nombreDelEvento="simo2025", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="torrejon", robots_idRobot=108 , fechaComienzoEnEvento="2025-01-01", fechaFinEnEvento="2025-01-30 23:23:23", disponible=True);
 
-    miDisponibleRobot13 = DisponibleRobot (eventos_nombreDelEvento="simo2025", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="torrejon", robots_idRobot=109 , fechaComienzoEnEvento="2025-01-01", fechaFinEnEvento="2025-01-30 23:23:23");
-    miDisponibleRobot14 = DisponibleRobot (eventos_nombreDelEvento="simo2025", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="torrejon", robots_idRobot=110 , fechaComienzoEnEvento="2024-12-01", fechaFinEnEvento="2024-12-30 23:23:23");
-    miDisponibleRobot15 = DisponibleRobot (eventos_nombreDelEvento="aula1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="ifema1", robots_idRobot=110 , fechaComienzoEnEvento="2025-01-01", fechaFinEnEvento="2025-01-30 23:23:23");
+    miDisponibleRobot13 = DisponibleRobot (eventos_nombreDelEvento="simo2025", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="torrejon", robots_idRobot=109 , fechaComienzoEnEvento="2025-01-01", fechaFinEnEvento="2025-01-30 23:23:23", disponible=True);
+    miDisponibleRobot14 = DisponibleRobot (eventos_nombreDelEvento="simo2025", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="torrejon", robots_idRobot=110 , fechaComienzoEnEvento="2024-12-01", fechaFinEnEvento="2024-12-30 23:23:23", disponible=True);
+    miDisponibleRobot15 = DisponibleRobot (eventos_nombreDelEvento="aula1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="ifema1", robots_idRobot=110 , fechaComienzoEnEvento="2025-01-01", fechaFinEnEvento="2025-01-30 23:23:23", disponible=True);
 
-    miDisponibleRobot16 = DisponibleRobot (eventos_nombreDelEvento="aula1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="ifema1", robots_idRobot=101 , fechaComienzoEnEvento="2024-11-01", fechaFinEnEvento="2024-11-30 23:23:23");
-    miDisponibleRobot17 = DisponibleRobot (eventos_nombreDelEvento="simo2025", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="torrejon", robots_idRobot=106 , fechaComienzoEnEvento="2025-01-01", fechaFinEnEvento="2025-01-30 23:23:23");
-    miDisponibleRobot18 = DisponibleRobot (eventos_nombreDelEvento="eurobot2042", eventos_fechaDeCreacionDelEvento="2024-11-27 11:19:48", eventos_lugarDondeSeCelebra="ifema2042", robots_idRobot=111 , fechaComienzoEnEvento="2024-12-01", fechaFinEnEvento="2024-12-30 23:23:23");
+    miDisponibleRobot16 = DisponibleRobot (eventos_nombreDelEvento="aula1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="ifema1", robots_idRobot=101 , fechaComienzoEnEvento="2024-11-01", fechaFinEnEvento="2024-11-30 23:23:23", disponible=True);
+    miDisponibleRobot17 = DisponibleRobot (eventos_nombreDelEvento="simo2025", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="torrejon", robots_idRobot=106 , fechaComienzoEnEvento="2025-01-01", fechaFinEnEvento="2025-01-30 23:23:23", disponible=True);
+    miDisponibleRobot18 = DisponibleRobot (eventos_nombreDelEvento="eurobot2042", eventos_fechaDeCreacionDelEvento="2024-11-27 11:19:48", eventos_lugarDondeSeCelebra="ifema2042", robots_idRobot=111 , fechaComienzoEnEvento="2024-12-01", fechaFinEnEvento="2024-12-30 23:23:23", disponible=True);
 
-    miDisponibleRobot19 = DisponibleRobot (eventos_nombreDelEvento="eurobot2042", eventos_fechaDeCreacionDelEvento="2024-11-27 11:19:48", eventos_lugarDondeSeCelebra="ifema2042", robots_idRobot=112 , fechaComienzoEnEvento="2024-12-01", fechaFinEnEvento="2024-12-30 23:23:23");
-    miDisponibleRobot20 = DisponibleRobot (eventos_nombreDelEvento="eurobot2042", eventos_fechaDeCreacionDelEvento="2024-11-27 11:19:48", eventos_lugarDondeSeCelebra="ifema2042", robots_idRobot=113 , fechaComienzoEnEvento="2024-12-01", fechaFinEnEvento="2024-12-30 23:23:23");
+    miDisponibleRobot19 = DisponibleRobot (eventos_nombreDelEvento="eurobot2042", eventos_fechaDeCreacionDelEvento="2024-11-27 11:19:48", eventos_lugarDondeSeCelebra="ifema2042", robots_idRobot=112 , fechaComienzoEnEvento="2024-12-01", fechaFinEnEvento="2024-12-30 23:23:23", disponible=True);
+    miDisponibleRobot20 = DisponibleRobot (eventos_nombreDelEvento="eurobot2042", eventos_fechaDeCreacionDelEvento="2024-11-27 11:19:48", eventos_lugarDondeSeCelebra="ifema2042", robots_idRobot=113 , fechaComienzoEnEvento="2024-12-01", fechaFinEnEvento="2024-12-30 23:23:23", disponible=True);
+    miDisponibleRobot20 = DisponibleRobot (eventos_nombreDelEvento="mobile week 2025", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="torrejon", robots_idRobot=113 , fechaComienzoEnEvento="2025-03-01", fechaFinEnEvento="2025-12-30 23:23:23", disponible=True);
 
 
     db.session.add (miDisponibleRobot1);
@@ -184,7 +187,8 @@ def miFuncionAntesDeLaPeticion ():
     print  ("miFuncionAntesDeLaPeticion() --- este es el endpoint: ", request.endpoint); 
     miVariablePermitirAccesoSinCorreoElectronico = True;
 
-    if (request.endpoint == 'index2') or (request.endpoint == None) or (request.endpoint == 'funcionAdministradorsignup') or (request.endpoint == 'funcion_aceptarRobot') or (request.endpoint == 'funcion_rechazarRobot') or (request.endpoint == 'funcion_registrarAsistente') or (request.endpoint == 'static') or (request.endpoint == 'funcionAdministradorLogin') or (request.endpoint == 'funcionError404'):
+    if (request.endpoint == 'index2') or (request.endpoint == None) or (request.endpoint == 'funcionAdministradorsignup') or (request.endpoint == 'funcion_aceptarRobot') or (request.endpoint == 'funcion_rechazarRobot') or (request.endpoint == 'funcion_registrarAsistente') or (request.endpoint ==
+         'static') or (request.endpoint == 'funcionAdministradorLogin') or (request.endpoint == 'funcionError404') or (request.endpoint == 'demostracionesroboticas'):
         miVariablePermitirAccesoSinCorreoElectronico = False;
 
     # en el caso de que el correoElectronico no este en la sesion y ademas la URL que yo he puesto no sea de las permitidas, me voy al loggin.  
@@ -237,7 +241,7 @@ def funcionGenerarCodigoQR (url):
 
 ######## endpoints Asistente. ########################################################################################################################################################################################################################
 
-@app.route ("/<codigoQR>") 
+@app.route ("/demostracionesroboticas/<codigoQR>") 
 def funcion_registrarAsistente (codigoQR):
     miEventos = Eventos.query.filter (Eventos._codigoQR == codigoQR).first();
     if (miEventos == None):
@@ -292,18 +296,12 @@ def funcion_registrarAsistente (codigoQR):
                 miDiccionarioAsistentesYestadoControlandoRobot[session['token']] = False;
 
         # ahora consigo los robots y ver que cantidad de robots rechazados ese token en ese evento tiene, para de esta manera no mostrarle los robot que  están rechazados. 
-        miListaDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento==miEventos._nombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento==miEventos._fechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra==miEventos._lugarDondeSeCelebra, DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now()).all();
+        miListaDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento==miEventos._nombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento==miEventos._fechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra==miEventos._lugarDondeSeCelebra, 
+                                                               DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now(), DisponibleRobot.disponible == True).all();
     
-        # hay 2 pasos para conseguir un robot.
-        # Paso1. esta es la parte que analiza la cantidad de robots que estan en servicio. 
-        #aqui lo que hago es quitar elementos de la lista que acabo de obtener de la BBDD en funcion de si el roobot esta en servicio o no. 
-        # con esto lo que hago es recorrer una copia de la lista, ya que la original la voy a modificcar: miListaDisponibleRobot[:]:
-        for i in miListaDisponibleRobot[:]:
-            miRobots = Robots.query.filter_by (_idRobot = i.robots_idRobot).first ();
-            if (miRobots._disponible == False):
-                miListaDisponibleRobot.remove (i);
+  
 
-        # paso2. de todos los robots que esten en servicio, voy a eliminar los que ya esten siendo usados. 
+        # de todos los robots que he conseguido de la tabla disponibleRobot, voy a eliminar los que ya esten siendo usados. 
         for i in miListaDisponibleRobot[:]:
             miControla = Controla.query.filter (Controla.robots_idRobot == i.robots_idRobot, Controla.fechaTomaDelRobot < datetime.now(), Controla.fechaAbandonoDelRobot > datetime.now()).first ();
             # si este if se cumple, significa que  el robot está siendo utilizado. 
@@ -388,7 +386,8 @@ def funcion_aceptarRobot (idRobot, codigoQR):
                         return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR));     
                     else: 
                         # aqui lo que hago es comprobar si el robot esta o no en servicio, en el caso de que no lo este, entonces lo mando a la  funcion_registrarAsistente para que consiga otro robot. 
-                        if (miRobots._disponible == False):
+                        miDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.robots_idRobot == idRobot, DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now()).first ();
+                        if (miDisponibleRobot.disponible == False):
                             return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR)); 
                         else:
                             miAsistentes.pasarAcontrolarRobot (miAsistentes._identificadorUnicoAsistente, idRobot);
@@ -479,6 +478,7 @@ def funcionAdministradorCerrarSesion ():
     session.pop ('correoElectronico');
     return redirect (url_for ('funcionAdministradorLogin'));
 
+
 @app.route('/administradorhome')   
 def funcionAdministradorHome():
     miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
@@ -486,12 +486,12 @@ def funcionAdministradorHome():
     miVariableCantidadDeEventosDelAdminstrador = len (miAdministradores.funcion_conseguirTodosLosEventosDeEseAdministrador());
     miVariableCantidadDeAsistentesDelAdministrador = len(miAdministradores.funcion_conseguirTodosLosAsistentesDelAdministrador());
     miVariableCantidadRobotsQueUsoEnEventosAdministrador = len (miAdministradores.funcion_conseguirRobotsQueUsoEnEventosAdministrador ());
-    miVariableCantidadRobotsQueUsoEnEventosAdministradorSinServicioActualmente = len (miAdministradores.funcion_conseguirRobotsQueUsoEnEventosAdministradorSinServicioActualmente());
+    miVariableCantidadRobotsQueUsoEnEventosAdministradorSinServicioActualmente = len (miAdministradores.funcion_conseguirListaDisponibleRobotEventosDelAdministradorSinServicioActualmente());
 
     miVariableCantidadDeEventosEnElSistema = len (miAdministradores.funcion_conseguirTodosLosEventos());
     miVariableCantidadAsistentensEnElSistema = len (miAdministradores.funcion_conseguirTodosLosAsistentesDelSistema ());
     miVariableCantidadRobotsEnElSistema = len (miAdministradores.funcion_conseguirTodosLosRobots ());
-    miVariableCantidadRobotsSinServicioEnElSistema = len (miAdministradores.funcion_conseguirRobotsSinServicioEnElSistema ());    
+    miVariableCantidadRobotsSinServicioEnElSistema = len (miAdministradores.funcion_conseguirListaEventosQueTienenAlmenosUnRobotEsperandoPorAsistentes ());    
 
     return (render_template ("administradorhome.html", parametroCantidadDeEventosDelAdministrador=miVariableCantidadDeEventosDelAdminstrador, parametroCantidadDeAsistentesDelAdministrador=miVariableCantidadDeAsistentesDelAdministrador, parametroCantidadRobotsDelAdminstrador=miVariableCantidadRobotsQueUsoEnEventosAdministrador,
     parametroRobotsQueUsoEnEventosAdministradorSinServicioActualmente=miVariableCantidadRobotsQueUsoEnEventosAdministradorSinServicioActualmente, parametroCantidadDeEventosEnElSistema=miVariableCantidadDeEventosEnElSistema, parametroCantidadAsistentesEnElSistema=miVariableCantidadAsistentensEnElSistema, 
@@ -657,8 +657,7 @@ def funcionAdministradorModificarDatosEvento (nombreDelEvento, fechaDeCreacionDe
             return render_template ("administradorcrearevento.html", parametroURL = miVariableGlobalURL, miFormularioParametro = miFormulario, miParametroAccionHtml = "modificar");
     else:
         if (miAdministradores.funcion_verSiEseEventoEsDeEseAdministrador  (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra)):
-            miEventos = miAdministradores.funcion_conseguirEventoPorClavePrimaria (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra);
-            miFormulario = formulario.FormularioCrearEvento (obj=miEventos);
+            miEventos = miAdministradores.funcion_conseguirEventoPorClavePrimaria (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra)
             miFormulario.nombreDelEvento.data = miEventos._nombreDelEvento;
             miFormulario.fechaDeCreacionDelEvento.data = miEventos._fechaDeCreacionDelEvento;
             miFormulario.lugarDondeSeCelebra.data = miEventos._lugarDondeSeCelebra;
@@ -677,9 +676,10 @@ def funcionAdministradorModificarRobotsEvento (nombreDelEvento, fechaDeCreacionD
     if (request.method == 'POST'):
         if ('nameformulariomodificar' in request.form):
             miAdministradores.funcion_modificarRobotDelEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra, request.form.get('robots_idRobot'), request.form.get('fechaComienzoEnEventoAntigua'), request.form.get('fechaFinEnEventoAntigua'), 
-                                                               request.form.get('fechaComienzoEnEvento'), request.form.get('fechaFinEnEvento'));
+                                                               request.form.get('fechaComienzoEnEvento'), request.form.get('fechaFinEnEvento'), request.form.get ('disponible'));
         else:
             if ("nameformulariosumarrobot" in request.form):
+                miDisponibleRecibido = request.form.get ('disponible');
                 miIdRobotRecibido = request.form.get('idRobot');
                 miFechaComienzoEnEventoRecibido = request.form.get ('fechaComienzoEnEvento');
                 miHoraComienzoEnEventoRecibido = request.form.get ('fechaComienzoEnEventoHora');
@@ -693,7 +693,7 @@ def funcionAdministradorModificarRobotsEvento (nombreDelEvento, fechaDeCreacionD
                 if (miFechaFinEnEventoRecibido != "" and miHoraFinEnEventoRecibido != ""):
                     miFechaFinEnEventoRecibido += " ";
                     miFechaFinEnEventoRecibido += miHoraFinEnEventoRecibido;
-                miAdministradores.funcion_sumarRobotAlEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra, miIdRobotRecibido, miFechaComienzoEnEventoRecibido, miFechaFinEnEventoRecibido);
+                miAdministradores.funcion_sumarRobotAlEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra, miIdRobotRecibido, miFechaComienzoEnEventoRecibido, miFechaFinEnEventoRecibido, miDisponibleRecibido);
             else:
                 if ("nameformularioeliminar" in request.form):
                     miAdministradores.funcion_eliminarRobotDelEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra, request.form.get('robots_idRobot'), request.form.get('fechaComienzoEnEventoAntigua'), request.form.get('fechaFinEnEventoAntigua'));
@@ -713,7 +713,8 @@ def funcionAdministradorModificarRobotsEvento (nombreDelEvento, fechaDeCreacionD
         #este for es para rellenar en el diccionario que almacena los robots de la tabla 1, par que el diccionario tenga tambien de cada uno de los robots en conocimiento de si debe mostrar los botones de borrar, modificar y enServicio. 
         for clave in miDiccionarioRobotsActualmenteEstanEnEvento:
             miVariablePuedoeliminar = miAdministradores.funcion_verSiPuedoBorrarRobot (clave._idRobot);
-            miVariableQueBotonEnServicioEs = not(clave._disponible);
+            miDisponibleRobotActualmente = miAdministradores.funcion_conseguirDisponibleRobotPorIdRobotYporEstarContempladaLaFechaDelSistema (clave._idRobot)
+            miVariableQueBotonEnServicioEs = not(miDisponibleRobotActualmente.disponible);
             miDiccionarioRobotsActualmenteEstanEnEvento[clave] = {"subclaveListas":miDiccionarioRobotsActualmenteEstanEnEvento[clave], "subclavePuedoeliminar": miVariablePuedoeliminar, "subclaveQueBotonEnServicioEs": miVariableQueBotonEnServicioEs};
     
         # esto me vale para rellenar la tabla2. 
@@ -727,8 +728,7 @@ def funcionAdministradorModificarRobotsEvento (nombreDelEvento, fechaDeCreacionD
         for clave in miDiccionarioRobotsActualmenteNoEstanEnEvento:
             miVariablePuedoeliminar = miAdministradores.funcion_verSiPuedoBorrarRobot (clave._idRobot);
             miVariablePuedoModificar = miAdministradores.funcion_verSiPuedoModificarRobot (clave._idRobot);
-            miVariableQueBotonEnServicioEs = not(clave._disponible);
-            miDiccionarioRobotsActualmenteNoEstanEnEvento[clave] = {"subclaveListas":miDiccionarioRobotsActualmenteNoEstanEnEvento[clave], "subclavePuedoModificar": miVariablePuedoModificar, "subclavePuedoeliminar": miVariablePuedoeliminar, "subclaveQueBotonEnServicioEs": miVariableQueBotonEnServicioEs};
+            miDiccionarioRobotsActualmenteNoEstanEnEvento[clave] = {"subclaveListas":miDiccionarioRobotsActualmenteNoEstanEnEvento[clave], "subclavePuedoModificar": miVariablePuedoModificar, "subclavePuedoeliminar": miVariablePuedoeliminar};
 
         # este for me vale para rellenar los formularios de los robots que no estan en ese evento. tabla 3. (la de abajo del todo).
         miListaDeSumarRobot = [];
@@ -738,7 +738,8 @@ def funcionAdministradorModificarRobotsEvento (nombreDelEvento, fechaDeCreacionD
         miVariableCantidadDeAsistentesVinculadosEnElEvento = len (miAdministradores.funcion_conseguirTodosLosAsistentesVinculadosAlEvento(nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra));
         return render_template ("administradormodificarrobotsevento.html", miDiccionarioRobotsActualmenteEstanEnEvetoParametro=miDiccionarioRobotsActualmenteEstanEnEvento, miDiccionarioRobotsActualmenteNoEstanEnEvetoParametro=miDiccionarioRobotsActualmenteNoEstanEnEvento,
                                  miListaDeSumarRobotParametro=miListaDeSumarRobot, miParametroNombreDelEvento=nombreDelEvento, miParametroFechaDeCreacionDelEvento=fechaDeCreacionDelEvento, miParametroLugarDondeSeCelebra=lugarDondeSeCelebra, 
-                                 miParametroPorcentajeAsistentesQueSiHanControladoUnRobot = miVariablePorcentajeAsistentesQueSiHanControladoUnRobot, miParametroCantidadDeAsistentesVinculadosEnElEvento = miVariableCantidadDeAsistentesVinculadosEnElEvento);
+                                 miParametroPorcentajeAsistentesQueSiHanControladoUnRobot = miVariablePorcentajeAsistentesQueSiHanControladoUnRobot, miParametroCantidadDeAsistentesVinculadosEnElEvento = miVariableCantidadDeAsistentesVinculadosEnElEvento,
+                                 miParametroFechaActualDelSistema = datetime.now ());
     else:
         return redirect(url_for('funcionAdministradorPanelEvento', miVerdadErrorDeEventoInexistente=1))
 

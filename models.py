@@ -36,7 +36,7 @@ class Administradores(db.Model):
         
 ##### funciones que gestionan los robots######################################################################################################################################################################################################################
     def funcion_crearRobot (self, parametroMacAddressDelRobot, parametroNombreDelRobot, parametroFotoDelRobot=None, parametroDescripcionDelRobot=None):
-        miRobots = Robots (_macAddressDelRobot=parametroMacAddressDelRobot, _nombreDelRobot=parametroNombreDelRobot, _disponible=True, _fotoDelRobot=parametroFotoDelRobot, _descripcionDelRobot=parametroDescripcionDelRobot);
+        miRobots = Robots (_macAddressDelRobot=parametroMacAddressDelRobot, _nombreDelRobot=parametroNombreDelRobot, _fotoDelRobot=parametroFotoDelRobot, _descripcionDelRobot=parametroDescripcionDelRobot);
         db.session.add (miRobots);
         db.session.commit ();
     
@@ -51,7 +51,6 @@ class Administradores(db.Model):
 
         if (parametroMacAddressDelRobot != None) and (parametroMacAddressDelRobot != miRobots._macAddressDelRobot):
             miRobots._macAddressDelRobot = parametroMacAddressDelRobot;
-            miRobots._disponible = False;
         
         if (parametroNombreDelRobot != None) and (parametroNombreDelRobot != miRobots._nombreDelRobot):
             miRobots._nombreDelRobot = parametroNombreDelRobot;
@@ -83,8 +82,8 @@ class Administradores(db.Model):
                 miControla.fechaAbandonoDelRobot = datetime.now ();
                 db.session.commit ();
 
-        miRobots = Robots.query.filter_by (_idRobot=parametroIdRobot).first();
-        miRobots._disponible = parametroEnServicio;
+        miDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now(), DisponibleRobot.robots_idRobot == parametroIdRobot).first();
+        miDisponibleRobot.disponible = parametroEnServicio;
         db.session.commit ();
     
     def funcion_conseguirTodosLosRobots (self):
@@ -95,7 +94,7 @@ class Administradores(db.Model):
         # lo que hago primero es obtener todos los Disponible robot que estan en el evento. 
         miListaDisponibleRobotQueEstaEnElEvento = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento==parametroNombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento==parametroFechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra==parametroLugarDondeSeCelebra).all (); 
     
-        # aqui lo que hago es de los disponible que estan asignados al evento, los conivierto a Robot, para saber que robots son los que sí estan cogidos. 
+        # aqui lo que hago es de los disponibleRobot que estan asignados al evento, los conivierto a Robot, para saber que robots son los que sí estan cogidos. 
         miListaRobotQueSeEstanUsando = [];
         for i in miListaDisponibleRobotQueEstaEnElEvento:
             miRobot = Robots.query.filter_by (_idRobot=i.robots_idRobot).first ();
@@ -161,20 +160,24 @@ class Administradores(db.Model):
                     miListaRobots.append (miRobots);
         return miListaRobots;
 
-    def funcion_conseguirRobotsQueUsoEnEventosAdministradorSinServicioActualmente (self):
-        miListaEventos = Eventos.query.filter_by (_administradores_correoElectronico = self._correoElectronico).all();
-        miListaRobots = [];
+    def funcion_conseguirListaDisponibleRobotEventosDelAdministradorSinServicioActualmente (self):
+        miListaEventos = Eventos.query.filter_by (_administradores_correoElectronico= self._correoElectronico).all();
+        miListaDisponibleRobotSinServicioActualmente = [];
         for i in miListaEventos:
             miListaDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento == i._nombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento == i._fechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra == i._lugarDondeSeCelebra,
-                                                                   DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now()).all();
+                                                                   DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now(), DisponibleRobot.disponible == False).all();
             for j in miListaDisponibleRobot:
-                miRobots = Robots.query.filter_by (_idRobot = j.robots_idRobot).first ();
-                if (miRobots not in miListaRobots) and (miRobots._disponible == False):
-                    miListaRobots.append (miRobots);
-        return miListaRobots;
+                miListaDisponibleRobotSinServicioActualmente.append (j);
+        return miListaDisponibleRobotSinServicioActualmente;
 
-    def funcion_conseguirRobotsSinServicioEnElSistema (self):
-        return  Robots.query.filter_by (_disponible = False).all ();
+    def funcion_conseguirListaEventosQueTienenAlmenosUnRobotEsperandoPorAsistentes (self):
+        miListaEventos = [];
+        miListaDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now()).all();
+        for i in miListaDisponibleRobot:
+            miEventos = Eventos.query.filter (Eventos._nombreDelEvento == i.eventos_nombreDelEvento, Eventos._fechaDeCreacionDelEvento == i.eventos_fechaDeCreacionDelEvento, Eventos._lugarDondeSeCelebra == i.eventos_lugarDondeSeCelebra).first();
+            if miEventos not in miListaEventos:
+                miListaEventos.append (miEventos);
+        return  miListaEventos;
 
 
 
@@ -231,6 +234,10 @@ class Administradores(db.Model):
                 miListaDisponibleRobotQueActualmenteNoEstanEnElEvento.remove (i);
         return miListaDisponibleRobotQueActualmenteNoEstanEnElEvento;
 
+    def funcion_conseguirDisponibleRobotPorIdRobotYporEstarContempladaLaFechaDelSistema (self, parametroIdRobot):
+        return DisponibleRobot.query.filter (DisponibleRobot.fechaComienzoEnEvento <= datetime.now (), DisponibleRobot.fechaFinEnEvento >= datetime.now(), DisponibleRobot.robots_idRobot == parametroIdRobot).first ();
+
+
     def funcion_modificarDatosDelEvento (self, parametroAntiguoNombreDelEvento, parametroAntiguoFechaDeCreacionDelEvento, parametroAntiguoLugarDondeSeCelebra, parametroNombreDelEvento, parametroLugarDondeSeCelebra, parametroCodigoQR=None, parametroCalle=None, parametroNumero=None, parametroCodigoPostal=None):
         miEventos = Eventos.query.filter (Eventos._nombreDelEvento == parametroAntiguoNombreDelEvento, Eventos._fechaDeCreacionDelEvento == parametroAntiguoFechaDeCreacionDelEvento, Eventos._lugarDondeSeCelebra == parametroAntiguoLugarDondeSeCelebra).first ();
         if (miEventos == None):
@@ -252,23 +259,39 @@ class Administradores(db.Model):
                 miEventos._codigoPostal = parametroCodigoPostal;
             db.session.commit ();
     
-    def funcion_modificarRobotDelEvento (self, parametroNombreDelEvento, parametroFechaDeCreacionDelEvento, parametroLugarDondeSeCelebra, parametroRobot_idRobot, parametroFechaComienzoEnEvento, parametroFechaFinEnEvento, parametroNuevaFechaComienzoEnEvento, parametroNuevaFechaFinEnEvento):
-        # en el caso de que se smodifique la fecha de un robot en el día enterior, entonces no dejo que se modifique la fecha de ese robot en ese evento.  
-        if (parametroNuevaFechaComienzoEnEvento < (datetime.now().strftime ("%Y-%m-%d"))): 
-            raise Exception ("exception. No se puede modificar la fecha de ese robot en el evento, está estableciendo la fecha de comienzo en un día que ya pasó.  ");
+    def funcion_modificarRobotDelEvento (self, parametroNombreDelEvento, parametroFechaDeCreacionDelEvento, parametroLugarDondeSeCelebra, parametroRobot_idRobot, parametroFechaComienzoEnEvento, parametroFechaFinEnEvento, parametroNuevaFechaComienzoEnEvento=None, parametroNuevaFechaFinEnEvento=None, parametroEnServicio=None):
+        miVariableDisponible = False;
+        if (parametroEnServicio == "on"):
+            miVariableDisponible = True;
+        
         miDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento==parametroNombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento==parametroFechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra==parametroLugarDondeSeCelebra, 
                                                           DisponibleRobot.robots_idRobot==parametroRobot_idRobot, DisponibleRobot.fechaComienzoEnEvento==parametroFechaComienzoEnEvento, DisponibleRobot.fechaFinEnEvento == parametroFechaFinEnEvento).first();
 
-        miDisponibleRobot.fechaComienzoEnEvento = parametroNuevaFechaComienzoEnEvento;
-        miDisponibleRobot.fechaFinEnEvento = parametroNuevaFechaFinEnEvento;
+        if (parametroNuevaFechaComienzoEnEvento != "") and (parametroNuevaFechaFinEnEvento != ""):
+            # en el caso de que se modifique la fecha de un robot en el día enterior, entonces no dejo que se modifique la fecha de ese robot en ese evento.  
+            if (parametroNuevaFechaComienzoEnEvento < (datetime.now().strftime ("%Y-%m-%d"))): 
+                raise Exception ("exception. No se puede modificar la fecha de ese robot en el evento, está estableciendo la fecha de comienzo en un día que ya pasó.  ");
+            else:
+                miDisponibleRobot.fechaComienzoEnEvento = parametroNuevaFechaComienzoEnEvento;
+                miDisponibleRobot.fechaFinEnEvento = parametroNuevaFechaFinEnEvento;
+
+
+        miDisponibleRobot.disponible = miVariableDisponible;
         db.session.commit ();
+        
+
     
-    def funcion_sumarRobotAlEvento (self, parametroNombreDelEvento, parametroFechaDeCreacionDelEvento, parametroLugarDondeSeCelebra, parametroRobot_idRobot, parametroFechaComienzoEnEvento, parametroFechaFinEnEvento):
+    def funcion_sumarRobotAlEvento (self, parametroNombreDelEvento, parametroFechaDeCreacionDelEvento, parametroLugarDondeSeCelebra, parametroRobot_idRobot, parametroFechaComienzoEnEvento, parametroFechaFinEnEvento, parametroEnServicio=None):
         # en el caso de que se sume un robot en el día enterior, entonces no dejo que se meta ese robot en el evento. 
         if (parametroFechaComienzoEnEvento < (datetime.now().strftime ("%Y-%m-%d"))): 
             raise Exception ("exception. No se puede sumar ese robot al evento, está simando ese robot al evento en un día pasado.  ");
+    
+        miVariableDisponible = False;
+        if (parametroEnServicio == "on"):
+            miVariableDisponible = True;
+
         miDisponibleRobot = DisponibleRobot (eventos_nombreDelEvento=parametroNombreDelEvento, eventos_fechaDeCreacionDelEvento=parametroFechaDeCreacionDelEvento, eventos_lugarDondeSeCelebra=parametroLugarDondeSeCelebra, 
-                                             robots_idRobot=parametroRobot_idRobot, fechaComienzoEnEvento = parametroFechaComienzoEnEvento, fechaFinEnEvento = parametroFechaFinEnEvento);
+                                             robots_idRobot=parametroRobot_idRobot, fechaComienzoEnEvento = parametroFechaComienzoEnEvento, fechaFinEnEvento = parametroFechaFinEnEvento, disponible = miVariableDisponible);
         db.session.add (miDisponibleRobot);
         db.session.commit ();
     
@@ -413,7 +436,6 @@ class Robots (db.Model):
             int: idRobot
             str: macAddressDelRobot
             str: nombreDelRobot
-            str: disponible
             byte: fotoDelRobot
             str: descripcionDelRobot
     """
@@ -421,7 +443,6 @@ class Robots (db.Model):
     _idRobot = db.Column (db.Integer, primary_key = True);
     _macAddressDelRobot = db.Column (db.String (17), unique=True, nullable = False); 
     _nombreDelRobot = db.Column (db.String (50), unique=True, nullable = False);
-    _disponible = db.Column (db.Boolean, nullable = False);
     _fotoDelRobot = db.Column (db.LargeBinary); 
     _descripcionDelRobot = db.Column (db.String (100));
 
@@ -461,6 +482,7 @@ class DisponibleRobot (db.Model):
             int:  robots_idRobot
             date:  fechaComienzoEnEvento
             date:  fechaFinEnEvento
+            str: disponible
     """
     __tablename__ = "mitablaDisponibleRobot";
     idDisponibleRobot = db.Column(db.Integer, primary_key=True);
@@ -470,6 +492,7 @@ class DisponibleRobot (db.Model):
     robots_idRobot = db.Column(db.Integer, db.ForeignKey('miTablaRobot._idRobot', onupdate="CASCADE", ondelete="CASCADE"), nullable=False);
     fechaComienzoEnEvento = db.Column(db.DateTime, nullable=False);
     fechaFinEnEvento = db.Column(db.DateTime, nullable=False);
+    disponible = db.Column (db.Boolean, nullable = False);
 
     #REQUISITO4. 
     __table_args__ = (db.ForeignKeyConstraint(['eventos_nombreDelEvento', 'eventos_fechaDeCreacionDelEvento', 'eventos_lugarDondeSeCelebra'],['miTablaEvento._nombreDelEvento', 'miTablaEvento._fechaDeCreacionDelEvento', 'miTablaEvento._lugarDondeSeCelebra'],onupdate="CASCADE", ondelete="CASCADE"),

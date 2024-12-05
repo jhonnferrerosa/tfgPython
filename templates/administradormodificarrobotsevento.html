@@ -140,6 +140,7 @@
                 <tr>
                     <th style="width: 350px">fecha de comienzo en el evento: </th>
                     <th>fecha de fin en el evento: </th>
+                    <th>Activar o desactivar: </th>
                     <th>Accion:</th>
                 </tr>
             </thead>
@@ -162,13 +163,26 @@
                                 <div class="input-group-append" data-target="#fechaFinEnEvento_{{ iteracion.robots_idRobot }}_{{ loop.index }}" data-toggle="datetimepicker">
                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                 </div>
-                            </div>                            
+                            </div>   
+                            
+                            
             
                             <input name="robots_idRobot" type="hidden" value="{{ iteracion.robots_idRobot }}">
                             <input name="fechaComienzoEnEventoAntigua" type="hidden" value="{{ iteracion.fechaComienzoEnEvento }}">
                             <input name="fechaFinEnEventoAntigua" type="hidden" value="{{ iteracion.fechaFinEnEvento }}">
+
                             
                         </td>
+                        <td>
+                            {% if miParametroFechaActualDelSistema >= iteracion.fechaFinEnEvento or iteracion.fechaComienzoEnEvento >= miParametroFechaActualDelSistema %}
+                                {% if iteracion.disponible == True %}
+                                    <input style="margin-left: 50px;" type="checkbox" id="disponible" name="disponible" checked>
+                                {% else %}
+                                    <input style="margin-left: 50px;" type="checkbox" id="disponible" name="disponible">
+                                {% endif%}
+                            {% endif %}
+                        </td>
+
                         <td>
                             <button type="submit" name="nameformulariomodificar"  class="btn btn-success">Modificar</button>
                             <button type="submit" name="nameformularioeliminar"  class="btn btn-success">Eliminar fecha</button> 
@@ -184,9 +198,14 @@
                         <input type="date" id="idFechaComienzoEnEvento" name="fechaComienzoEnEvento">
                         <input type="time" id="idFechaComienzoEnEvento" name="fechaComienzoEnEventoHora">
                     </td>
+
                     <td>
                         <input type="date" id="idFechaFinEnEvento" name="fechaFinEnEvento">
                         <input type="time" id="idFechaFinEnEvento" name="fechaFinEnEventoHora">
+                    </td>
+
+                    <td>
+                        <input style="margin-left: 50px;" type="checkbox" id="disponible" name="disponible">
                     </td>
                     <td><button type="submit" name="nameformulariosumarrobot"  class="btn btn-warning">Sumar horario</button></td>
                 </tr>
@@ -209,11 +228,7 @@
             <ol class="list-unstyled" style="margin-left: 30px;">
                 {% if valor["subclavePuedoModificar"] == True %}
                 <li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotModificar', idRobot=clave._idRobot, nombreDelEvento=miParametroNombreDelEvento, fechaDeCreacionDelEvento=miParametroFechaDeCreacionDelEvento, lugarDondeSeCelebra=miParametroLugarDondeSeCelebra) }}" class="btn btn-danger">Modificar robot </a></li>
-                    {% if valor["subclaveQueBotonEnServicioEs"] == True %}
-<li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=clave._idRobot, robotEnServicio=1, nombreDelEvento=miParametroNombreDelEvento, fechaDeCreacionDelEvento=miParametroFechaDeCreacionDelEvento, lugarDondeSeCelebra=miParametroLugarDondeSeCelebra) }}" class="btn btn-secondary">Activar robot</a></li>
-                    {% else %}
-<li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotPonerServicio', idRobot=clave._idRobot, robotEnServicio=0, nombreDelEvento=miParametroNombreDelEvento, fechaDeCreacionDelEvento=miParametroFechaDeCreacionDelEvento, lugarDondeSeCelebra=miParametroLugarDondeSeCelebra) }}" class="btn btn-danger">Desactivar robot</a></li>
-                    {% endif %}
+
                 {% endif %}
                 {% if valor["subclavePuedoeliminar"] == True %}
                     <li class="mb-2" style="float:left; margin-left: 20px;"> <a href="{{ url_for('funcionAdministradorPanelRobotBorrar', idRobot=clave._idRobot, nombreDelEvento=miParametroNombreDelEvento, fechaDeCreacionDelEvento=miParametroFechaDeCreacionDelEvento, lugarDondeSeCelebra=miParametroLugarDondeSeCelebra) }}" class="btn btn-danger">Borrar robot</a></li> 
@@ -227,6 +242,7 @@
                 <tr>
                     <th style="width: 350px">fecha de comienzo en el evento: </th>
                     <th>fecha de fin en el evento: </th>
+                    <th>Activar o desactivar: </th>
                     <th>Accion:</th>
                 </tr>
             </thead>
@@ -252,6 +268,18 @@
                             <input name="fechaComienzoEnEventoAntigua" type="hidden" value="{{ iteracion.fechaComienzoEnEvento }}">
                             <input name="fechaFinEnEventoAntigua" type="hidden" value="{{ iteracion.fechaFinEnEvento }}">
                         </td>
+
+                        <td>
+                        {% if iteracion.disponible == True %}
+                            <input style="margin-left: 50px;" type="checkbox" id="disponible" name="disponible" checked>
+                        {% else %}
+                            <input style="margin-left: 50px;" type="checkbox" id="disponible" name="disponible">
+                        {% endif%}
+
+                        </td>
+
+                        
+
                         <td>
                             <button type="submit" name="nameformulariomodificar"  class="btn btn-success">Modificar</button>
                             <button type="submit" name="nameformularioeliminar"  class="btn btn-success">Eliminar fecha</button> 
@@ -271,6 +299,11 @@
                         <input type="date" id="idFechaFinEnEvento" name="fechaFinEnEvento">
                         <input type="time" id="idFechaFinEnEvento" name="fechaFinEnEventoHora">
                     </td>
+
+                    <td>
+                        <input style="margin-left: 50px;" type="checkbox" id="disponible" name="disponible">
+                    </td>
+
                     <td><button type="submit" name="nameformulariosumarrobot"  class="btn btn-warning">Sumar horario</button></td>
                 </tr>
             </form>
@@ -298,6 +331,7 @@
                     <th>MAC: </th>
                     <th>fecha de comienzo en el evento: </th>
                     <th>fecha de fin en el evento: </th>
+                    <th>Activar o desactivar: </th>
                     <th>Accion:</th>
                 </tr>
             </thead>
@@ -317,6 +351,10 @@
                         <td>
                             <input type="date" id="idFechaFinEnEvento" name="fechaFinEnEvento">
                             <input type="time" id="idFechaFinEnEvento" name="fechaFinEnEventoHora">
+                        </td>
+                        
+                        <td>
+                            <input style="margin-left: 50px;" type="checkbox" id="disponible" name="disponible">
                         </td>
 
                         <td><button type="submit" name="nameformulariosumarrobot"  class="btn btn-primary">Añadir robot</button></td>
