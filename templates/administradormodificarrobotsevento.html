@@ -147,6 +147,7 @@
             {% for iteracion in valor["subclaveListas"] %}
             <tbody>
                 <form  method="POST" >
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <tr class="align-middle">
                         <td>
                             <div class="input-group date" id="fechaComienzoEnEvento_{{ iteracion.robots_idRobot }}_{{ loop.index }}" data-target-input="nearest">
@@ -192,6 +193,7 @@
             </tbody>
             {% endfor %}
             <form  method="POST" >
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <tr class="align-middle">
                     <input type="hidden" value="{{ clave._idRobot }}" name="idRobot"/>
                     <td>
@@ -249,6 +251,7 @@
             {% for iteracion in valor["subclaveListas"] %}
             <tbody>
                 <form  method="POST" >
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <tr class="align-middle">
                         <td>
                             <div class="input-group date" id="fechaComienzoEnEvento_{{ iteracion.robots_idRobot }}_{{ loop.index }}" data-target-input="nearest">
@@ -289,6 +292,7 @@
             </tbody>
             {% endfor %}
             <form  method="POST" >
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <tr class="align-middle">
                     <input type="hidden" value="{{ clave._idRobot }}" name="idRobot"/>
                     <td>
@@ -338,6 +342,7 @@
 {% for iteracion in miListaDeSumarRobotParametro %}
             <tbody>
                 <form  method="POST" >
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <!--  el {{ iteracion[0] }} es el numero del idRobot  -->
                      <!--  el {{ iteracion[1] }} es el macAddressDelRobot  -->
                     <input type="hidden" value="{{ iteracion[0] }}" name="idRobot"/>

@@ -260,21 +260,22 @@ class Administradores(db.Model):
         miDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento==parametroNombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento==parametroFechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra==parametroLugarDondeSeCelebra, 
                                                           DisponibleRobot.robots_idRobot==parametroRobot_idRobot, DisponibleRobot.fechaComienzoEnEvento==parametroFechaComienzoEnEvento, DisponibleRobot.fechaFinEnEvento == parametroFechaFinEnEvento).first();
 
-        if (parametroNuevaFechaComienzoEnEvento != ""):
+        # en el caso de que la fecha de comienzo no este vacia. 
+        if (parametroNuevaFechaComienzoEnEvento != "") and (parametroNuevaFechaComienzoEnEvento != None):
             # en el caso de que se modifique la fecha de un robot en el día enterior, entonces no dejo que se modifique la fecha de ese robot en ese evento.  
             if (parametroNuevaFechaComienzoEnEvento < (datetime.now().strftime ("%Y-%m-%d"))): 
                 miVariableMensajeDeError = ("exception. No se puede modificar la fecha de ese robot en el evento, está estableciendo la fecha de comienzo en un día que ya pasó.  ");
                 return miVariableMensajeDeError;
             else:
                 miDisponibleRobot.fechaComienzoEnEvento = parametroNuevaFechaComienzoEnEvento;
-                if (parametroNuevaFechaFinEnEvento != ""):
+                if (parametroNuevaFechaFinEnEvento != "") and (parametroNuevaFechaFinEnEvento != None):
                     miDisponibleRobot.fechaFinEnEvento = parametroNuevaFechaFinEnEvento;
                 else:
                     miDisponibleRobot.fechaFinEnEvento = parametroFechaFinEnEvento;
         else:
-            if (parametroNuevaFechaFinEnEvento != ""):
-                miDisponibleRobot.fechaComienzoEnEvento = parametroFechaDeCreacionDelEvento;
-                miDisponibleRobot.fechaFinEnEvento = parametroFechaFinEnEvento;
+            if (parametroNuevaFechaFinEnEvento != "") or (parametroNuevaFechaFinEnEvento != None):
+                miDisponibleRobot.fechaComienzoEnEvento = parametroFechaComienzoEnEvento;
+                miDisponibleRobot.fechaFinEnEvento = parametroNuevaFechaFinEnEvento;
         
         miDisponibleRobot.disponible = miVariableDisponible;
         db.session.commit ();

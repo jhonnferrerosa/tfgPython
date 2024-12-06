@@ -84,6 +84,7 @@
 
 
     <form  method="POST"> <!--begin::Body-->
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <div class="card-body">
             {{ miFormularioParametro.fechaDeCreacionDelEvento }}
             <div class="mb-3"> <label  class="form-label">Introduzca el nombre del evento (max. 50 caracteres)*:</label> {{ miFormularioParametro.nombreDelEvento }}  </div>

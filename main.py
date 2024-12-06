@@ -3,6 +3,7 @@
 # el url_for genera una url para una de las funciones que tengo en este main.py. 
 # el session es para el menajo de las sessiones de los usuarios en la pagina web. . 
 from flask import Flask, request, render_template, redirect, url_for, session
+from flask_wtf import CSRFProtect
 from models import db
 #Desde mi archivo config.py importo esta clase. 
 from config import DevelopmentConfig  
@@ -32,6 +33,7 @@ import qrcode
 
 app = Flask(__name__)
 app.config.from_object (DevelopmentConfig);
+csrf = CSRFProtect ();
 
 # este diccionario lo voy a utilizar para almacenar como clave al identificadorUnicoAsistente y como valor, un bool el cual determina si ese asistente esta manejando o no un robot.  
 # esto se utiliza (por ejemplo, hay más casos) para que cuando un asistente este en el endpoint de aceptarRobot y se le  haya acababo el tiempo de uso del robot, este valor esté en 
@@ -881,7 +883,7 @@ def funcionAdministradorBorrarCuentaAdministrador (correoelectronico):
 # a este if. De esta manera tengo más control sobre la ejecución y es que a esas funcones de arriba las puedo llamar en cualquier momento.  
 if __name__ == '__main__':
     # a la hora de poner los formularios, necesito que tengan un token para verrificar que el me envia los datos de nuevo al servidor, que sea el cliente correcto.  
-
+    csrf.init_app(app);
 
     # esto lo que hace es aplicar la configuracion de la base datos hecha en el archivo condig.py 
     db.init_app (app);

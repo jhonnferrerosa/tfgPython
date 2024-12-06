@@ -27,6 +27,7 @@
 <div class="card-title">Ingrese sus credenciales. </div>
 </div> <!--end::Header--> <!--begin::Form-->
 <form  method="POST"> <!--begin::Body-->
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 <div class="card-body">
 <div class="mb-3"> <label for="exampleInputEmail1" class="form-label">Introduzca su correo electronico:  (max. 50 caracteres)</label> {{ miFormularioParametro.correoElectronico }}
 

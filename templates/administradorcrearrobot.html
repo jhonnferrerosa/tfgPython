@@ -95,6 +95,7 @@
  </div>
 </div> <!--end::Header--> <!--begin::Form-->
 <form  method="POST" enctype="multipart/form-data"> <!--begin::Body-->
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 <div class="card-body">
 {% if miParametroNombreDelEvento != None and miParametroFechaDeCreacionDelEvento!= None and miParametroLugarDondeSeCelebra!=None %}
   <label style="display: none;"> {{ miFormularioParametro.macAddressDelRobot }} </label>
