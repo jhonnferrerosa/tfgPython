@@ -250,7 +250,8 @@ def funcionGenerarCodigoQR (url, correoelectronico = None):
 def funcion_registrarAsistente (codigoQR, correoelectronico = None):
     miEventos = Eventos.query.filter (Eventos._codigoQR == codigoQR).first();
     if (miEventos == None):
-        return "<p> funcion_registrarAsistente () --- error, el evento que se ha pasado por parametro, no existe. </p>";
+        miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoAsistente":None, "miParametroEstado":"error404","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None};
+        return jsonify(miRespuestaJson), 404;
     else:
         if (('token' in session) == False):
             session['token'] = os.urandom(24).hex(); 
@@ -262,7 +263,9 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
                 db.session.commit ();
             except Exception as e:
                 db.session.rollback();
-                return redirect (url_for ('funcionError404', mensajeerror=e));  
+                miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoAsistente":None, "miParametroEstado":"error500","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None};
+                return jsonify(miRespuestaJson), 500;
+                #return redirect (url_for ('funcionError404', mensajeerror=e));  
         else: 
             # esta parte de aqui la hago porque puede haber clientes que almacenen su identificadorUnnicoAsistente, pero en otro momento se puede haber reseteado la aplicacion y la BBDD. 
             miAsistentes = Asistentes.query.filter_by (_identificadorUnicoAsistente= session['token']).first ();
@@ -276,7 +279,9 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
                     db.session.commit ();
                 except Exception as e:
                     db.session.rollback();
-                    return redirect (url_for ('funcionError404', mensajeerror=e));  
+                    miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoAsistente":None, "miParametroEstado":"error500","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None};
+                    return jsonify(miRespuestaJson), 500;
+                    #return redirect (url_for ('funcionError404', mensajeerror=e));  
             else: 
                 miVincula = Vincula.query.filter (Vincula.asistentes_identificadorUnicoAsistente == session['token'], Vincula.eventos_nombreDelEvento == miEventos._nombreDelEvento, Vincula.eventos_fechaDeCreacionDelEvento == miEventos._fechaDeCreacionDelEvento, Vincula.eventos_lugarDondeSeCelebra == miEventos._lugarDondeSeCelebra).first();
                 # en el caso de que haya token de sesion y este en la tabla Asistentes, pero no este vinculado a este evento (segun la BBDD), entonces lo vinculo a este otro evento nuevo, digo otro nuevo porque sí o sí este asistente para que exista, tiene que estar vinculado a un evento. Pongo esto 
@@ -375,7 +380,9 @@ def funcion_aceptarRobot ():
 
     miEventos = Eventos.query.filter (Eventos._codigoQR == codigoQR).first();
     if (miEventos == None):
-        return "<p> funcion_registrarAsistente () --- error, el evento que se ha pasado por parametro, no existe. </p>";
+        miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoAsistente":None, "miParametroEstado":"error404","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None};
+        return jsonify(miRespuestaJson), 404;
+        #return "<p> funcion_registrarAsistente () --- error, el evento que se ha pasado por parametro, no existe. </p>";
     else:
         miVariableCorreoElectronicoAdministrador = None;
         miAdministradores = None;
@@ -458,7 +465,9 @@ def funcion_rechazarRobot ():
 
     miEventos = Eventos.query.filter (Eventos._codigoQR == codigoQR).first();
     if (miEventos == None):
-        return "<p> funcion_registrarAsistente () --- error, el evento que se ha pasado por parametro, no existe. </p>";
+        miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoAsistente":None, "miParametroEstado":"error404","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None};
+        return jsonify(miRespuestaJson), 404;   
+        #return "<p> funcion_registrarAsistente () --- error, el evento que se ha pasado por parametro, no existe. </p>";
     else:
         miVariableCorreoElectronicoAdministrador = None;
         if (correoelectronico != None):
