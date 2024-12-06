@@ -10,16 +10,23 @@ servers:
 
 paths:
   /{idEvento}:
+  /demostracionesroboticas/<codigoQR>/<correoelectronico>:
     get:
       summary:  primer acceso. 
       description: en este endpoint los usuarios se registran dentro de las demostraciones roboticas, ademas se busca un robot para ese usuario, puede ser que devuelva un JSON con un robot que ha encontrado o que de vuelva un JSON con un aviso de que está esperando por un robot.
       parameters:
-        - name: idEvento
+        - name: codigoQR
           in: path
-          description: "este es el entero que se refiera al evento al que va a entrar el asistente."
+          description: "este es el string con el que se identifica a un Evento"
           required: true
           schema:
-            type: integer
+            type: String
+        - name: correoelectronico
+          in: path
+          description: "en el caso de que se quiera obtener un robot como administrador, entonces este valor tiene que estar rellenado. "
+          required: false
+          schema:
+            type: String
       responses:
         '200':
           description: devuelve un JSON con el id del robot que está listo para trabajar. 
@@ -28,72 +35,186 @@ paths:
               schema:
                 type: object
                 properties:
-                  estadoActual:
+                  miParametroApodoAsistente:
                     type: string
-                  idRobot:
-                    type: integer
-                  macAddressDelRobot:
+                  miParametroCodigoQR:
+                    type: string
+                  miParametroCorreoElectronicoDelAdministrador:
+                    type: string
+                  miParametroEstado:
+                    type: string
+                  miParametroIdRobot:
+                    type: int
+                  miParametroMac:
+                    type: string
+                  miParametroMiEventoNombreDelEvento:
+                    type: string
+        '200':
+          description: devuelve un JSON que tiene la clave miParametroEstado avisando de que se está esperando por un robot. 
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  miParametroApodoAsistente:
+                    type: string
+                  miParametroCodigoQR:
+                    type: string
+                  miParametroCorreoElectronicoDelAdministrador:
+                    type: string
+                  miParametroEstado:
+                    type: string
+                  miParametroIdRobot:
+                    type: int
+                  miParametroMac:
+                    type: string
+                  miParametroMiEventoNombreDelEvento:
+                    type: string
+        '404':
+          description: "Se ha pasado por parametro un una URL con un determinado códigoQR el cual ningun evento de la base de datos tiene ese coódigoQR"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  miParametroApodoAsistente:
+                    type: string
+                  miParametroCodigoQR:
+                    type: string
+                  miParametroCorreoElectronicoDelAdministrador:
+                    type: string
+                  miParametroEstado:
+                    type: string
+                  miParametroIdRobot:
+                    type: int
+                  miParametroMac:
+                    type: string
+                  miParametroMiEventoNombreDelEvento:
+                    type: string
+        '500':
+          description: "Ha ocurrido un error inesperado en la base de datos. "
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  miParametroApodoAsistente:
+                    type: string
+                  miParametroCodigoQR:
+                    type: string
+                  miParametroCorreoElectronicoDelAdministrador:
+                    type: string
+                  miParametroEstado:
+                    type: string
+                  miParametroIdRobot:
+                    type: int
+                  miParametroMac:
+                    type: string
+                  miParametroMiEventoNombreDelEvento:
                     type: string
   /aceptarrobot:
     post:
       summary: opción de empezar a manejar un robot. 
-      description: en el caso de que un usuario acepte el robot que se le ha mostrado, pulsará aceptar en la aplcación de Kodular y entonces enviará un JSON con el evento y el robot al que quiera manejar. Sólo puede de volver un JSON que dice que se está manajando un robot, en el caso de que devuelva cualquier otra respuesta, eso significa que el robot que se ha acaptado, por alguna razón ya no está disponible, y esto se debe a que internamente este primer endpoint ha tendido que llamar al primero para hacer la búsqueda de un nuevo robot. 
+      description: en el caso de que un usuario acepte el robot que se le ha mostrado, pulsará aceptar en la aplcación de Kodular y entonces enviará un JSON con  el robot al que quiera manejar. Sólo puede de volver un JSON que dice que se está manajando un robot, en el caso de que devuelva cualquier otra respuesta, eso significa que el robot que se ha acaptado, por alguna razón ya no está disponible, y esto se debe a que internamente este primer endpoint ha tendido que llamar al primero para hacer la búsqueda de un nuevo robot. 
       requestBody:
-        description: se va a aneviar a la API un JSON con el idEvento y el idRobot del robot que se quiere manejar. 
+        description: se va a enviar a la API un JSON con el código QR, un correo de algún administrador (puede ser NULL) y el idRobot del robot que se quiere manejar. 
         required: true
         content:
           'application/json':
             schema:
               type: object
               properties:
-                idRobot:
-                  type: integer
-                idEvento:
-                  type: integer
+                miParametroCodigoQR:
+                  type: string
+                miParametroCorreoElectronicoDelAdministrador:
+                  type: string
+                miParametroIdRobot:
+                  type: int
       responses:
         '200':
-          description: devuelve un JSON con el id del robot, la mac y un String que avisa que en la aplicación está registrado que ya está manejando ese robot. 
+          description: devuelve un JSON con el id Robot y la MAC del robot que está controlando.  
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  estadoActual:
+                  miParametroApodoAsistente:
                     type: string
-                  idRobot:
-                    type: integer
-                  macAddressDelRobot:
+                  miParametroCodigoQR:
                     type: string
-  /rechazarrobot/{idRobot}/{idEvento}:
-    get:
+                  miParametroCorreoElectronicoDelAdministrador:
+                    type: string
+                  miParametroEstado:
+                    type: string
+                  miParametroIdRobot:
+                    type: int
+                  miParametroMac:
+                    type: string
+                  miParametroMiEventoNombreDelEvento:
+                    type: string
+        '404':
+          description: "Se ha pasado por el POST un determinado códigoQR el cual ningun evento de la base de datos tiene ese coódigoQR"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  miParametroApodoAsistente:
+                    type: string
+                  miParametroCodigoQR:
+                    type: string
+                  miParametroCorreoElectronicoDelAdministrador:
+                    type: string
+                  miParametroEstado:
+                    type: string
+                  miParametroIdRobot:
+                    type: int
+                  miParametroMac:
+                    type: string
+                  miParametroMiEventoNombreDelEvento:
+                    type: string
+
+
+  /rechazarrobot:
+    post:
       summary: esta es la opción de rechazar un robot mostrado.
-      description: al usuario se le ha mostrado un robot por pantalla y este tiene la opción de rechalo, ya que puedde ser que esté esperando por uno en concreto. En este caso se ejecutará el método GET que tendrá como parametros el id del robot y el id del evento que no acepta manejar. Al asistente se le devera el resultado de cualquiera de los dos endpoint anteriores, aceptarrobot /idEvento y será un JSON que le muestre otro robot disponible o un mensaje en el que se le avise que está esperando por un robot.
-      parameters:
-        - name: idRobot
-          in: path
-          description: este es el campo que se refiere al robot.
-          required: true
-          schema:
-            type: integer
-        - name: idEvento
-          in: path
-          description: este es el campo que se refiere al evento. 
-          required: true
-          schema:
-            type:
-              integer
-      responses:
-        '200':
-          description: devuelve un JSON con el id del robot, la mac y un String que avisa si esta esperando por al gun robot o puede aceptar ese que se le está mostrando. 
+      description: al usuario se le ha mostrado un robot por pantalla y este tiene la opción de rechazarlo, ya que puede ser que esté esperando por otro. En este caso se enviará por el POST el id del robot que se ha rechazado. Al asistente, se le devolverá el resultado del primer endpint ejecutado ya que ese esnpoint es el que localiza robots disponibles para los asistentes
+      requestBody:
+        description: se va a enviar a la API un JSON con el código QR, un correo de algún administrador (puede ser NULL) y el idRobot del robot que se quiere manejar. 
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+                properties:
+                  miParametroCodigoQR:
+                    type: string
+                  miParametroCorreoElectronicoDelAdministrador:
+                    type: string
+                  miParametroIdRobot:
+                    type: int
+                    
+       responses: 
+        description:  Como ya se ha dicho antes, la respueta va a ser la misma que las que genere el endpoint /demostracionesroboticas/<codigoQR>/<correoelectronico>  ya que una vez rechazado un robot, este es el que hace la búsqueda de un nuevo robot disponible. 
+        '404':
+          description: "Se ha pasado por el POST un determinado códigoQR el cual ningun evento de la base de datos tiene ese coódigoQR"
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  estadoActual:
+                  miParametroApodoAsistente:
                     type: string
-                  idRobot:
-                    type: integer
-                  macAddressDelRobot:
+                  miParametroCodigoQR:
+                    type: string
+                  miParametroCorreoElectronicoDelAdministrador:
+                    type: string
+                  miParametroEstado:
+                    type: string
+                  miParametroIdRobot:
+                    type: int
+                  miParametroMac:
+                    type: string
+                  miParametroMiEventoNombreDelEvento:
                     type: string
           
