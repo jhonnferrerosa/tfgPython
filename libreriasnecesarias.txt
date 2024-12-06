@@ -1,6 +1,0 @@
-pip install Flask
-pip install Flask-WTF 
-pip install Flask-SQLAlchemy 
-sudo apt install python3-dev libpq-dev  # esto es para ubuntu, no recuerdo si es necesario instalar esto desde windows. 
-pip install psycopg2
-pip install Werkzeug
