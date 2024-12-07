@@ -6,19 +6,32 @@
 {% endblock %}
 
 {% block content %}
+{% if miParametroUsuarioYaCreado == True %}
+    <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">Ese correo ya existe en el sistema</nav>
+{% else %}
+    {% if miParametroContrasenasNoCoinciden == True %}
+        <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">Las contraseñas no coinciden</nav>
+        {% endif %}
+{% endif %}
+
 <div class="container">
  <!--begin::Header-->
 <div class="card card-warning card-outline mb-4"> <!--begin::Header-->
                                 <div class="card-header">
-                                    <div class="card-title">Cree una cuenta en el sistema con un correo eletrónico y una contraseña  
-                                    </div>
+                                    {% if miPrametroTokenRestablecerContrasena == None %}
+                                        <div class="card-title">Cree una cuenta en el sistema con un correo eletrónico y una contraseña </div>
+                                    {% else %}
+                                        <div class="card-title">Restablezca su contraseña</div>  
+                                    {% endif %}
                                 </div> <!--end::Header--> <!--begin::Form-->
                                 <form  method="POST"> <!--begin::Body-->
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                     <div class="card-body">
-                                        <div class="row mb-3"> <label for="inputEmail3" class="col-sm-2 col-form-label">Introduzca su correo electronico: </label>
-                                            <div class="col-sm-10"> {{ miFormularioParametro.correoElectronico }} </div>
-                                        </div>
+                                        {% if miPrametroTokenRestablecerContrasena == None %}
+                                            <div class="row mb-3"> <label for="inputEmail3" class="col-sm-2 col-form-label">Introduzca su correo electronico: </label>
+                                                <div class="col-sm-10"> {{ miFormularioParametro.correoElectronico }} </div>
+                                            </div>
+                                        {% endif %}
                                         <div class="row mb-3"> <label for="inputPassword3" class="col-sm-2 col-form-label">Introduzca su contrasena: </label>
                                             <div class="col-sm-10"> {{ miFormularioParametro.contrasena }} </div>
                                         </div>
@@ -28,7 +41,14 @@
 
                                         {{ miFormularioParametro.opcionMostrarContrasena }} <label for="opcionMostrarContrasena">Mostrar contrseña</label>
                                     </div> <!--end::Body--> <!--begin::Footer-->
-                                    <div class="card-footer"> <button type="submit"  id="botonSignup" class="btn btn-warning">Sign up</button>  </div> <!--end::Footer-->
+                                    <div class="card-footer"> 
+                                        {% if miPrametroTokenRestablecerContrasena == None %}
+                                            <button type="submit"  id="botonSignup" class="btn btn-warning">Sign up</button>  
+                                        {% else %}
+                                            <button type="submit"  id="botonSignup" class="btn btn-warning">Cambiar contraseña</button>  
+                                        {% endif %}
+                                        
+                                    </div> <!--end::Footer-->
                                 </form> <!--end::Form-->
                             </div>
 

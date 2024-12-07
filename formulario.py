@@ -14,9 +14,10 @@ class FormularioAcceder (Form):
         Este formulario lo utilizo para el login y el signup, para el administrador. 
     """
     correoElectronico = EmailField(validators= [InputRequired("Esta campo es requerido"), Length(min=3, max=50, message="Esciba entre 3 y 50 caracteres.")]); 
-    contrasena  = PasswordField(validators= [InputRequired("Esta campo es requerido"), Length(min=3, max=50, message="Esciba entre 3 y 50 caracteres.")]);
+    contrasena  = PasswordField(validators= [Optional(), Length(min=3, max=50, message="Esciba entre 3 y 50 caracteres.")]);
     confirmarContrasena  = PasswordField(validators= [InputRequired("Esta campo es requerido"), Length(min=3, max=50, message="Esciba entre 3 y 50 caracteres.")]);
     opcionMostrarContrasena = BooleanField('Mostrar contraseña');
+            
 
 class FormularioCreaRobot (Form):
     """ 
@@ -46,7 +47,7 @@ class FormularioCrearEvento (Form):
             miExpresionRegular = r"^[a-zA-Z0-9@.:\-]+$";
             miVerdadCodigoQRvalidado = bool (re.match (miExpresionRegular, miCampoCodigoQR));
             if (miVerdadCodigoQRvalidado == False):
-                raise validators.ValidationError ("Sólo se permite caracteres alfanuméricos en la URL. No vale espacios ni carecteres especiales. "); 
+                raise validators.ValidationError ("Sólo se permite caracteres alfanuméricos en la URL. No vale espacios ni carecteres especiales "); 
 
 
 

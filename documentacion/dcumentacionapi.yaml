@@ -6,24 +6,25 @@ info:
 
 servers:
   - url: http://localhost:5000
-    description: el servidor esta montado en local. 
+    description: El servidor esta montado en local.  para los casos es los que alguna clave del objeto JSON contenga un velor NULL, lo que está pasando, es que no se ha podido conseguir o no se ha solicitado esa funcionalidad, por ejemplo, si el servidor no ha encontrado un robot que esté listo paraa manejar porque todos los robots estén ocupados,
+      entonces el valor de la MAC y el valor del idRobot van a estar NULL, ya que no se ha conseguido un robot. 
 
 paths:
   /{idEvento}:
   /demostracionesroboticas/<codigoQR>/<correoelectronico>:
     get:
-      summary:  primer acceso. 
-      description: en este endpoint los usuarios se registran dentro de las demostraciones roboticas, ademas se busca un robot para ese usuario, puede ser que devuelva un JSON con un robot que ha encontrado o que de vuelva un JSON con un aviso de que está esperando por un robot.
+      summary:  Primer acceso. 
+      description: En este endpoint los usuarios se registran dentro de las demostraciones roboticas, ademas se busca un robot para ese usuario, puede ser que devuelva un JSON con un robot que ha encontrado o que  devuelva un JSON con un aviso de que está esperando por un robot.
       parameters:
         - name: codigoQR
           in: path
-          description: "este es el string con el que se identifica a un Evento"
+          description: "Este es el string con el que se identifica a un Evento."
           required: true
           schema:
             type: String
         - name: correoelectronico
           in: path
-          description: "en el caso de que se quiera obtener un robot como administrador, entonces este valor tiene que estar rellenado. "
+          description: "En el caso de que se quiera obtener un robot como administrador, entonces este valor tiene que estar rellenado. "
           required: false
           schema:
             type: String
@@ -50,7 +51,7 @@ paths:
                   miParametroMiEventoNombreDelEvento:
                     type: string
         '200':
-          description: devuelve un JSON que tiene la clave miParametroEstado avisando de que se está esperando por un robot. 
+          description: Devuelve un JSON que tiene la clave miParametroEstado avisando de que se está esperando por un robot. 
           content:
             application/json:
               schema:

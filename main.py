@@ -30,10 +30,15 @@ import re
 # esto me vale para generar los codigos QR. 
 import qrcode
 
+# esto es para enviar los correos electrónicos.
+from flask_mail import Mail
+from flask_mail import Message
+
 
 app = Flask(__name__)
 app.config.from_object (DevelopmentConfig);
 csrf = CSRFProtect ();
+mail = Mail (app);
 
 # este diccionario lo voy a utilizar para almacenar como clave al identificadorUnicoAsistente y como valor, un bool el cual determina si ese asistente esta manejando o no un robot.  
 # esto se utiliza (por ejemplo, hay más casos) para que cuando un asistente este en el endpoint de aceptarRobot y se le  haya acababo el tiempo de uso del robot, este valor esté en 
@@ -44,6 +49,10 @@ miDiccionarioAsistentesYestadoControlandoRobot = {}
 
 # en este diccionario la clave va a ser el token con el evento , para saber que asistenten en que evento hay rechazado un robot, para que de esta forma no se le muestre uno que el haya rechazado en el evento. 
 miDiccionarioGlobalTokensListaDeRobotsRechazados = {}
+
+# en este diccionario la clave es el correo electronico del administrador que ha solicitado cambiar la contraseñamm y el valor es el token (48 carecteres hexagesimal) que se le envían al correo 
+# que solicitó cambiar la contraseña, para que cuando el admininstrador acceda a su correo, que haga clic en la url que envía 
+miDiccionarioCorreoElectroncoYtokenRestablecerContrasena = {};
 
 miVariableGlobalURL = "http://localhost:5000/demostracionesroboticas/"; 
 
@@ -190,7 +199,7 @@ def miFuncionAntesDeLaPeticion ():
     miVariablePermitirAccesoSinCorreoElectronico = True;
 
     if (request.endpoint == 'index2') or (request.endpoint == None) or (request.endpoint == 'funcionAdministradorsignup') or (request.endpoint == 'funcion_aceptarRobot') or (request.endpoint == 'funcion_rechazarRobot') or (request.endpoint == 'funcion_registrarAsistente') or (request.endpoint ==
-         'static') or (request.endpoint == 'funcionAdministradorLogin') or (request.endpoint == 'funcionError404') or (request.endpoint == 'demostracionesroboticas'):
+         'static') or (request.endpoint == 'funcionAdministradorLogin') or (request.endpoint == 'funcionErrorClienteServidor') or (request.endpoint == 'demostracionesroboticas'):
         miVariablePermitirAccesoSinCorreoElectronico = False;
 
     # en el caso de que el correoElectronico no este en la sesion y ademas la URL que yo he puesto no sea de las permitidas, me voy al loggin.  
@@ -202,12 +211,12 @@ def miFuncionAntesDeLaPeticion ():
 
 @app.errorhandler (404)  # esto es para sacar el HTML que contiene el mensaje de error, para los casos en los que la aplicacion caiga en algun error. 
 def miPaginaNoEncntradaError (e):
-	return render_template ("404.html"), 404; 
+	return render_template ("error.html"), 404; 
 
-@app.route ('/error404/<mensajeerror>')
-def funcionError404 (mensajeerror = None):
-    print ("funcionError404()----")
-    return render_template ("404.html", parametroMensajeError = mensajeerror);
+@app.route ('/errorclienteservidor/<mensajeerror>')
+def funcionErrorClienteServidor (mensajeerror = None):
+    print ("funcionErrorClienteServidor()----")
+    return render_template ("error.html", parametroMensajeError = mensajeerror);
 
 
 # este endpoint es necesario para la representacion de las imagenes en el HTML. Ya en la base dde datos la imagen se alamecena codificada, lo que hago aqui es decodificarla y darsela al HTML 
@@ -267,7 +276,7 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
                 db.session.rollback();
                 miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoAsistente":None, "miParametroEstado":"error500","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None};
                 return jsonify(miRespuestaJson), 500;
-                #return redirect (url_for ('funcionError404', mensajeerror=e));  
+                #return redirect (url_for ('funcionErrorClienteServidor', mensajeerror=e));  
         else: 
             # esta parte de aqui la hago porque puede haber clientes que almacenen su identificadorUnnicoAsistente, pero en otro momento se puede haber reseteado la aplicacion y la BBDD. 
             miAsistentes = Asistentes.query.filter_by (_identificadorUnicoAsistente= session['token']).first ();
@@ -283,7 +292,7 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
                     db.session.rollback();
                     miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoAsistente":None, "miParametroEstado":"error500","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None};
                     return jsonify(miRespuestaJson), 500;
-                    #return redirect (url_for ('funcionError404', mensajeerror=e));  
+                    #return redirect (url_for ('funcionErrorClienteServidor', mensajeerror=e));  
             else: 
                 miVincula = Vincula.query.filter (Vincula.asistentes_identificadorUnicoAsistente == session['token'], Vincula.eventos_nombreDelEvento == miEventos._nombreDelEvento, Vincula.eventos_fechaDeCreacionDelEvento == miEventos._fechaDeCreacionDelEvento, Vincula.eventos_lugarDondeSeCelebra == miEventos._lugarDondeSeCelebra).first();
                 # en el caso de que haya token de sesion y este en la tabla Asistentes, pero no este vinculado a este evento (segun la BBDD), entonces lo vinculo a este otro evento nuevo, digo otro nuevo porque sí o sí este asistente para que exista, tiene que estar vinculado a un evento. Pongo esto 
@@ -504,43 +513,88 @@ def funcion_rechazarRobot ():
     return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR, correoelectronico = miVariableCorreoElectronicoAdministrador)); 
 
 
-
 ########################### endpoints Administrador con el robot. #####################################################################################################################################################################################
 @app.route ("/administradorsignup", methods = ['GET', 'POST'])
-def funcionAdministradorsignup ():
+@app.route ("/administradorsignup/<tokenrestablecercontrasena>", methods = ['GET', 'POST'])
+def funcionAdministradorsignup (tokenrestablecercontrasena = None):
+    print ("funcionAdministradorLogin()---", tokenrestablecercontrasena);
+    miVariableContrasenasNoCoinciden = False;
+    miVariableUsuarioYaCreado = False;
     miFormulario = formulario.FormularioAcceder (request.form);
     if (request.method == 'POST'):
-        if (miFormulario.contrasena.data != miFormulario.confirmarContrasena.data):
-            return redirect (url_for ('funcionError404', mensajeerror="administradorsignup --- las contarseñas no coinciden. "));  
+        if (tokenrestablecercontrasena != None):
+            miVariableCorreoAdministrador = None;
+            fechaDeCreacionDelTokenRestablecerContrasena = None;
+            for clave in miDiccionarioCorreoElectroncoYtokenRestablecerContrasena:
+                if (miDiccionarioCorreoElectroncoYtokenRestablecerContrasena[clave][0] == tokenrestablecercontrasena):
+                    miVariableCorreoAdministrador = clave;
+                    fechaDeCreacionDelTokenRestablecerContrasena = miDiccionarioCorreoElectroncoYtokenRestablecerContrasena[clave][1];
+                    break;
+            if (miVariableCorreoAdministrador == None) or ((datetime.now() - fechaDeCreacionDelTokenRestablecerContrasena) >= timedelta (minutes=10)):
+                return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorsignup.html --- Error401 --- El token de para cambiar la contrsaeña, no identifica a nungun administrador en el sistema o ha caducado. "));  
+            else:
+                miAdministradores = Administradores.query.filter_by (_correoElectronico = miVariableCorreoAdministrador).first ();
+                if (miAdministradores == None):
+                    return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorsignup.html --- Error404  ----  El token sí aparece en el sistema, pero ese administrador no esta en la base de datos. "));  
+                else:
+                    if (miFormulario.contrasena.data != miFormulario.confirmarContrasena.data):
+                        miVariableContrasenasNoCoinciden = True;
+                    else:
+                        miContrasenaHaseada = generate_password_hash (miFormulario.contrasena.data);
+                        miAdministradores._contrasena = miContrasenaHaseada;
+                        db.session.commit ();
+                        del (miDiccionarioCorreoElectroncoYtokenRestablecerContrasena [miVariableCorreoAdministrador]);
+                        return redirect (url_for ('funcionAdministradorLogin'));
         else:
-            miContrasenaHaseada = generate_password_hash (miFormulario.contrasena.data);
-            miAdministradores = Administradores (_correoElectronico=miFormulario.correoElectronico.data, _contrasena=miContrasenaHaseada);
-            db.session.add (miAdministradores);
-            db.session.commit ();
-            return redirect (url_for ('funcionAdministradorLogin'));
+            miAdministradores = Administradores.query.filter_by (_correoElectronico = miFormulario.correoElectronico.data).first ();
+            if (miAdministradores):
+                miVariableUsuarioYaCreado = True;
+            else:
+                if (miFormulario.contrasena.data != miFormulario.confirmarContrasena.data):
+                    miVariableContrasenasNoCoinciden = True;
+                else:
+                    miContrasenaHaseada = generate_password_hash (miFormulario.contrasena.data);
+                    miAdministradores = Administradores (_correoElectronico=miFormulario.correoElectronico.data, _contrasena=miContrasenaHaseada);
+                    db.session.add (miAdministradores);
+                    db.session.commit ();
+                    return redirect (url_for ('funcionAdministradorLogin'));
+    return (render_template ("administradorsignup.html", miFormularioParametro=miFormulario, miParametroContrasenasNoCoinciden=miVariableContrasenasNoCoinciden, miParametroUsuarioYaCreado = miVariableUsuarioYaCreado, miPrametroTokenRestablecerContrasena = tokenrestablecercontrasena));
 
-    return (render_template ("administradorsignup.html", miFormularioParametro=miFormulario));
 
 @app.route ("/administradorlogin", methods = ['GET', 'POST'])
 def funcionAdministradorLogin ():
     miFormulario = formulario.FormularioAcceder (request.form);
     miVariableUsuarioIncorrecto = False;
     miVariableContrasenaIncorrecta = False;
+    miVariableRecuperarCorreo = False;
     if (request.method == 'POST'):
         miAdministradores = Administradores.query.filter_by (_correoElectronico=miFormulario.correoElectronico.data).first ();
         if (miAdministradores != None):
-            if (miAdministradores.validarContrasena (miFormulario.contrasena.data)):
-                session['correoElectronico'] = miAdministradores._correoElectronico;
-                return redirect (url_for ('funcionAdministradorHome'));
+            if ("nameformularioacceder" in request.form):
+                print ("funcionAdministradorLogin ()---, nameformularioacceder");
+                if (miAdministradores.validarContrasena (miFormulario.contrasena.data)):
+                    session['correoElectronico'] = miAdministradores._correoElectronico;
+                    return redirect (url_for ('funcionAdministradorHome'));
+                else:
+                    # en este caso la contraseña pasada, no coincide con el HASH, por lo tanto contraseña incorrecta.
+                    miVariableContrasenaIncorrecta = True;
             else:
-                # en este caso la contraseña pasada, no coincide con el HASH, por lo tanto contraseña incorrecta. 
-                miVariableContrasenaIncorrecta = True;
+                if ("nameformulariorecuperarcontrasena" in request.form):
+                    try:
+                        miDiccionarioCorreoElectroncoYtokenRestablecerContrasena[miAdministradores._correoElectronico] = [os.urandom(12).hex(), datetime.now()]; 
+                        miMensaje = Message (subject="Demostraciones robóticas, solicitud de cambio de contraseña.", body="Buenas se ha solicitado un cambio de contraseña en el página web de demostracione robóticas, sí desea cambiarla acceda aquí: http://localhost:5000/administradorsignup/" +miDiccionarioCorreoElectroncoYtokenRestablecerContrasena[miAdministradores._correoElectronico][0],
+                                          sender= app.config['MAIL_USERNAME'], recipients=[miAdministradores._correoElectronico]);
+                        mail.send (miMensaje);
+                        miVariableRecuperarCorreo = True;
+                    except Exception as e:
+                        return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorlogin.html ---Error500  --- error al enviar el correo electrónico"));  
+                else:
+                    return redirect (url_for ('funcionErrorClienteServidor', mensajeerror = "administradorlogin.html --- Error500 --- formulario inválido"));
         else:
             #en este caso ni si quiera se ha encontrado a ese correo de administrador en la BBDD. 
             miVariableUsuarioIncorrecto = True;
             
-    return (render_template("administradorlogin.html", miFormularioParametro = miFormulario, miParametroUsuarioIncorrecto = miVariableUsuarioIncorrecto, miParametroContrasenaIncorrecta = miVariableContrasenaIncorrecta));
-
+    return (render_template("administradorlogin.html", miFormularioParametro = miFormulario, miParametroUsuarioIncorrecto = miVariableUsuarioIncorrecto, miParametroContrasenaIncorrecta = miVariableContrasenaIncorrecta, miParametroRecuperarCorreo=miVariableRecuperarCorreo));
 
 @app.route ("/administradorcerrarsesion")
 def funcionAdministradorCerrarSesion ():
@@ -599,10 +653,10 @@ def funcionAdministradorPanelRobotBorrar (idRobot, nombreDelEvento=None, fechaDe
     miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
     miRobots = miAdministradores.funcion_conseguirRobotPorIdRobot (idRobot);
     if (miRobots == None):
-        return redirect (url_for ('funcionError404', mensajeerror="exception. No se puede modificar el robot, ya que el robot que has puesto no existe en la BBDD ")); 
+        return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="adminstradorpanelrobotborrar.html  --- Error404 --- No se puede modificar el robot, ya que el robot que has puesto no existe en la BBDD ")); 
     else: 
         if (miAdministradores.funcion_verSiPuedoBorrarRobot (idRobot) == False):
-            return redirect (url_for ('funcionError404', mensajeerror="administradorpaneleventoborrar.html --- ese administrador, no puede eliminar ese robot."));  
+            return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorpaneleventoborrar.html --- Error403--- ese administrador, no puede eliminar ese robot."));  
 
     miAdministradores.funcion_borrarRobot (idRobot);
 
@@ -639,7 +693,7 @@ def funcionAdministradorCrearRobot ():
             miVerdadEsJPEG = bool(re.match (miExpresionRegularParaJPEG, fotoRecibidaDelFormulario.filename));
             miVerdadEsPNG = bool(re.match (miExpresionRegularParaPNG, fotoRecibidaDelFormulario.filename));
             if (miVerdadEsJPG == False) and (miVerdadEsJPEG == False) and (miVerdadEsPNG == False):
-                return redirect (url_for ('funcionError404', mensajeerror="administradorcrearrobot.html --- la extesión del archivo no es valida, las extensiones permitidas son .jpg .jpeg y .png"));  
+                return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorcrearrobot.html --- Error400 ---la extesión del archivo no es valida, las extensiones permitidas son .jpg .jpeg y .png"));  
         
         miAdministradores.funcion_crearRobot (miFormulario.macAddressDelRobot.data, miFormulario.nombreDelRobot.data, binarioDeFoto, miFormulario.descripcionDelRobot.data);
         return redirect(url_for('funcionAdministradorPanelRobot'));
@@ -658,7 +712,7 @@ def funcionAdministradorPanelRobotModificar (idRobot, nombreDelEvento = None, fe
 
     miRobots = miAdministradores.funcion_conseguirRobotPorIdRobot (idRobot);
     if (miRobots == None):
-        return redirect (url_for ('funcionError404', mensajeerror="exception. No se puede modificar el robot, ya que el robot que has puesto no existe en la BBDD ")); 
+        return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="adminstradorpanelrobotmodificar.html --- Error404 --- No se puede modificar el robot, ya que el robot que has puesto no existe en la BBDD ")); 
     if (request.method == 'POST'):
         if (miFormulario.validate()):
             fotoRecibidaDelFormulario = request.files['fotoDelRobot'];
@@ -673,7 +727,7 @@ def funcionAdministradorPanelRobotModificar (idRobot, nombreDelEvento = None, fe
                 miVerdadEsJPEG = bool(re.match (miExpresionRegularParaJPEG, fotoRecibidaDelFormulario.filename));
                 miVerdadEsPNG = bool(re.match (miExpresionRegularParaPNG, fotoRecibidaDelFormulario.filename));
                 if (miVerdadEsJPG == False) and (miVerdadEsJPEG == False) and (miVerdadEsPNG == False):
-                    return redirect (url_for ('funcionError404', mensajeerror="administradorcrearrobot.html --- la extesión del archivo no es valida, las extensiones permitidas son .jpg .jpeg y .png")); 
+                    return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorcrearrobot.html --- Error400 ---la extesión del archivo no es valida, las extensiones permitidas son .jpg .jpeg y .png")); 
 
             miAdministradores.funcion_modificarRobot (idRobot, miFormulario.macAddressDelRobot.data, miFormulario.nombreDelRobot.data, binarioDeFoto, miFormulario.descripcionDelRobot.data);
 
@@ -689,7 +743,7 @@ def funcionAdministradorPanelRobotModificar (idRobot, nombreDelEvento = None, fe
         #en el caso de que un administrador vea un robot, sabiendo que esta en la tabla de disponible, pero que ademas ese robot lo estan utilizando actualmente, entonces no se le va a mostrar la opcion de modificar, pero lo que pasa es que si el pone en la URL
         # a este robot, entonecs sí que lo puede modificar, por lo tanto hago este if que vuelve a comprobar si ese administrador lo puede o no modificar, en el caso de que no pueda, le mando un error. 
         if (miAdministradores.funcion_verSiPuedoModificarRobot (idRobot) == False):
-            return redirect (url_for ('funcionError404', mensajeerror="administradorpaneleventoborrar.html --- ese administrador, no puede modificcar ese robot, ya que otro adminsitrador lo esta usando actualmente. ")); 
+            return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorpaneleventoborrar.html --- error403 --- ese administrador, no puede modificcar ese robot, ya que otro adminsitrador lo esta usando actualmente. ")); 
         else:
             miFormulario.macAddressDelRobot.data = miRobots._macAddressDelRobot; 
             miFormulario.nombreDelRobot.data = miRobots._nombreDelRobot; 
@@ -713,13 +767,13 @@ def funcionAdministradorPanelEventoBorrar (nombreDelEvento, fechaDeCreacionDelEv
     miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
     miEventos = miAdministradores.funcion_conseguirEventoPorClavePrimaria (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra);
     if (miEventos == None):
-        return redirect (url_for ('funcionError404', mensajeerror="exception. No se puede borrar el evento, ya que no existe en la BBDD.")); 
+        return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorpaneleventoborrar.html ---  error404--- No se puede borrar el evento, ya que no existe en la BBDD.")); 
     
     if (miAdministradores.funcion_verSiEseEventoEsDeEseAdministrador  (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra)):
         miAdministradores.funcion_borrarEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra);
         return redirect (url_for ('funcionAdministradorPanelEvento'));
     else:
-        return redirect (url_for ('funcionError404', mensajeerror="administradorpaneleventoborrar.html --- para ese adminstrador, ese evento no existe")); 
+        return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorpaneleventoborrar.html --- error403  --- para ese adminstrador, ese evento no existe")); 
 
 
 @app.route ('/administradorcrearevento', methods = ['GET', 'POST'])
@@ -738,7 +792,7 @@ def funcionAdministradorModificarDatosEvento (nombreDelEvento, fechaDeCreacionDe
     miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
     miEventos = miAdministradores.funcion_conseguirEventoPorClavePrimaria (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra);
     if (miEventos == None):
-        return redirect (url_for ('funcionError404', mensajeerror="exception. No se puede modificar el evento ya que ese evento no existe")); 
+        return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradormodificardatosevento.html --- error404 ---  No se puede modificar el evento ya que ese evento no existe")); 
 
     miFormulario = formulario.FormularioCrearEvento (request.form);
 
@@ -747,7 +801,7 @@ def funcionAdministradorModificarDatosEvento (nombreDelEvento, fechaDeCreacionDe
             miVariableMensajeDeError = None;
             miVariableMensajeDeError = miAdministradores.funcion_modificarDatosDelEvento (nombreDelEvento, miFormulario.fechaDeCreacionDelEvento.data, lugarDondeSeCelebra, miFormulario.nombreDelEvento.data,  miFormulario.lugarDondeSeCelebra.data, miFormulario.codigoQR.data, miFormulario.calle.data, miFormulario.numero.data, miFormulario.codigoPostal.data);
             if (miVariableMensajeDeError != None):
-                return redirect (url_for ('funcionError404', mensajeerror=miVariableMensajeDeError)); 
+                return redirect (url_for ('funcionErrorClienteServidor', mensajeerror=miVariableMensajeDeError)); 
             return redirect(url_for('funcionAdministradorPanelEvento'));
         else:
             return render_template ("administradorcrearevento.html", parametroURL = miVariableGlobalURL, miFormularioParametro = miFormulario, miParametroAccionHtml = "modificar");
@@ -775,7 +829,7 @@ def funcionAdministradorModificarRobotsEvento (nombreDelEvento, fechaDeCreacionD
             miVariableMensajeDeError = miAdministradores.funcion_modificarRobotDelEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra, request.form.get('robots_idRobot'), request.form.get('fechaComienzoEnEventoAntigua'), request.form.get('fechaFinEnEventoAntigua'), 
                                                                request.form.get('fechaComienzoEnEvento'), request.form.get('fechaFinEnEvento'), request.form.get ('disponible'));
             if (miVariableMensajeDeError != None):
-                return redirect (url_for ('funcionError404', mensajeerror=miVariableMensajeDeError)); 
+                return redirect (url_for ('funcionErrorClienteServidor', mensajeerror=miVariableMensajeDeError)); 
         else:
             if ("nameformulariosumarrobot" in request.form):
                 miDisponibleRecibido = request.form.get ('disponible');
@@ -798,9 +852,9 @@ def funcionAdministradorModificarRobotsEvento (nombreDelEvento, fechaDeCreacionD
                     miVariableMensajeDeError = None;
                     miVariableMensajeDeError = miAdministradores.funcion_eliminarRobotDelEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra, request.form.get('robots_idRobot'), request.form.get('fechaComienzoEnEventoAntigua'), request.form.get('fechaFinEnEventoAntigua'));
                     if (miVariableMensajeDeError != None):
-                        return redirect (url_for ('funcionError404', mensajeerror=miVariableMensajeDeError)); 
+                        return redirect (url_for ('funcionErrorClienteServidor', mensajeerror=miVariableMensajeDeError)); 
                 else:
-                    return redirect (url_for ('funcionError404', mensajeerror="administradormodificarrobotsevento.htmml --- formulario invalido.")); 
+                    return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradormodificarrobotsevento.htmml --- Error500 --- formulario invalido.")); 
     
     if (miAdministradores.funcion_verSiEseEventoEsDeEseAdministrador (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra)):
         miDiccionarioRobotsActualmenteEstanEnEvento = {};
@@ -852,7 +906,7 @@ def funcionAdministradorPanelRobotPonerServicio (idRobot, robotEnServicio, nombr
     # este if lo pongo, ya que en el caso de que otro administrador conozca el idRoot y el evento en el que etá, puede modificar el servicio del robot, por lo tanto para evitar eseo, copruebo que es el dueño del robot
     #el que esta modificando el servicio del robot. 
     if (miAdministradores.funcion_verSiPuedoModificarRobot (idRobot) == False):
-        return redirect (url_for ('funcionError404', mensajeerror="adminstradorpanelrobotponerservicio  --- ese administrador no puede modificar el servicio de ese robot, ya que actualmente la hora de trabajo de este robot no se corresponde con ningun evento de este administrador. ")); 
+        return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="adminstradorpanelrobotponerservicio  --- Error403---  ese administrador no puede modificar el servicio de ese robot, ya que actualmente la hora de trabajo de este robot no se corresponde con ningun evento de este administrador. ")); 
     miAdministradores.funcion_activarOdesactivarRobot (idRobot, robotEnServicio);
     return redirect (url_for ('funcionAdministradorModificarRobotsEvento', nombreDelEvento=nombreDelEvento, fechaDeCreacionDelEvento=fechaDeCreacionDelEvento, lugarDondeSeCelebra=lugarDondeSeCelebra));
 
@@ -884,6 +938,7 @@ def funcionAdministradorBorrarCuentaAdministrador (correoelectronico):
 if __name__ == '__main__':
     # a la hora de poner los formularios, necesito que tengan un token para verrificar que el me envia los datos de nuevo al servidor, que sea el cliente correcto.  
     csrf.init_app(app);
+
 
     # esto lo que hace es aplicar la configuracion de la base datos hecha en el archivo condig.py 
     db.init_app (app);

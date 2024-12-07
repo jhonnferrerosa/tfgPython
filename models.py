@@ -236,7 +236,7 @@ class Administradores(db.Model):
         if (miEventos._codigoQR != parametroCodigoQR):
             # en el caso de que el código QR recién modificado esté ya en la BBDD, devuelvo una exception. 
             if (Eventos.query.filter_by (_codigoQR = parametroCodigoQR).first ()):
-                miVariableMensajeDeError = ("exception. Esa URL para ese evento ya existe en la base de datos, recuerde que el link de cade evento debe de ser distinto. ");
+                miVariableMensajeDeError = ("Error409. Esa URL para ese evento ya existe en la base de datos, recuerde que el link de cade evento debe de ser distinto. ");
                 return miVariableMensajeDeError;
         miEventos._nombreDelEvento = parametroNombreDelEvento;
         miEventos._lugarDondeSeCelebra = parametroLugarDondeSeCelebra
@@ -264,7 +264,7 @@ class Administradores(db.Model):
         if (parametroNuevaFechaComienzoEnEvento != "") and (parametroNuevaFechaComienzoEnEvento != None):
             # en el caso de que se modifique la fecha de un robot en el día enterior, entonces no dejo que se modifique la fecha de ese robot en ese evento.  
             if (parametroNuevaFechaComienzoEnEvento < (datetime.now().strftime ("%Y-%m-%d"))): 
-                miVariableMensajeDeError = ("exception. No se puede modificar la fecha de ese robot en el evento, está estableciendo la fecha de comienzo en un día que ya pasó.  ");
+                miVariableMensajeDeError = ("Error422.  No se puede modificar la fecha de ese robot en el evento, está estableciendo la fecha de comienzo en un día que ya pasó.  ");
                 return miVariableMensajeDeError;
             else:
                 miDisponibleRobot.fechaComienzoEnEvento = parametroNuevaFechaComienzoEnEvento;
@@ -302,10 +302,16 @@ class Administradores(db.Model):
         return miVariableMensajeDeError;
     
     def funcion_eliminarRobotDelEvento (self, parametroNombreDelEvento, parametroFechaDeCreacionDelEvento, parametroLugarDondeSeCelebra, parametroRobot_idRobot, parametroFechaComienzoEnEvento, parametroFechaFinEnEvento):
+        miVariableMensajeDeError = None;
         miDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento==parametroNombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento==parametroFechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra==parametroLugarDondeSeCelebra, 
                                                           DisponibleRobot.robots_idRobot==parametroRobot_idRobot, DisponibleRobot.fechaComienzoEnEvento==parametroFechaComienzoEnEvento, DisponibleRobot.fechaFinEnEvento == parametroFechaFinEnEvento).first();
-        db.session.delete (miDisponibleRobot);
-        db.session.commit ();
+        if (miDisponibleRobot == None):
+            miVariableMensajeDeError = "error404 --- esa fecha del robot en el evento, no existe. ";
+            return miVariableMensajeDeError;
+        else:
+            db.session.delete (miDisponibleRobot);
+            db.session.commit ();
+            return miVariableMensajeDeError;
     
     def funcion_borrarEvento (self, parametroNombreDelEvento, parametroFechaDeCreacionDelEvento, parametroLugarDondeSeCelebra):
         miEventos = Eventos.query.filter (Eventos._nombreDelEvento==parametroNombreDelEvento, Eventos._fechaDeCreacionDelEvento==parametroFechaDeCreacionDelEvento, Eventos._lugarDondeSeCelebra==parametroLugarDondeSeCelebra).first ();
