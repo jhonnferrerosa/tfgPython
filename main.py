@@ -773,7 +773,7 @@ def funcionAdministradorPanelEventoBorrar (nombreDelEvento, fechaDeCreacionDelEv
         miAdministradores.funcion_borrarEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra);
         return redirect (url_for ('funcionAdministradorPanelEvento'));
     else:
-        return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorpaneleventoborrar.html --- error403  --- para ese adminstrador, ese evento no existe")); 
+        return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorpaneleventoborrar.html --- error404  --- para ese adminstrador, ese evento no existe")); 
 
 
 @app.route ('/administradorcrearevento', methods = ['GET', 'POST'])
