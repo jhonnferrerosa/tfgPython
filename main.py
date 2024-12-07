@@ -211,7 +211,7 @@ def miFuncionAntesDeLaPeticion ():
 
 @app.errorhandler (404)  # esto es para sacar el HTML que contiene el mensaje de error, para los casos en los que la aplicacion caiga en algun error. 
 def miPaginaNoEncntradaError (e):
-	return render_template ("error.html"), 404; 
+	return render_template ("error.html", parametroMensajeError = e), 404; 
 
 @app.route ('/errorclienteservidor/<mensajeerror>')
 def funcionErrorClienteServidor (mensajeerror = None):
