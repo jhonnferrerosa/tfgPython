@@ -54,8 +54,17 @@ class FormularioBuscarRobot (Form):
         Este formulario lo uso como buscador de robots. 
     """
     # este valor:  render_kw,  hace que en el caso de que se pase un atributo valido  (como por ejemplo, style o placeholder) junto con un valor correcto (background-color: black) entonces hace que se aplique ese estilo.  
-    campoBuscadorRobotString = StringField (validators= [InputRequired("Esta campo es requerido"), Length(max=50, message="Esciba entre 3 y 50 caracteres.")], render_kw={"placeholder": "Robot explorador"});
+    # campoBuscadorRobotString = StringField (validators= [InputRequired("Esta campo es requerido"), Length(max=50, message="Esciba entre 3 y 50 caracteres.")], render_kw={"placeholder": "Robot explorador"});
+    campoBuscadorRobotString = StringField (validators= [InputRequired("Esta campo es requerido"), Length(max=50, message="Esciba entre 3 y 50 caracteres.")]);
     campoBuscadorRobotSelect = SelectField (choices=[]);
+
+class FormularioBuscarEvento (Form):
+    """
+        Este formulario lo uso como buscador de eventos. 
+    """
+    campoBuscadorEventoString = StringField (validators= [InputRequired("Esta campo es requerido"), Length(max=50, message="Esciba entre 3 y 50 caracteres.")]);
+    campoBuscadorEventoSelect = SelectField (choices=[]);
+
 
 
 

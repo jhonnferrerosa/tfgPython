@@ -77,16 +77,20 @@ def index2 ():
     db.session.add (miAdmin3);
     db.session.commit ();
 
-    miEvento1 = Eventos (_nombreDelEvento="aula1", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="ifema1", _codigoQR="miQR1", _administradores_correoElectronico="jhon@gmail.com");
-    miEvento2 = Eventos (_nombreDelEvento="puertas abiertas1", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="alcala", _codigoQR="miQR2", _administradores_correoElectronico="jhon@gmail.com");
-    miEvento3 = Eventos (_nombreDelEvento="eurobot2042", _fechaDeCreacionDelEvento='2024-11-27 11:19:48', _lugarDondeSeCelebra="ifema2042", _codigoQR="eurobot20422024-11-27T11:19:48ifema2042", _administradores_correoElectronico="jhon@gmail.com");
-    miEvento4 = Eventos (_nombreDelEvento="simo2025", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="torrejon", _codigoQR="simo20252024-10-01torrejon", _administradores_correoElectronico="ana@gmail.com");
-    miEvento5 = Eventos (_nombreDelEvento="mobile week 2025", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="torrejon", _codigoQR="mlileWeek2025-10-01torrejon", _administradores_correoElectronico="ana@gmail.com");
+    miEvento1 = Eventos (_nombreDelEvento="aula1", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="ifema1", _codigoQR="miQR1", _administradores_correoElectronico="jhon@gmail.com", _calle = "elisa ochoa", _numero="trece pavellon 2", _codigoPostal=28001);
+    miEvento2 = Eventos (_nombreDelEvento="puertas abiertas1", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="alcala", _codigoQR="miQR2", _administradores_correoElectronico="jhon@gmail.com", _calle = "humanes", _numero="catorce", _codigoPostal=28001);
+    miEvento3 = Eventos (_nombreDelEvento="eurobot2042", _fechaDeCreacionDelEvento='2024-11-27 11:19:48', _lugarDondeSeCelebra="ifema2042", _codigoQR="eurobot20422024-11-27T11:19:48ifema2042", _administradores_correoElectronico="jhon@gmail.com", _calle = "andalucía", _numero="quince", _codigoPostal=28005);
+    miEvento4 = Eventos (_nombreDelEvento="simo2025", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="torrejon", _codigoQR="simo20252024-10-01torrejon", _administradores_correoElectronico="ana@gmail.com", _calle = "real", _numero="dieciseis", _codigoPostal=28001);
+    miEvento5 = Eventos (_nombreDelEvento="mobile week 2025", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="torrejon", _codigoQR="mlileWeek2025-10-01torrejon", _administradores_correoElectronico="ana@gmail.com", _calle = "avenida de la dehesa", _numero="diecisiete", _codigoPostal=28001);
+    miEvento6 = Eventos (_nombreDelEvento="aula2", _fechaDeCreacionDelEvento='2024-11-27 11:19:48', _lugarDondeSeCelebra="ifema2042", _codigoQR="miQR3", _administradores_correoElectronico="jhon@gmail.com", _calle = "caño", _numero="dieciocho", _codigoPostal=28001);
+    miEvento7 = Eventos (_nombreDelEvento="aula3", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="ibiza hotel", _codigoQR="miQR4", _administradores_correoElectronico="ana@gmail.com", _calle = "plaza de españa", _numero="diecinueva", _codigoPostal=28005);
     db.session.add (miEvento1);
     db.session.add (miEvento2);
     db.session.add (miEvento3);
     db.session.add (miEvento4);
     db.session.add (miEvento5);
+    db.session.add (miEvento6);
+    db.session.add (miEvento7);
     db.session.commit ();
 
     miAsistente1 = Asistentes (_identificadorUnicoAsistente="IUA1", _apodoAsistente="apodo1");
@@ -650,15 +654,11 @@ def funcionAdministradorPanelRobot (nombreDelEvento = None, fechaDeCreacionDelEv
     else:
         if ((nombreDelEvento == "todosLosRobots") and (fechaDeCreacionDelEvento == "todosLosRobots") and (lugarDondeSeCelebra=="todosLosRobots")):
             if (request.method == 'POST'):
-                print ("funcionAdministradorPanelRobot()--- ", miFormulario.campoBuscadorRobotSelect.data);
-                print ("funcionAdministradorPanelRobot()--- ", miFormulario.campoBuscadorRobotString.data);
                 if (miFormulario.campoBuscadorRobotSelect.data == "MAC"):
                     miListaRobots = miAdministradores.funcion_conseguirTodosLosRobotsPorMacAddressDelRobot (miFormulario.campoBuscadorRobotString.data);  
                 else:
                     miListaRobots = miAdministradores.funcion_conseguirTodosLosRobotsPorNombreDelRobot (miFormulario.campoBuscadorRobotString.data);
-                miFormulario.campoBuscadorRobotSelect.choices = ["MAC", "Nombre del robot"];
             else:
-                miFormulario.campoBuscadorRobotSelect.choices = ["MAC", "Nombre del robot"];
                 miListaRobots = miAdministradores.funcion_conseguirTodosLosRobots();
         else:
             miListaDisponibleRobot = miAdministradores.funcion_conseguirDisponibleRobotPorEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra);
@@ -666,7 +666,7 @@ def funcionAdministradorPanelRobot (nombreDelEvento = None, fechaDeCreacionDelEv
                 miRobot = miAdministradores.funcion_conseguirRobotPorIdRobot (miDisponibleRobotObjeto.robots_idRobot);
                 if (miRobot not in miListaRobots): # aqui sólo añado los robots que no se repiten, por eso compruebo primero si esta.
                     miListaRobots.append (miRobot);
-
+    miFormulario.campoBuscadorRobotSelect.choices = ["MAC", "Nombre del robot"];
     return render_template ("administradorpanelrobot.html", miListaRobotsParametro=miListaRobots, miListaDeEventosParametro=miListaDeEventos, miParametroMostrarRobotsNingunEvento=miMostrarRobotsNingunEvento, parametroNombreDelEvento = nombreDelEvento, miFormularioParametro=miFormulario);
 
 
@@ -937,21 +937,57 @@ def funcionAdministradorPanelRobotPonerServicio (idRobot, robotEnServicio, nombr
 
 
 ########################### endpoints Administrador con las cuentas #####################################################################################################################################################################################
-@app.route ('/administradorpaneladministradorgestioncuentas')
+@app.route ('/administradorpaneladministradorgestioncuentas', methods = ['GET', 'POST'])
 def funcionAdministradorGestioncuentas ():
     miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first();
-    miListaAdministradores = miAdministradores.funcion_conseguirTodasLasCuentasMenosLaInstanciada ();
+    miFormulario = formulario.FormularioBuscarEvento (request.form);
+
+    miListaAdministradores = [];
     miDiccionarioAdministradores = {};
     miListaDeEventos = [];
-    for i in miListaAdministradores:
-        miListaDeEventos = miAdministradores.funcion_conseguirTodosLosEventosPorCorreoElectronico (i._correoElectronico);
-        miDiccionarioAdministradores[i._correoElectronico] = miListaDeEventos;
-    return render_template ("administradorpanelgestioncuentas.html", miParametroDiccionarioAdministradores = miDiccionarioAdministradores);
+    
+    if (request.method == 'POST'):
+        if (miFormulario.campoBuscadorEventoSelect.data == "Nombre del evento"):
+            miListaDeEventos = miAdministradores.funcion_conseguirListaEventosPorNombreDelEvento (miFormulario.campoBuscadorEventoString.data);
+        else:
+            if (miFormulario.campoBuscadorEventoSelect.data == "Lugar del evento"):
+                miListaDeEventos = miAdministradores.funcion_conseguirListaEventosPorLugarDelEvento (miFormulario.campoBuscadorEventoString.data);
+            else:
+                if (miFormulario.campoBuscadorEventoSelect.data == "Calle del evento"):
+                    miListaDeEventos = miAdministradores.funcion_conseguirListaEventosPorCalle (miFormulario.campoBuscadorEventoString.data);
+                else:
+                    if (miFormulario.campoBuscadorEventoSelect.data == "Número de la calle"):
+                        miListaDeEventos = miAdministradores.funcion_conseguirListaEventosPorNumero (miFormulario.campoBuscadorEventoString.data);
+                    else:
+                        if (miFormulario.campoBuscadorEventoSelect.data == "Código postal"):
+                            miVariableEntero = int (miFormulario.campoBuscadorEventoString.data);
+                            if (int (miVariableEntero == False)):
+                                return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="adminstradorpanelrobotponerservicio  --- Error403---  el código postal sólo recibe valores enteros")); 
+                            else:
+                                if ((miVariableEntero < 1000) or (miVariableEntero > 99999)):
+                                    return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="adminstradorpanelrobotponerservicio  --- Error403---  el código postal es un número entre 01000 hasta 99999")); 
+
+                            miListaDeEventos = miAdministradores.funcion_conseguirListaEventosPorCodigoPostal (miVariableEntero);
+        for i in miListaDeEventos: 
+            # en el caso de que ese correo electronico no este como clave en el diccionario, entonces lo meto como clave y como valor lo inicalizo con un vector. 
+            if i._administradores_correoElectronico not in miDiccionarioAdministradores:
+                miDiccionarioAdministradores[i._administradores_correoElectronico] = []; 
+            miDiccionarioAdministradores[i._administradores_correoElectronico].append (i);
+
+    else:
+        miListaAdministradores = miAdministradores.funcion_conseguirTodasLasCuentasMenosLaInstanciada ();
+        for i in miListaAdministradores:
+            miListaDeEventos = miAdministradores.funcion_conseguirTodosLosEventosPorCorreoElectronico (i._correoElectronico);
+            miDiccionarioAdministradores[i._correoElectronico] = miListaDeEventos;
+    
+    miFormulario.campoBuscadorEventoSelect.choices = ["Nombre del evento", "Lugar del evento", "Calle del evento", "Número de la calle", "Código postal"];
+    return render_template ("administradorpanelgestioncuentas.html", miParametroDiccionarioAdministradores = miDiccionarioAdministradores, miFormularioParametro=miFormulario);
 
 @app.route ('/administradorborrarcuentaadministrador/<correoelectronico>')
 def funcionAdministradorBorrarCuentaAdministrador (correoelectronico):
     miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
     miAdministradores.funcion_borrarCuentaAdministrador (correoelectronico);
+    
     return redirect (url_for ('funcionAdministradorGestioncuentas'));
 
 ######## Configuración de Flask.  ##################################################################################################################################################################################################################

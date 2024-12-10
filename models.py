@@ -164,15 +164,6 @@ class Administradores(db.Model):
                 miListaDisponibleRobotSinServicioActualmente.append (j);
         return miListaDisponibleRobotSinServicioActualmente;
 
-    def funcion_conseguirListaEventosQueTienenAlmenosUnRobotEsperandoPorAsistentes (self):
-        miListaEventos = [];
-        miListaDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now()).all();
-        for i in miListaDisponibleRobot:
-            miEventos = Eventos.query.filter (Eventos._nombreDelEvento == i.eventos_nombreDelEvento, Eventos._fechaDeCreacionDelEvento == i.eventos_fechaDeCreacionDelEvento, Eventos._lugarDondeSeCelebra == i.eventos_lugarDondeSeCelebra).first();
-            if miEventos not in miListaEventos:
-                miListaEventos.append (miEventos);
-        return  miListaEventos;
-
     def funcion_conseguirTodosLosRobotsPorMacAddressDelRobot (self, parametroMacAddressDelRobot):
         parametroMacAddressDelRobot = parametroMacAddressDelRobot.upper();
         # el operador like, mu busca en las diferntes filas, las conincidencias del String. 
@@ -337,6 +328,31 @@ class Administradores(db.Model):
         if (miEventos == None):
             miVerdadVerSiEseEventoEsDeEseAdministrador = False; 
         return miVerdadVerSiEseEventoEsDeEseAdministrador;
+
+    def funcion_conseguirListaEventosQueTienenAlmenosUnRobotEsperandoPorAsistentes (self):
+        miListaEventos = [];
+        miListaDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now()).all();
+        for i in miListaDisponibleRobot:
+            miEventos = Eventos.query.filter (Eventos._nombreDelEvento == i.eventos_nombreDelEvento, Eventos._fechaDeCreacionDelEvento == i.eventos_fechaDeCreacionDelEvento, Eventos._lugarDondeSeCelebra == i.eventos_lugarDondeSeCelebra).first();
+            if miEventos not in miListaEventos:
+                miListaEventos.append (miEventos);
+        return  miListaEventos;
+
+    def funcion_conseguirListaEventosPorNombreDelEvento (self, parametroNombreDelEvento):
+        return Eventos.query.filter (Eventos._nombreDelEvento.like (f"{parametroNombreDelEvento}%")).all();
+
+    def funcion_conseguirListaEventosPorLugarDelEvento (self, parametroLugarDelEvento):
+        return Eventos.query.filter (Eventos._lugarDondeSeCelebra.like (f"{parametroLugarDelEvento}%")).all();
+
+    def funcion_conseguirListaEventosPorCalle (self, parametroCalle):
+        return Eventos.query.filter (Eventos._calle.like (f"{parametroCalle}%")).all();
+
+    def funcion_conseguirListaEventosPorNumero (self, parametroNumero):
+        return Eventos.query.filter (Eventos._numero.like (f"{parametroNumero}%")).all();
+
+    def funcion_conseguirListaEventosPorCodigoPostal (self, parametroCodigoPostal):
+        return Eventos.query.filter_by (_codigoPostal = parametroCodigoPostal).all();
+
 
 
 ##### funciones que menejan las cuentas de los administradores  ##############################################################################################################################################################################################
