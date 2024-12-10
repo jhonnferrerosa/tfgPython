@@ -9,6 +9,9 @@ servers:
     description: El servidor esta montado en local.  para los casos es los que alguna clave del objeto JSON contenga un velor NULL, lo que está pasando, es que no se ha podido conseguir o no se ha solicitado esa funcionalidad, por ejemplo, si el servidor no ha encontrado un robot que esté listo paraa manejar porque todos los robots estén ocupados,
       entonces el valor de la MAC y el valor del idRobot van a estar NULL, ya que no se ha conseguido un robot. 
 
+security:
+  - CSRFtoken: []
+
 paths:
   /{idEvento}:
   /demostracionesroboticas/<codigoQR>/<correoelectronico>:
@@ -50,6 +53,8 @@ paths:
                     type: string
                   miParametroMiEventoNombreDelEvento:
                     type: string
+                  miParametroCSRFtoken:
+                    type: string
         '200':
           description: Devuelve un JSON que tiene la clave miParametroEstado avisando de que se está esperando por un robot. 
           content:
@@ -70,6 +75,8 @@ paths:
                   miParametroMac:
                     type: string
                   miParametroMiEventoNombreDelEvento:
+                    type: string
+                  miParametroCSRFtoken:
                     type: string
         '404':
           description: "Se ha pasado por parametro un una URL con un determinado códigoQR el cual ningun evento de la base de datos tiene ese coódigoQR"
@@ -92,6 +99,8 @@ paths:
                     type: string
                   miParametroMiEventoNombreDelEvento:
                     type: string
+                  miParametroCSRFtoken:
+                    type: string
         '500':
           description: "Ha ocurrido un error inesperado en la base de datos. "
           content:
@@ -113,10 +122,19 @@ paths:
                     type: string
                   miParametroMiEventoNombreDelEvento:
                     type: string
+                  miParametroCSRFtoken:
+                    type: string
   /aceptarrobot:
     post:
       summary: opción de empezar a manejar un robot. 
       description: en el caso de que un usuario acepte el robot que se le ha mostrado, pulsará aceptar en la aplcación de Kodular y entonces enviará un JSON con  el robot al que quiera manejar. Sólo puede de volver un JSON que dice que se está manajando un robot, en el caso de que devuelva cualquier otra respuesta, eso significa que el robot que se ha acaptado, por alguna razón ya no está disponible, y esto se debe a que internamente este primer endpoint ha tendido que llamar al primero para hacer la búsqueda de un nuevo robot. 
+      parameters:
+        - name: X-CSRFToken
+          in: header
+          description: "este endpoint necesita recibir por el heeader el endpoint que recibio en la primera sollcidud  para que de esta forma solamente la API restful haga las acciones de sólo los clientes que ella autoriza"
+          required: true
+          schema:
+            type: String
       requestBody:
         description: se va a enviar a la API un JSON con el código QR, un correo de algún administrador (puede ser NULL) y el idRobot del robot que se quiere manejar. 
         required: true
@@ -153,6 +171,8 @@ paths:
                     type: string
                   miParametroMiEventoNombreDelEvento:
                     type: string
+                  miParametroCSRFtoken:
+                    type: string
         '404':
           description: "Se ha pasado por el POST un determinado códigoQR el cual ningun evento de la base de datos tiene ese coódigoQR"
           content:
@@ -174,12 +194,21 @@ paths:
                     type: string
                   miParametroMiEventoNombreDelEvento:
                     type: string
+                  miParametroCSRFtoken:
+                    type: string
 
 
   /rechazarrobot:
     post:
       summary: esta es la opción de rechazar un robot mostrado.
       description: al usuario se le ha mostrado un robot por pantalla y este tiene la opción de rechazarlo, ya que puede ser que esté esperando por otro. En este caso se enviará por el POST el id del robot que se ha rechazado. Al asistente, se le devolverá el resultado del primer endpint ejecutado ya que ese esnpoint es el que localiza robots disponibles para los asistentes
+      parameters:
+        - name: X-CSRFToken
+          in: header
+          description: "este endpoint necesita recibir por el heeader el endpoint que recibio en la primera sollcidud  para que de esta forma solamente la API restful haga las acciones de sólo los clientes que ella autoriza"
+          required: true
+          schema:
+            type: String
       requestBody:
         description: se va a enviar a la API un JSON con el código QR, un correo de algún administrador (puede ser NULL) y el idRobot del robot que se quiere manejar. 
         required: true
@@ -217,5 +246,7 @@ paths:
                   miParametroMac:
                     type: string
                   miParametroMiEventoNombreDelEvento:
+                    type: string
+                  miParametroCSRFtoken:
                     type: string
           

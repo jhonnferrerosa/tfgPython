@@ -4,6 +4,8 @@
 # el session es para el menajo de las sessiones de los usuarios en la pagina web. . 
 from flask import Flask, request, render_template, redirect, url_for, session
 from flask_wtf import CSRFProtect
+# esta librería me vale para generar u CSRF tokem que le enviaré a los cliete de la API, para que posteriormente ellos me lo devuelva y de esta forma se pueda llevar a cabo la comunicación entre Androir y la API. 
+from flask_wtf.csrf import generate_csrf
 from models import db
 #Desde mi archivo config.py importo esta clase. 
 from config import DevelopmentConfig  
@@ -37,7 +39,7 @@ from flask_mail import Message
 
 app = Flask(__name__)
 app.config.from_object (DevelopmentConfig);
-csrf = CSRFProtect ();
+#csrf = CSRFProtect ();
 mail = Mail (app);
 
 # este diccionario lo voy a utilizar para almacenar como clave al identificadorUnicoAsistente y como valor, un bool el cual determina si ese asistente esta manejando o no un robot.  
@@ -110,6 +112,11 @@ def index2 ():
     miRobot11 = Robots (_idRobot=111, _macAddressDelRobot="AA:AA:AA:AA:AA:AA", _nombreDelRobot="robot11", _fotoDelRobot=None, _descripcionDelRobot=None);
     miRobot12 = Robots (_idRobot=112, _macAddressDelRobot="BB:BB:BB:BB:BB:BB", _nombreDelRobot="robot12", _fotoDelRobot=None, _descripcionDelRobot=None);
     miRobot13 = Robots (_idRobot=113, _macAddressDelRobot="CC:CC:CC:CC:CC:CC", _nombreDelRobot="robot13", _fotoDelRobot=None, _descripcionDelRobot=None);
+
+    miRobot14 = Robots (_idRobot=114, _macAddressDelRobot="AB:AB:AB:AB:AB:AB", _nombreDelRobot="robot14", _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot15 = Robots (_idRobot=115, _macAddressDelRobot="AC:AC:AC:AC:AC:AC", _nombreDelRobot="robot15", _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot16 = Robots (_idRobot=116, _macAddressDelRobot="AD:AD:AD:AD:AD:AD", _nombreDelRobot="robot16", _fotoDelRobot=None, _descripcionDelRobot=None);
+    miRobot17 = Robots (_idRobot=117, _macAddressDelRobot="AE:AE:AE:AE:AE:AE", _nombreDelRobot="robot17", _fotoDelRobot=None, _descripcionDelRobot=None);
     db.session.add (miRobot1);
     db.session.add (miRobot2);
     db.session.add (miRobot3);
@@ -123,6 +130,11 @@ def index2 ():
     db.session.add (miRobot11);
     db.session.add (miRobot12);
     db.session.add (miRobot13);
+    db.session.add (miRobot14);
+    db.session.add (miRobot15);
+    db.session.add (miRobot16);
+    db.session.add (miRobot17);
+
     db.session.commit ();
 
     miVincula1 = Vincula (asistentes_identificadorUnicoAsistente="IUA1", eventos_nombreDelEvento="aula1", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="ifema1", fechaAcceso="2024-12-01", fechaSalida="2024-12-30");
@@ -261,7 +273,8 @@ def funcionGenerarCodigoQR (url, correoelectronico = None):
 def funcion_registrarAsistente (codigoQR, correoelectronico = None):
     miEventos = Eventos.query.filter (Eventos._codigoQR == codigoQR).first();
     if (miEventos == None):
-        miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoAsistente":None, "miParametroEstado":"error404","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None};
+        miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoAsistente":None, "miParametroEstado":"error404","miParametroIdRobot": None, "miParametroMac" : None,
+                            "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None, "miParametroCSRFtoken":generate_csrf()};
         return jsonify(miRespuestaJson), 404;
     else:
         if (('token' in session) == False):
@@ -274,7 +287,7 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
                 db.session.commit ();
             except Exception as e:
                 db.session.rollback();
-                miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoAsistente":None, "miParametroEstado":"error500","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None};
+                miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoAsistente":None, "miParametroEstado":"error500","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None, "miParametroCSRFtoken":generate_csrf()};
                 return jsonify(miRespuestaJson), 500;
                 #return redirect (url_for ('funcionErrorClienteServidor', mensajeerror=e));  
         else: 
@@ -290,7 +303,7 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
                     db.session.commit ();
                 except Exception as e:
                     db.session.rollback();
-                    miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoAsistente":None, "miParametroEstado":"error500","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None};
+                    miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoAsistente":None, "miParametroEstado":"error500","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None, "miParametroCSRFtoken":generate_csrf()};
                     return jsonify(miRespuestaJson), 500;
                     #return redirect (url_for ('funcionErrorClienteServidor', mensajeerror=e));  
             else: 
@@ -347,13 +360,12 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
             for miDisponibleRobotObjeto in miListaDisponibleRobot: 
                 miRobots = Robots.query.filter_by (_idRobot=miDisponibleRobotObjeto.robots_idRobot).first ();
                 miListaRobots.append (miRobots);
-            miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoAsistente":miAsistentes._apodoAsistente, "miParametroEstado":"Esperando por un robot","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR};
+            miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoAsistente":miAsistentes._apodoAsistente, "miParametroEstado":"Esperando por un robot","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR, "miParametroCSRFtoken":generate_csrf()};
             return jsonify(miRespuestaJson), 200;
             #return (render_template("registrarasistente.html", miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miParametroApodoAsistente=miAsistentes._apodoAsistente, miParametroEstado="Esperando", miParametroIdRobot = None, miParametroMac = None, miParametroCorreoElectronicoDelAdministrador = miVariableCorreoElectronicoAdministrador, miParametroCodigoQR = codigoQR));
         else:
             # por ultimo lo que hago es la lógica de los robots rechazados. 
             miVariabletokenDeSesionYeventoQR = session ['token'] +"-" +codigoQR;
-
             # si he rechazado algun robot, voy a ver que otro robot le puedo ofrecer al asistente. 
             if (miVariabletokenDeSesionYeventoQR in miDiccionarioGlobalTokensListaDeRobotsRechazados):
                 miRobots = None;
@@ -365,13 +377,13 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
                 if (miRobots == None):
                     miDiccionarioGlobalTokensListaDeRobotsRechazados[miVariabletokenDeSesionYeventoQR].clear ();
                     miRobots = Robots.query.filter_by (_idRobot=miListaDisponibleRobot[0].robots_idRobot).first();
-                miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoAsistente":miAsistentes._apodoAsistente, "miParametroEstado":"Robot Listo","miParametroIdRobot": miRobots._idRobot, "miParametroMac" : miRobots._macAddressDelRobot, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR};
+                miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoAsistente":miAsistentes._apodoAsistente, "miParametroEstado":"Robot Listo","miParametroIdRobot": miRobots._idRobot, "miParametroMac" : miRobots._macAddressDelRobot, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR, "miParametroCSRFtoken":generate_csrf()};
                 return jsonify(miRespuestaJson), 200;
                 #return render_template ("robotlisto.html", miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miParametroApodoAsistente=miAsistentes._apodoAsistente, miParametroEstado="Robot Listo", miParametroIdRobot=miRobots._idRobot, miParametroMac = miRobots._macAddressDelRobot, miParametroCorreoElectronicoDelAdministrador = miVariableCorreoElectronicoAdministrador, miParametroCodigoQR=codigoQR);
            # en este caso que ese token con ese evento, no está en el miDiccionarioGlobalTokensListaDeRobotsRechazados  entonces eso significa que ese asistente, nunca ha rechazado un robot, por tanto le propongo el primer robot que encuentre. 
             else:
                 miRobots = Robots.query.filter_by (_idRobot=miListaDisponibleRobot[0].robots_idRobot).first(); 
-                miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoAsistente":miAsistentes._apodoAsistente, "miParametroEstado":"Robot Listo","miParametroIdRobot": miRobots._idRobot, "miParametroMac" : miRobots._macAddressDelRobot, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR};
+                miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoAsistente":miAsistentes._apodoAsistente, "miParametroEstado":"Robot Listo","miParametroIdRobot": miRobots._idRobot, "miParametroMac" : miRobots._macAddressDelRobot, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR, "miParametroCSRFtoken":generate_csrf()};
                 return jsonify(miRespuestaJson), 200;
                 #return render_template ("robotlisto.html", miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miParametroApodoAsistente=miAsistentes._apodoAsistente, miParametroEstado="Robot Listo", miParametroIdRobot=miRobots._idRobot, miParametroMac = miRobots._macAddressDelRobot, miParametroCorreoElectronicoDelAdministrador = miVariableCorreoElectronicoAdministrador, miParametroCodigoQR=codigoQR);
 
@@ -391,7 +403,7 @@ def funcion_aceptarRobot ():
 
     miEventos = Eventos.query.filter (Eventos._codigoQR == codigoQR).first();
     if (miEventos == None):
-        miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoAsistente":None, "miParametroEstado":"error404","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None};
+        miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoAsistente":None, "miParametroEstado":"error404","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None, "miParametroCSRFtoken":generate_csrf()};
         return jsonify(miRespuestaJson), 404;
         #return "<p> funcion_registrarAsistente () --- error, el evento que se ha pasado por parametro, no existe. </p>";
     else:
@@ -424,7 +436,7 @@ def funcion_aceptarRobot ():
             # en este caso solicito el objeto Asistentes, ya que el es el que tiene los métodos para consultar eventos y consultar robots. 
             miRobots = miAsistentes.funcion_consultaRobot (miControla.robots_idRobot); 
             miEventos = miAsistentes.funcion_consultaEvento (miControla.robots_idRobot);
-            miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoAsistente":miAsistentes._apodoAsistente, "miParametroEstado":"Robot manejando","miParametroIdRobot": miRobots._idRobot, "miParametroMac" : miRobots._macAddressDelRobot, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR};
+            miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoAsistente":miAsistentes._apodoAsistente, "miParametroEstado":"Robot manejando","miParametroIdRobot": miRobots._idRobot, "miParametroMac" : miRobots._macAddressDelRobot, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR, "miParametroCSRFtoken":generate_csrf()};
             return jsonify(miRespuestaJson), 200;
             #return render_template ("robotmanejando.html",  miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miParametroApodoAsistente=miAsistentes._apodoAsistente, miParametroEstado="Robot manejando", miParametroIdRobot=miRobots._idRobot, miParametroMac = miRobots._macAddressDelRobot, miParametroCorreoElectronicoDelAdministrador = miVariableCorreoElectronicoAdministrador, miParametroCodigoQR=codigoQR);
         else:
@@ -459,7 +471,7 @@ def funcion_aceptarRobot ():
                                 # este if lo tengo porque unas veces el asistente no rechaza un robot, por lo tanto nunca se mete en este diccionario, entonces lo que estoy haciendo es ver primero si esta.
                                 if (miVariabletokenDeSesionYeventoQR in miDiccionarioGlobalTokensListaDeRobotsRechazados):
                                     miDiccionarioGlobalTokensListaDeRobotsRechazados[miVariabletokenDeSesionYeventoQR].clear (); 
-                                miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoAsistente":miAsistentes._apodoAsistente, "miParametroEstado":"Robot manejando","miParametroIdRobot": miRobots._idRobot, "miParametroMac" : miRobots._macAddressDelRobot, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR};
+                                miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoAsistente":miAsistentes._apodoAsistente, "miParametroEstado":"Robot manejando","miParametroIdRobot": miRobots._idRobot, "miParametroMac" : miRobots._macAddressDelRobot, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR, "miParametroCSRFtoken":generate_csrf()};
                                 return jsonify(miRespuestaJson), 200;
                                 #return render_template ("robotmanejando.html",  miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miParametroApodoAsistente=miAsistentes._apodoAsistente, miParametroEstado="Robot manejando", miParametroIdRobot=miRobots._idRobot, miParametroMac = miRobots._macAddressDelRobot, miParametroCorreoElectronicoDelAdministrador = miVariableCorreoElectronicoAdministrador, miParametroCodigoQR=codigoQR);
 
@@ -476,7 +488,7 @@ def funcion_rechazarRobot ():
 
     miEventos = Eventos.query.filter (Eventos._codigoQR == codigoQR).first();
     if (miEventos == None):
-        miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoAsistente":None, "miParametroEstado":"error404","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None};
+        miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoAsistente":None, "miParametroEstado":"error404","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None, "miParametroCSRFtoken":generate_csrf()};
         return jsonify(miRespuestaJson), 404;   
         #return "<p> funcion_registrarAsistente () --- error, el evento que se ha pasado por parametro, no existe. </p>";
     else:
@@ -622,29 +634,40 @@ def funcionAdministradorHome():
    
 
 
-@app.route ('/administradorpanelrobot/<nombreDelEvento>/<fechaDeCreacionDelEvento>/<lugarDondeSeCelebra>')
+@app.route ('/administradorpanelrobot/<nombreDelEvento>/<fechaDeCreacionDelEvento>/<lugarDondeSeCelebra>', methods = ['GET', 'POST'])
 @app.route ('/administradorpanelrobot')
 def funcionAdministradorPanelRobot (nombreDelEvento = None, fechaDeCreacionDelEvento = None, lugarDondeSeCelebra = None):
     miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
+    miFormulario = formulario.FormularioBuscarRobot (request.form);
 
     miListaDeEventos = miAdministradores.funcion_conseguirTodosLosEventos ();
     miMostrarRobotsNingunEvento = False;
+    miListaRobots = [];
 
     if ((nombreDelEvento == None) and (fechaDeCreacionDelEvento == None) and (lugarDondeSeCelebra == None)):
         miListaRobots = miAdministradores.funcion_conseguirRobotsQueNoEstanEnNingunEvento();
         miMostrarRobotsNingunEvento = True;
     else:
         if ((nombreDelEvento == "todosLosRobots") and (fechaDeCreacionDelEvento == "todosLosRobots") and (lugarDondeSeCelebra=="todosLosRobots")):
-            miListaRobots = miAdministradores.funcion_conseguirTodosLosRobots();
+            if (request.method == 'POST'):
+                print ("funcionAdministradorPanelRobot()--- ", miFormulario.campoBuscadorRobotSelect.data);
+                print ("funcionAdministradorPanelRobot()--- ", miFormulario.campoBuscadorRobotString.data);
+                if (miFormulario.campoBuscadorRobotSelect.data == "MAC"):
+                    miListaRobots = miAdministradores.funcion_conseguirTodosLosRobotsPorMacAddressDelRobot (miFormulario.campoBuscadorRobotString.data);  
+                else:
+                    miListaRobots = miAdministradores.funcion_conseguirTodosLosRobotsPorNombreDelRobot (miFormulario.campoBuscadorRobotString.data);
+                miFormulario.campoBuscadorRobotSelect.choices = ["MAC", "Nombre del robot"];
+            else:
+                miFormulario.campoBuscadorRobotSelect.choices = ["MAC", "Nombre del robot"];
+                miListaRobots = miAdministradores.funcion_conseguirTodosLosRobots();
         else:
-            miListaRobots = [];
             miListaDisponibleRobot = miAdministradores.funcion_conseguirDisponibleRobotPorEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra);
             for miDisponibleRobotObjeto in miListaDisponibleRobot:
                 miRobot = miAdministradores.funcion_conseguirRobotPorIdRobot (miDisponibleRobotObjeto.robots_idRobot);
                 if (miRobot not in miListaRobots): # aqui sólo añado los robots que no se repiten, por eso compruebo primero si esta.
                     miListaRobots.append (miRobot);
 
-    return render_template ("administradorpanelrobot.html", miListaRobotsParametro=miListaRobots, miListaDeEventosParametro=miListaDeEventos, miParametroMostrarRobotsNingunEvento=miMostrarRobotsNingunEvento);
+    return render_template ("administradorpanelrobot.html", miListaRobotsParametro=miListaRobots, miListaDeEventosParametro=miListaDeEventos, miParametroMostrarRobotsNingunEvento=miMostrarRobotsNingunEvento, parametroNombreDelEvento = nombreDelEvento, miFormularioParametro=miFormulario);
 
 
 @app.route ('/adminstradorpanelrobotborrar/<int:idRobot>/<nombreDelEvento>/<fechaDeCreacionDelEvento>/<lugarDondeSeCelebra>')
@@ -824,7 +847,7 @@ def funcionAdministradorModificarRobotsEvento (nombreDelEvento, fechaDeCreacionD
     miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
 
     if (request.method == 'POST'):
-        if ('nameformulariomodificar' in request.form):
+        if ('nameformulariomodificar' in request.n):
             miVariableMensajeDeError = None;
             miVariableMensajeDeError = miAdministradores.funcion_modificarRobotDelEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra, request.form.get('robots_idRobot'), request.form.get('fechaComienzoEnEventoAntigua'), request.form.get('fechaFinEnEventoAntigua'), 
                                                                request.form.get('fechaComienzoEnEvento'), request.form.get('fechaFinEnEvento'), request.form.get ('disponible'));
@@ -937,7 +960,7 @@ def funcionAdministradorBorrarCuentaAdministrador (correoelectronico):
 # a este if. De esta manera tengo más control sobre la ejecución y es que a esas funcones de arriba las puedo llamar en cualquier momento.  
 if __name__ == '__main__':
     # a la hora de poner los formularios, necesito que tengan un token para verrificar que el me envia los datos de nuevo al servidor, que sea el cliente correcto.  
-    csrf.init_app(app);
+    #csrf.init_app(app);
 
 
     # esto lo que hace es aplicar la configuracion de la base datos hecha en el archivo condig.py 

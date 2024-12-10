@@ -36,6 +36,7 @@ class Administradores(db.Model):
         
 ##### funciones que gestionan los robots######################################################################################################################################################################################################################
     def funcion_crearRobot (self, parametroMacAddressDelRobot, parametroNombreDelRobot, parametroFotoDelRobot=None, parametroDescripcionDelRobot=None):
+        parametroMacAddressDelRobot = parametroMacAddressDelRobot.upper();
         miRobots = Robots (_macAddressDelRobot=parametroMacAddressDelRobot, _nombreDelRobot=parametroNombreDelRobot, _fotoDelRobot=parametroFotoDelRobot, _descripcionDelRobot=parametroDescripcionDelRobot);
         db.session.add (miRobots);
         db.session.commit ();
@@ -45,6 +46,7 @@ class Administradores(db.Model):
         miRobots = Robots.query.filter_by (_idRobot = parametroIdRobot).first();
 
         if (parametroMacAddressDelRobot != None) and (parametroMacAddressDelRobot != miRobots._macAddressDelRobot):
+            parametroMacAddressDelRobot = parametroMacAddressDelRobot.upper();
             miRobots._macAddressDelRobot = parametroMacAddressDelRobot;
         
         if (parametroNombreDelRobot != None) and (parametroNombreDelRobot != miRobots._nombreDelRobot):
@@ -170,6 +172,14 @@ class Administradores(db.Model):
             if miEventos not in miListaEventos:
                 miListaEventos.append (miEventos);
         return  miListaEventos;
+
+    def funcion_conseguirTodosLosRobotsPorMacAddressDelRobot (self, parametroMacAddressDelRobot):
+        parametroMacAddressDelRobot = parametroMacAddressDelRobot.upper();
+        # el operador like, mu busca en las diferntes filas, las conincidencias del String. 
+        return Robots.query.filter (Robots._macAddressDelRobot.like(f"{parametroMacAddressDelRobot}%")).all();
+
+    def funcion_conseguirTodosLosRobotsPorNombreDelRobot (self, parametroNombreDelRobot):
+        return Robots.query.filter (Robots._nombreDelRobot.like(f"{parametroNombreDelRobot}%")).all();
 
 
 

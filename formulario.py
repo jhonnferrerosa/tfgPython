@@ -1,6 +1,6 @@
 
 from flask_wtf import Form
-from wtforms import StringField, IntegerField, BooleanField, FileField, HiddenField, PasswordField, BooleanField, TextAreaField, validators
+from wtforms import StringField, IntegerField, BooleanField, FileField, HiddenField, PasswordField, BooleanField, TextAreaField, validators, SelectField
 from wtforms.fields import EmailField
 
 # esto me vale para utilizar expresiones regulares en pyrhon. 
@@ -48,6 +48,16 @@ class FormularioCrearEvento (Form):
             miVerdadCodigoQRvalidado = bool (re.match (miExpresionRegular, miCampoCodigoQR));
             if (miVerdadCodigoQRvalidado == False):
                 raise validators.ValidationError ("Sólo se permite caracteres alfanuméricos en la URL. No vale espacios ni carecteres especiales "); 
+
+class FormularioBuscarRobot (Form):
+    """
+        Este formulario lo uso como buscador de robots. 
+    """
+    # este valor:  render_kw,  hace que en el caso de que se pase un atributo valido  (como por ejemplo, style o placeholder) junto con un valor correcto (background-color: black) entonces hace que se aplique ese estilo.  
+    campoBuscadorRobotString = StringField (validators= [InputRequired("Esta campo es requerido"), Length(max=50, message="Esciba entre 3 y 50 caracteres.")], render_kw={"placeholder": "Robot explorador"});
+    campoBuscadorRobotSelect = SelectField (choices=[]);
+
+
 
 
 

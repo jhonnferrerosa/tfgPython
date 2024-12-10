@@ -113,11 +113,11 @@
 
 
 
-    <section>
+    <section style="padding-left: 10px;">
 	<h4> Robots que actualmente están en el evento: </h4>
 
 {% for clave, valor in miDiccionarioRobotsActualmenteEstanEnEvetoParametro.items() %}
-<div class="card mb-4" style="clear: both;">
+<div class="card mb-4" style="clear: both; background-color: #d1d1d1;">
     <div class="card-header">
         <h3 class="card-title">Id del robot: {{ clave._idRobot }} - Mac: {{ clave._macAddressDelRobot }} - Nombre del robot: {{ clave._nombreDelRobot }}</h3>
         <h3 class="card-title">

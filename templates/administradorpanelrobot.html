@@ -5,6 +5,8 @@
 {% block title %}
     <title>administradorpanelrobot</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='administradorPanelRobot.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='adminlte/plugins/select2/css/select2.min.css') }}">
+    <script src="{{ url_for('static', filename='adminlte/plugins/jquery/jquery.js') }}"></script>
 {% endblock %}
 
 
@@ -78,9 +80,46 @@
 
 <section style="padding-left: 10px;">
 
+{% if parametroNombreDelEvento == None %}
+  <h4> Robots que no están en ningún evento </h4>
+{% else %}
+  {% if parametroNombreDelEvento == 'todosLosRobots' %}
+    <h4> Todos los robots</h4>
 
-{% if miParametroVerdadErrorDeRobotInexistente == 1 %}
-  <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">Ese robot no existe, ha dejado de existir o es de otro administrador.</nav>
+  </form>
+
+  <form method="POST">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="row">
+                <div class="col-6 mt-2" data-select2-id="21">
+                    <div class="form-group" data-select2-id="20">
+                        <label>Buscar robot:</label>
+                        {{ miFormularioParametro.campoBuscadorRobotSelect }}
+
+                    </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="input-group">
+                    {{ miFormularioParametro.campoBuscadorRobotString }}
+                      <div class="input-group-append">
+                          <button type="submit" class="btn btn-primary">
+                              <i class="fa fa-search"></i>
+                          </button>
+                      </div>
+                  </div>
+              </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+  
+  {% else %}
+    <h4> {{ parametroNombreDelEvento }}</h4>
+  {% endif %}
 {% endif %}
 
 <div class="card mb-4" style="clear: both;">
@@ -137,6 +176,14 @@
 
 
 </section>
+
+<script>
+  $(function () {
+    $('.select2').select2()
+  });
+</script>
+
+<script type="text/javascript" src="{{ url_for('static', filename='adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
 
 
 </div>
