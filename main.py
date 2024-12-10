@@ -93,6 +93,8 @@ def index2 ():
     db.session.add (miEvento7);
     db.session.commit ();
 
+
+
     miAsistente1 = Asistentes (_identificadorUnicoAsistente="IUA1", _apodoAsistente="apodo1");
     miAsistente2 = Asistentes (_identificadorUnicoAsistente="IUA2", _apodoAsistente="apodo2");
     miAsistente3 = Asistentes (_identificadorUnicoAsistente="IUA3", _apodoAsistente="apodo3");
@@ -937,56 +939,16 @@ def funcionAdministradorPanelRobotPonerServicio (idRobot, robotEnServicio, nombr
 
 
 ########################### endpoints Administrador con las cuentas #####################################################################################################################################################################################
-@app.route ('/administradorpaneladministradorgestioncuentas', methods = ['GET', 'POST'])
+@app.route ('/administradorpaneladministradorgestioncuentas')
 def funcionAdministradorGestioncuentas ():
     miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first();
-    miFormulario = formulario.FormularioBuscarEvento (request.form);
-
-    miListaAdministradores = [];
+    miListaAdministradores = miAdministradores.funcion_conseguirTodasLasCuentasMenosLaInstanciada ();
     miDiccionarioAdministradores = {};
     miListaDeEventos = [];
-    miVerdadHeEncontradoBuscador = True;
-    
-    if (request.method == 'POST'):
-        if (miFormulario.campoBuscadorEventoSelect.data == "Nombre del evento"):
-            miListaDeEventos = miAdministradores.funcion_conseguirListaEventosPorNombreDelEvento (miFormulario.campoBuscadorEventoString.data);
-        else:
-            if (miFormulario.campoBuscadorEventoSelect.data == "Lugar del evento"):
-                miListaDeEventos = miAdministradores.funcion_conseguirListaEventosPorLugarDelEvento (miFormulario.campoBuscadorEventoString.data);
-            else:
-                if (miFormulario.campoBuscadorEventoSelect.data == "Calle del evento"):
-                    miListaDeEventos = miAdministradores.funcion_conseguirListaEventosPorCalle (miFormulario.campoBuscadorEventoString.data);
-                else:
-                    if (miFormulario.campoBuscadorEventoSelect.data == "Número de la calle"):
-                        miListaDeEventos = miAdministradores.funcion_conseguirListaEventosPorNumero (miFormulario.campoBuscadorEventoString.data);
-                    else:
-                        if (miFormulario.campoBuscadorEventoSelect.data == "Código postal"):
-                            miVariableEntero = int (miFormulario.campoBuscadorEventoString.data);
-                            if (int (miVariableEntero == False)):
-                                return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="adminstradorpanelrobotponerservicio  --- Error403---  el código postal sólo recibe valores enteros")); 
-                            else:
-                                if ((miVariableEntero < 1000) or (miVariableEntero > 99999)):
-                                    return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="adminstradorpanelrobotponerservicio  --- Error403---  el código postal es un número entre 01000 hasta 99999")); 
-
-                            miListaDeEventos = miAdministradores.funcion_conseguirListaEventosPorCodigoPostal (miVariableEntero);
-        if (len (miListaDeEventos) > 0):
-            for i in miListaDeEventos: 
-                # en el caso de que ese correo electronico no este como clave en el diccionario, entonces lo meto como clave y como valor lo inicalizo con un vector. 
-                if i._administradores_correoElectronico not in miDiccionarioAdministradores:
-                    miDiccionarioAdministradores[i._administradores_correoElectronico] = []; 
-                miDiccionarioAdministradores[i._administradores_correoElectronico].append (i);
-        else:
-            miVerdadHeEncontradoBuscador = False;
-
-
-    else:
-        miListaAdministradores = miAdministradores.funcion_conseguirTodasLasCuentasMenosLaInstanciada ();
-        for i in miListaAdministradores:
-            miListaDeEventos = miAdministradores.funcion_conseguirTodosLosEventosPorCorreoElectronico (i._correoElectronico);
-            miDiccionarioAdministradores[i._correoElectronico] = miListaDeEventos;
-    
-    miFormulario.campoBuscadorEventoSelect.choices = ["Nombre del evento", "Lugar del evento", "Calle del evento", "Número de la calle", "Código postal"];
-    return render_template ("administradorpanelgestioncuentas.html", miParametroDiccionarioAdministradores = miDiccionarioAdministradores, miFormularioParametro=miFormulario, miParametroVerdadHeEncontradoBuscador = miVerdadHeEncontradoBuscador);
+    for i in miListaAdministradores:
+        miListaDeEventos = miAdministradores.funcion_conseguirTodosLosEventosPorCorreoElectronico (i._correoElectronico);
+        miDiccionarioAdministradores[i._correoElectronico] = miListaDeEventos;
+    return render_template ("administradorpanelgestioncuentas.html", miParametroDiccionarioAdministradores = miDiccionarioAdministradores);
 
 @app.route ('/administradorborrarcuentaadministrador/<correoelectronico>')
 def funcionAdministradorBorrarCuentaAdministrador (correoelectronico):

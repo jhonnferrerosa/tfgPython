@@ -46,31 +46,6 @@
 <h4> Administradores: </h4>
 
 
-<form method="POST">
-  <div class="row">
-      <div class="col-md-10 offset-md-1">
-          <div class="row">
-              <div class="col-6 mt-2" data-select2-id="21">
-                  <div class="form-group" data-select2-id="20">
-                      <label>Buscar Administrador por Evento:</label>
-                      {{ miFormularioParametro.campoBuscadorEventoSelect }}
-
-                  </div>
-              </div>
-
-              <div class="form-group">
-                <div class="input-group">
-                  {{ miFormularioParametro.campoBuscadorEventoString }}
-                    <div class="input-group-append">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fa fa-search"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-          </div>
-      </div>
-  </div>
 
 {% for clave, valor in miParametroDiccionarioAdministradores.items() %}
 <div class="card mb-4" style="clear: both;">
@@ -87,9 +62,6 @@
                     <th style="width: 350px">Nombre del evento:</th>
                     <th>Fecha de creación del evento:</th>
                     <th>Lugar del evento:</th>
-                    <th>Calle del evento:</th>
-                    <th>Número de la calle:</th>
-                    <th>Código postal :</th>
                 </tr>
             </thead>
 {% for iteracion in valor %}
@@ -98,9 +70,6 @@
                     <td>{{ iteracion._nombreDelEvento }}</td>
                     <td>{{ iteracion._fechaDeCreacionDelEvento }}</td>
                     <td>{{ iteracion._lugarDondeSeCelebra }}</td>
-                    <td>{{ iteracion._calle }}</td>
-                    <td>{{ iteracion._numero }}</td>
-                    <td>{{ iteracion._codigoPostal }}</td>
                 </tr>
             </tbody>
 {% endfor %}
@@ -110,14 +79,8 @@
 {% endfor %}
 
 {% if miParametroDiccionarioAdministradores|length == 0 %}
-  {% if miParametroVerdadHeEncontradoBuscador == False %}
-    <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">No se ha encontrado ningún administrador con esas caracerísticas</nav>
-  {% else %}
     <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">Actualmente usted es el único administrador en el sistema.</nav>
-  {% endif %} 
 {% endif %} 
-
-
 
 </section>
 

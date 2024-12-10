@@ -178,13 +178,13 @@ class Administradores(db.Model):
     def funcion_conseguirEventoPorClavePrimaria (self, parametroNombreDelEvento, parametroFechaDeCreacionDelEvento, parametroLugarDondeSeCelebra):
         return Eventos.query.filter (Eventos._nombreDelEvento == parametroNombreDelEvento, Eventos._fechaDeCreacionDelEvento == parametroFechaDeCreacionDelEvento, Eventos._lugarDondeSeCelebra == parametroLugarDondeSeCelebra).first ();
 
-    def funcion_crearEvento (self, parametroNombreDelEvento, parametroLugarDondeSeCelebra, parametroCodigoQR=None, parametroCalle = None, parametroNumero = None, parametroCodigoPostal = None):
+    def funcion_crearEvento (self, parametroNombreDelEvento, parametroLugarDondeSeCelebra, parametroCodigoQR=None):
         miFechaDeCreaacionDelEvento = datetime.now().strftime("%Y-%m-%dT%H:%M:%S");
         if (parametroCodigoQR != None) and (parametroCodigoQR != ""):
             miVariableCodigoQR = parametroCodigoQR;
         else:
             miVariableCodigoQR = parametroNombreDelEvento +miFechaDeCreaacionDelEvento +parametroLugarDondeSeCelebra;  
-        miEventos = Eventos (_nombreDelEvento=parametroNombreDelEvento, _fechaDeCreacionDelEvento=miFechaDeCreaacionDelEvento, _lugarDondeSeCelebra=parametroLugarDondeSeCelebra, _codigoQR=miVariableCodigoQR, _administradores_correoElectronico=self._correoElectronico, _calle=parametroCalle, _numero=parametroNumero,  _codigoPostal=parametroCodigoPostal);
+        miEventos = Eventos (_nombreDelEvento=parametroNombreDelEvento, _fechaDeCreacionDelEvento=miFechaDeCreaacionDelEvento, _lugarDondeSeCelebra=parametroLugarDondeSeCelebra, _codigoQR=miVariableCodigoQR, _administradores_correoElectronico=self._correoElectronico);
         db.session.add (miEventos);
         db.session.commit ();
 
@@ -231,7 +231,7 @@ class Administradores(db.Model):
         return DisponibleRobot.query.filter (DisponibleRobot.fechaComienzoEnEvento <= datetime.now (), DisponibleRobot.fechaFinEnEvento >= datetime.now(), DisponibleRobot.robots_idRobot == parametroIdRobot).first ();
 
 
-    def funcion_modificarDatosDelEvento (self, parametroAntiguoNombreDelEvento, parametroAntiguoFechaDeCreacionDelEvento, parametroAntiguoLugarDondeSeCelebra, parametroNombreDelEvento, parametroLugarDondeSeCelebra, parametroCodigoQR=None, parametroCalle=None, parametroNumero=None, parametroCodigoPostal=None):
+    def funcion_modificarDatosDelEvento (self, parametroAntiguoNombreDelEvento, parametroAntiguoFechaDeCreacionDelEvento, parametroAntiguoLugarDondeSeCelebra, parametroNombreDelEvento, parametroLugarDondeSeCelebra, parametroCodigoQR=None):
         miEventos = Eventos.query.filter (Eventos._nombreDelEvento == parametroAntiguoNombreDelEvento, Eventos._fechaDeCreacionDelEvento == parametroAntiguoFechaDeCreacionDelEvento, Eventos._lugarDondeSeCelebra == parametroAntiguoLugarDondeSeCelebra).first ();
         miVariableMensajeDeError = None;
         if (miEventos._codigoQR != parametroCodigoQR):
@@ -243,12 +243,6 @@ class Administradores(db.Model):
         miEventos._lugarDondeSeCelebra = parametroLugarDondeSeCelebra
         if (parametroCodigoQR != None) and (parametroCodigoQR != "") and (miEventos._codigoQR != parametroCodigoQR):
             miEventos._codigoQR =  parametroCodigoQR;
-        if (parametroCalle != None) and (miEventos._calle != parametroCalle):
-            miEventos._calle = parametroCalle;
-        if (parametroNumero != None) and (miEventos._numero != parametroNumero):
-            miEventos._numero = parametroNumero;
-        if (parametroCodigoPostal != None) and (miEventos._codigoPostal != parametroCodigoPostal):
-            miEventos._codigoPostal = parametroCodigoPostal;
         db.session.commit ();
         return miVariableMensajeDeError;
     
@@ -338,20 +332,6 @@ class Administradores(db.Model):
                 miListaEventos.append (miEventos);
         return  miListaEventos;
 
-    def funcion_conseguirListaEventosPorNombreDelEvento (self, parametroNombreDelEvento):
-        return Eventos.query.filter (Eventos._nombreDelEvento.like (f"{parametroNombreDelEvento}%")).all();
-
-    def funcion_conseguirListaEventosPorLugarDelEvento (self, parametroLugarDelEvento):
-        return Eventos.query.filter (Eventos._lugarDondeSeCelebra.like (f"{parametroLugarDelEvento}%")).all();
-
-    def funcion_conseguirListaEventosPorCalle (self, parametroCalle):
-        return Eventos.query.filter (Eventos._calle.like (f"{parametroCalle}%")).all();
-
-    def funcion_conseguirListaEventosPorNumero (self, parametroNumero):
-        return Eventos.query.filter (Eventos._numero.like (f"{parametroNumero}%")).all();
-
-    def funcion_conseguirListaEventosPorCodigoPostal (self, parametroCodigoPostal):
-        return Eventos.query.filter_by (_codigoPostal = parametroCodigoPostal).all();
 
 
 

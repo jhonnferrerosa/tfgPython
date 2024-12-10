@@ -66,9 +66,6 @@
                                                 <th>Fecha creación del evento:</th>
                                                 <th>Lugar donde se celebra: </th>
                                                 <th style="width: 300px">CódigoQR: </th>
-                                                <th>Calle:</th>
-                                                <th>Número de la calle: </th>
-                                                <th>Codigo postal:</th>
                                                 <th>Acciones para modificar el evento: </th>
                                             </tr>
                                         </thead>
@@ -85,9 +82,6 @@
                                                     <div><a href="{{ url_for ('funcionGenerarCodigoQR', url=iteracion._codigoQR ) }}" class="btn btn-success mb-2"> Generar CodigoQR asistentes </a></div>
                                                     <div><a href="{{ url_for ('funcionGenerarCodigoQR', url=iteracion._codigoQR, correoelectronico=parametroCorreoElectronico ) }}" class="btn btn-warning mb-2"> Generar CodigoQR administradores</a></div>
                                                 </td>
-                                                <td>{{ iteracion._calle }}</td>
-                                                <td>{{ iteracion._numero }}</td>
-                                                <td> {{ iteracion._codigoPostal }}</td>
                                                 <td>
                                                     <ol class="list-unstyled">
                                                     <li class="mb-2"> <a href="{{ url_for('funcionAdministradorModificarDatosEvento', nombreDelEvento=iteracion._nombreDelEvento, fechaDeCreacionDelEvento=iteracion._fechaDeCreacionDelEvento, lugarDondeSeCelebra=iteracion._lugarDondeSeCelebra) }}" class="btn btn-primary">Modificar datos del evento</a></li>

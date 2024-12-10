@@ -58,13 +58,6 @@ class FormularioBuscarRobot (Form):
     campoBuscadorRobotString = StringField (validators= [InputRequired("Esta campo es requerido"), Length(max=50, message="Esciba entre 3 y 50 caracteres.")]);
     campoBuscadorRobotSelect = SelectField (choices=[]);
 
-class FormularioBuscarEvento (Form):
-    """
-        Este formulario lo uso como buscador de eventos. 
-    """
-    campoBuscadorEventoString = StringField (validators= [InputRequired("Esta campo es requerido"), Length(max=50, message="Esciba entre 3 y 50 caracteres.")]);
-    campoBuscadorEventoSelect = SelectField (choices=[]);
-
 
 
 
