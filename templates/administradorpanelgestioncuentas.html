@@ -110,8 +110,14 @@
 {% endfor %}
 
 {% if miParametroDiccionarioAdministradores|length == 0 %}
+  {% if miParametroVerdadHeEncontradoBuscador == False %}
+    <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">No se ha encontrado ningún administrador con esas caracerísticas</nav>
+  {% else %}
     <nav class="app-header navbar navbar-expand bg-warning" data-bs-theme="dark">Actualmente usted es el único administrador en el sistema.</nav>
+  {% endif %} 
 {% endif %} 
+
+
 
 </section>
 
