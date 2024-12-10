@@ -36,9 +36,6 @@ class FormularioCrearEvento (Form):
     fechaDeCreacionDelEvento = HiddenField ();
     lugarDondeSeCelebra = StringField (validators= [Length(min=3, max=50, message="Esciba entre 3 y 50 caracteres.")]);
     codigoQR = StringField ();
-    calle = StringField (validators= [Optional(), Length(min=3, max=50, message="Esciba entre 3 y 50 caracteres.")]);
-    numero = StringField (validators= [Optional(), Length(min=3, max=50, message="Esciba entre 3 y 50 caracteres.")]);
-    codigoPostal = IntegerField (validators=[Optional(), NumberRange(min=10000, max=99999, message="El codigo postal debe de tener 5 dígitos.")]);
 
     # en este caso, solo que con que el nombre de la funcion tenga este nombre validate_codigoQR ya sé que se está refiriendo al campo codigoQR del formulario. 
     def validate_codigoQR (form, field):

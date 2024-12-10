@@ -39,7 +39,7 @@ from flask_mail import Message
 
 app = Flask(__name__)
 app.config.from_object (DevelopmentConfig);
-#csrf = CSRFProtect ();
+csrf = CSRFProtect ();
 mail = Mail (app);
 
 # este diccionario lo voy a utilizar para almacenar como clave al identificadorUnicoAsistente y como valor, un bool el cual determina si ese asistente esta manejando o no un robot.  
@@ -77,13 +77,13 @@ def index2 ():
     db.session.add (miAdmin3);
     db.session.commit ();
 
-    miEvento1 = Eventos (_nombreDelEvento="aula1", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="ifema1", _codigoQR="miQR1", _administradores_correoElectronico="jhon@gmail.com", _calle = "elisa ochoa", _numero="trece pavellon 2", _codigoPostal=28001);
-    miEvento2 = Eventos (_nombreDelEvento="puertas abiertas1", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="alcala", _codigoQR="miQR2", _administradores_correoElectronico="jhon@gmail.com", _calle = "humanes", _numero="catorce", _codigoPostal=28001);
-    miEvento3 = Eventos (_nombreDelEvento="eurobot2042", _fechaDeCreacionDelEvento='2024-11-27 11:19:48', _lugarDondeSeCelebra="ifema2042", _codigoQR="eurobot20422024-11-27T11:19:48ifema2042", _administradores_correoElectronico="jhon@gmail.com", _calle = "andalucía", _numero="quince", _codigoPostal=28005);
-    miEvento4 = Eventos (_nombreDelEvento="simo2025", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="torrejon", _codigoQR="simo20252024-10-01torrejon", _administradores_correoElectronico="ana@gmail.com", _calle = "real", _numero="dieciseis", _codigoPostal=28001);
-    miEvento5 = Eventos (_nombreDelEvento="mobile week 2025", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="torrejon", _codigoQR="mlileWeek2025-10-01torrejon", _administradores_correoElectronico="ana@gmail.com", _calle = "avenida de la dehesa", _numero="diecisiete", _codigoPostal=28001);
-    miEvento6 = Eventos (_nombreDelEvento="aula2", _fechaDeCreacionDelEvento='2024-11-27 11:19:48', _lugarDondeSeCelebra="ifema2042", _codigoQR="miQR3", _administradores_correoElectronico="jhon@gmail.com", _calle = "caño", _numero="dieciocho", _codigoPostal=28001);
-    miEvento7 = Eventos (_nombreDelEvento="aula3", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="ibiza hotel", _codigoQR="miQR4", _administradores_correoElectronico="ana@gmail.com", _calle = "plaza de españa", _numero="diecinueva", _codigoPostal=28005);
+    miEvento1 = Eventos (_nombreDelEvento="aula1", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="ifema1", _codigoQR="miQR1", _administradores_correoElectronico="jhon@gmail.com");
+    miEvento2 = Eventos (_nombreDelEvento="puertas abiertas1", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="alcala", _codigoQR="miQR2", _administradores_correoElectronico="jhon@gmail.com");
+    miEvento3 = Eventos (_nombreDelEvento="eurobot2042", _fechaDeCreacionDelEvento='2024-11-27 11:19:48', _lugarDondeSeCelebra="ifema2042", _codigoQR="eurobot20422024-11-27T11:19:48ifema2042", _administradores_correoElectronico="jhon@gmail.com");
+    miEvento4 = Eventos (_nombreDelEvento="simo2025", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="torrejon", _codigoQR="simo20252024-10-01torrejon", _administradores_correoElectronico="ana@gmail.com");
+    miEvento5 = Eventos (_nombreDelEvento="mobile week 2025", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="torrejon", _codigoQR="mlileWeek2025-10-01torrejon", _administradores_correoElectronico="ana@gmail.com");
+    miEvento6 = Eventos (_nombreDelEvento="aula2", _fechaDeCreacionDelEvento='2024-11-27 11:19:48', _lugarDondeSeCelebra="ifema2042", _codigoQR="miQR3", _administradores_correoElectronico="jhon@gmail.com");
+    miEvento7 = Eventos (_nombreDelEvento="aula3", _fechaDeCreacionDelEvento='2024-10-01', _lugarDondeSeCelebra="ibiza hotel", _codigoQR="miQR4", _administradores_correoElectronico="ana@gmail.com");
     db.session.add (miEvento1);
     db.session.add (miEvento2);
     db.session.add (miEvento3);
@@ -807,7 +807,7 @@ def funcionAdministradorCrearEvento ():
     miFormulario = formulario.FormularioCrearEvento (request.form);
 
     if (request.method == 'POST') and (miFormulario.validate ()): 
-        miAdministradores.funcion_crearEvento (miFormulario.nombreDelEvento.data, miFormulario.lugarDondeSeCelebra.data, miFormulario.codigoQR.data, miFormulario.calle.data, miFormulario.numero.data, miFormulario.codigoPostal.data);
+        miAdministradores.funcion_crearEvento (miFormulario.nombreDelEvento.data, miFormulario.lugarDondeSeCelebra.data, miFormulario.codigoQR.data);
         return redirect (url_for ('funcionAdministradorPanelEvento'));
 
     return render_template ("administradorcrearevento.html", parametroURL = miVariableGlobalURL, miFormularioParametro = miFormulario, miParametroAccionHtml = "crear");
@@ -824,7 +824,7 @@ def funcionAdministradorModificarDatosEvento (nombreDelEvento, fechaDeCreacionDe
     if (request.method == 'POST'):
         if (miFormulario.validate()):
             miVariableMensajeDeError = None;
-            miVariableMensajeDeError = miAdministradores.funcion_modificarDatosDelEvento (nombreDelEvento, miFormulario.fechaDeCreacionDelEvento.data, lugarDondeSeCelebra, miFormulario.nombreDelEvento.data,  miFormulario.lugarDondeSeCelebra.data, miFormulario.codigoQR.data, miFormulario.calle.data, miFormulario.numero.data, miFormulario.codigoPostal.data);
+            miVariableMensajeDeError = miAdministradores.funcion_modificarDatosDelEvento (nombreDelEvento, miFormulario.fechaDeCreacionDelEvento.data, lugarDondeSeCelebra, miFormulario.nombreDelEvento.data,  miFormulario.lugarDondeSeCelebra.data, miFormulario.codigoQR.data);
             if (miVariableMensajeDeError != None):
                 return redirect (url_for ('funcionErrorClienteServidor', mensajeerror=miVariableMensajeDeError)); 
             return redirect(url_for('funcionAdministradorPanelEvento'));
@@ -837,9 +837,6 @@ def funcionAdministradorModificarDatosEvento (nombreDelEvento, fechaDeCreacionDe
             miFormulario.fechaDeCreacionDelEvento.data = miEventos._fechaDeCreacionDelEvento;
             miFormulario.lugarDondeSeCelebra.data = miEventos._lugarDondeSeCelebra;
             miFormulario.codigoQR.data = miEventos._codigoQR;
-            miFormulario.calle.data = miEventos._calle;
-            miFormulario.numero.data = miEventos._numero;
-            miFormulario.codigoPostal.data = miEventos._codigoPostal;
             return render_template ("administradorcrearevento.html", parametroURL = miVariableGlobalURL, miFormularioParametro = miFormulario, miParametroAccionHtml = "modificar");
         else:
             return redirect(url_for('funcionAdministradorPanelEvento', miVerdadErrorDeEventoInexistente=1));
@@ -963,7 +960,7 @@ def funcionAdministradorBorrarCuentaAdministrador (correoelectronico):
 # a este if. De esta manera tengo más control sobre la ejecución y es que a esas funcones de arriba las puedo llamar en cualquier momento.  
 if __name__ == '__main__':
     # a la hora de poner los formularios, necesito que tengan un token para verrificar que el me envia los datos de nuevo al servidor, que sea el cliente correcto.  
-    #csrf.init_app(app);
+    csrf.init_app(app);
 
 
     # esto lo que hace es aplicar la configuracion de la base datos hecha en el archivo condig.py 

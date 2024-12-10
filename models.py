@@ -403,10 +403,7 @@ class Eventos (db.Model):
 
             str: codigoQR 
             str: administradores_correoElectronico
-            str: calle 
 
-            str: numero 
-            int: codigoPostal 
     """ 
     __tablename__ = "miTablaEvento"; 
     _nombreDelEvento = db.Column (db.String (50), primary_key=True); 
@@ -414,9 +411,6 @@ class Eventos (db.Model):
     _lugarDondeSeCelebra = db.Column (db.String (50), primary_key=True); 
     _codigoQR = db.Column (db.String (200), nullable = False, unique=True); 
     _administradores_correoElectronico = db.Column (db.String (50), db.ForeignKey ('miTablaAdministrador._correoElectronico', onupdate="CASCADE", ondelete="CASCADE"), nullable=False);
-    _calle = db.Column (db.String (50)); 
-    _numero = db.Column (db.String (50)); 
-    _codigoPostal = db.Column (db.Integer); 
 
 
 class Asistentes (db.Model):
