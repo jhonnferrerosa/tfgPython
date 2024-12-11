@@ -222,7 +222,6 @@ def miFuncionAntesDeLaPeticion ():
 
     # en el caso de que el correoElectronico no este en la sesion y ademas la URL que yo he puesto no sea de las permitidas, me voy al loggin.  
     if ('correoElectronico' not in session) and (miVariablePermitirAccesoSinCorreoElectronico == True):
-        #print ("miFuncionAntesDeLaPeticion() --- en la sesion no esta el correo electronico, y el endpoint no es uno permitido, se va a redirigir al login. ");
         return redirect (url_for ('funcionAdministradorLogin'));
 
 
@@ -233,7 +232,6 @@ def miPaginaNoEncntradaError (e):
 
 @app.route ('/errorclienteservidor/<mensajeerror>')
 def funcionErrorClienteServidor (mensajeerror = None):
-    print ("funcionErrorClienteServidor()----")
     return render_template ("error.html", parametroMensajeError = mensajeerror);
 
 
@@ -535,7 +533,6 @@ def funcion_rechazarRobot ():
 @app.route ("/administradorsignup", methods = ['GET', 'POST'])
 @app.route ("/administradorsignup/<tokenrestablecercontrasena>", methods = ['GET', 'POST'])
 def funcionAdministradorsignup (tokenrestablecercontrasena = None):
-    print ("funcionAdministradorLogin()---", tokenrestablecercontrasena);
     miVariableContrasenasNoCoinciden = False;
     miVariableUsuarioYaCreado = False;
     miFormulario = formulario.FormularioAcceder (request.form);
@@ -589,7 +586,6 @@ def funcionAdministradorLogin ():
         miAdministradores = Administradores.query.filter_by (_correoElectronico=miFormulario.correoElectronico.data).first ();
         if (miAdministradores != None):
             if ("nameformularioacceder" in request.form):
-                print ("funcionAdministradorLogin ()---, nameformularioacceder");
                 if (miAdministradores.validarContrasena (miFormulario.contrasena.data)):
                     session['correoElectronico'] = miAdministradores._correoElectronico;
                     return redirect (url_for ('funcionAdministradorHome'));

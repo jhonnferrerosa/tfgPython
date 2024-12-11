@@ -23,7 +23,7 @@ class Administradores(db.Model):
             str: contrasena
     """
     __tablename__ = "miTablaAdministrador";
-    _correoElectronico = db.Column(db.String(50), primary_key=True);
+    _correoElectronico = db.Column(db.String(320), primary_key=True);
     _contrasena = db.Column(db.String(162), nullable=False);
 
 
@@ -409,8 +409,8 @@ class Eventos (db.Model):
     _nombreDelEvento = db.Column (db.String (50), primary_key=True); 
     _fechaDeCreacionDelEvento = db.Column (db.DateTime, primary_key=True); 
     _lugarDondeSeCelebra = db.Column (db.String (50), primary_key=True); 
-    _codigoQR = db.Column (db.String (200), nullable = False, unique=True); 
-    _administradores_correoElectronico = db.Column (db.String (50), db.ForeignKey ('miTablaAdministrador._correoElectronico', onupdate="CASCADE", ondelete="CASCADE"), nullable=False);
+    _codigoQR = db.Column (db.String (2048), nullable = False, unique=True); 
+    _administradores_correoElectronico = db.Column (db.String (320), db.ForeignKey ('miTablaAdministrador._correoElectronico', onupdate="CASCADE", ondelete="CASCADE"), nullable=False);
 
 
 class Asistentes (db.Model):
@@ -424,7 +424,7 @@ class Asistentes (db.Model):
     """
     __tablename__ = "miTablaAsistente";
     _identificadorUnicoAsistente = db.Column (db.String (48), nullable = False, primary_key=True);
-    _apodoAsistente = db.Column (db.String (), nullable = False, unique=True);
+    _apodoAsistente = db.Column (db.String (50), nullable = False, unique=True);
 
     # esta funcion mete al asistente en la tabla de Controla. 
     def pasarAcontrolarRobot (self, parametroidentIficadorUnicoAsistente, parametroIdRobot):
