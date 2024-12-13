@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.0
 info:
   title: API demostraciones roboticas. 
   description: API que utiliza Kodular para gestionar a las personas que quieran controlar un robot.
@@ -13,240 +13,167 @@ security:
   - CSRFtoken: []
 
 paths:
-  /{idEvento}:
-  /demostracionesroboticas/<codigoQR>/<correoelectronico>:
+  /demostracionesroboticas/{codigoQR}:
     get:
-      summary:  Primer acceso. 
-      description: En este endpoint los usuarios se registran dentro de las demostraciones roboticas, ademas se busca un robot para ese usuario, puede ser que devuelva un JSON con un robot que ha encontrado o que  devuelva un JSON con un aviso de que está esperando por un robot.
+      summary: Primer acceso de los asistentespara manejar un robot
+      description: En este endpoint los asistentes se registran dentro de las demostraciones roboticas, ademas se busca un robot para ese asistente, puede ser que devuelva un JSON con un robot que ha encontrado o que  devuelva un JSON con un aviso de que está esperando por un robot, aparte de los errores. 
       parameters:
-        - name: codigoQR
-          in: path
-          description: "Este es el string con el que se identifica a un Evento."
-          required: true
-          schema:
-            type: String
-        - name: correoelectronico
-          in: path
-          description: "En el caso de que se quiera obtener un robot como administrador, entonces este valor tiene que estar rellenado. "
-          required: false
-          schema:
-            type: String
+      - $ref: '#/components/parameters/codigoQR'
       responses:
         '200':
           description: devuelve un JSON con el id del robot que está listo para trabajar. 
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  miParametroApodoAsistente:
-                    type: string
-                  miParametroCodigoQR:
-                    type: string
-                  miParametroCorreoElectronicoDelAdministrador:
-                    type: string
-                  miParametroEstado:
-                    type: string
-                  miParametroIdRobot:
-                    type: int
-                  miParametroMac:
-                    type: string
-                  miParametroMiEventoNombreDelEvento:
-                    type: string
-                  miParametroCSRFtoken:
-                    type: string
-        '200':
-          description: Devuelve un JSON que tiene la clave miParametroEstado avisando de que se está esperando por un robot. 
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  miParametroApodoAsistente:
-                    type: string
-                  miParametroCodigoQR:
-                    type: string
-                  miParametroCorreoElectronicoDelAdministrador:
-                    type: string
-                  miParametroEstado:
-                    type: string
-                  miParametroIdRobot:
-                    type: int
-                  miParametroMac:
-                    type: string
-                  miParametroMiEventoNombreDelEvento:
-                    type: string
-                  miParametroCSRFtoken:
-                    type: string
+                $ref: '#/components/schemas/mensajeDeAPIaCliente'
         '404':
           description: "Se ha pasado por parametro un una URL con un determinado códigoQR el cual ningun evento de la base de datos tiene ese coódigoQR"
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  miParametroApodoAsistente:
-                    type: string
-                  miParametroCodigoQR:
-                    type: string
-                  miParametroCorreoElectronicoDelAdministrador:
-                    type: string
-                  miParametroEstado:
-                    type: string
-                  miParametroIdRobot:
-                    type: int
-                  miParametroMac:
-                    type: string
-                  miParametroMiEventoNombreDelEvento:
-                    type: string
-                  miParametroCSRFtoken:
-                    type: string
+                $ref: '#/components/schemas/mensajeDeAPIaCliente'
         '500':
           description: "Ha ocurrido un error inesperado en la base de datos. "
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  miParametroApodoAsistente:
-                    type: string
-                  miParametroCodigoQR:
-                    type: string
-                  miParametroCorreoElectronicoDelAdministrador:
-                    type: string
-                  miParametroEstado:
-                    type: string
-                  miParametroIdRobot:
-                    type: int
-                  miParametroMac:
-                    type: string
-                  miParametroMiEventoNombreDelEvento:
-                    type: string
-                  miParametroCSRFtoken:
-                    type: string
-  /aceptarrobot:
+                $ref: '#/components/schemas/mensajeDeAPIaCliente'
+                
+  /demostracionesroboticas/{codigoQR}/{correoelectronico}:
+    get: 
+      summary: Primer acceso de los administradores para manejar un robot
+      description: En este endpoint los administradores se registran dentro de las demostraciones roboticas, ademas se busca un robot para ese administrador, puede ser que devuelva un JSON con un robot que ha encontrado o que  devuelva un JSON con un aviso de que está esperando por un robot, aparte de los errores. 
+      parameters:
+      - $ref: '#/components/parameters/codigoQR'
+      - $ref: '#/components/parameters/correoelectronico'
+      responses:
+        '200':
+          description: devuelve un JSON que tiene una clave miParametroEstado que determina si puede aceptar ese robot o rechazarlo. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mensajeDeAPIaCliente'
+        '404':
+          description: "Se ha pasado por parametro un una URL con un determinado códigoQR el cual ningun evento de la base de datos tiene ese coódigoQR"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mensajeDeAPIaCliente'
+        '500':
+          description: "Ha ocurrido un error inesperado en la base de datos. "
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mensajeDeAPIaCliente'
+  /aceptarrobot: 
     post:
-      summary: opción de empezar a manejar un robot. 
-      description: en el caso de que un usuario acepte el robot que se le ha mostrado, pulsará aceptar en la aplcación de Kodular y entonces enviará un JSON con  el robot al que quiera manejar. Sólo puede de volver un JSON que dice que se está manajando un robot, en el caso de que devuelva cualquier otra respuesta, eso significa que el robot que se ha acaptado, por alguna razón ya no está disponible, y esto se debe a que internamente este primer endpoint ha tendido que llamar al primero para hacer la búsqueda de un nuevo robot. 
+      summary: opción de empezar a manejar un robot por parte del asistentes 
+      description: en el caso de que un usuario acepte el robot que se le ha mostrado, pulsará aceptar en la aplcación de Kodular y entonces enviará un JSON con  el robot al que quiera manejar. Sólo puede de volver un JSON que dice que se está manajando un robot, en el caso de que se robot ya no esté disponible, le devilverá un JSON con un nuevo robot propuesto o un mensaje de aviso que está esperando por un robot. 
       parameters:
         - name: X-CSRFToken
           in: header
-          description: "este endpoint necesita recibir por el heeader el endpoint que recibio en la primera sollcidud  para que de esta forma solamente la API restful haga las acciones de sólo los clientes que ella autoriza"
+          description: Este endpoint necesita recibir por el heeader el CSRF token que recibio en la primera sollcidud, para que de esta forma solamente la API restful haga las acciones de los clientes que sólo ella autoriza. 
           required: true
           schema:
-            type: String
+            type: string
       requestBody:
         description: se va a enviar a la API un JSON con el código QR, un correo de algún administrador (puede ser NULL) y el idRobot del robot que se quiere manejar. 
         required: true
-        content:
+        content: 
           'application/json':
             schema:
-              type: object
-              properties:
-                miParametroCodigoQR:
-                  type: string
-                miParametroCorreoElectronicoDelAdministrador:
-                  type: string
-                miParametroIdRobot:
-                  type: int
+              $ref: '#/components/schemas/mensajeDeClienteAlaAPI'
       responses:
         '200':
-          description: devuelve un JSON con el id Robot y la MAC del robot que está controlando.  
+          description: devuelve un JSON que tiene una clave miParametroEstado que determina si está manejando el robot o está esperando por uno.  
           content:
-            application/json:
+            'application/json':
               schema:
-                type: object
-                properties:
-                  miParametroApodoAsistente:
-                    type: string
-                  miParametroCodigoQR:
-                    type: string
-                  miParametroCorreoElectronicoDelAdministrador:
-                    type: string
-                  miParametroEstado:
-                    type: string
-                  miParametroIdRobot:
-                    type: int
-                  miParametroMac:
-                    type: string
-                  miParametroMiEventoNombreDelEvento:
-                    type: string
-                  miParametroCSRFtoken:
-                    type: string
+                $ref: '#/components/schemas/mensajeDeAPIaCliente'
         '404':
-          description: "Se ha pasado por el POST un determinado códigoQR el cual ningun evento de la base de datos tiene ese coódigoQR"
+          description: "Se ha pasado por parametro un una URL con un determinado códigoQR el cual ningun evento de la base de datos tiene ese coódigoQR"
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  miParametroApodoAsistente:
-                    type: string
-                  miParametroCodigoQR:
-                    type: string
-                  miParametroCorreoElectronicoDelAdministrador:
-                    type: string
-                  miParametroEstado:
-                    type: string
-                  miParametroIdRobot:
-                    type: int
-                  miParametroMac:
-                    type: string
-                  miParametroMiEventoNombreDelEvento:
-                    type: string
-                  miParametroCSRFtoken:
-                    type: string
-
-
+                $ref: '#/components/schemas/mensajeDeAPIaCliente'
+              
   /rechazarrobot:
     post:
       summary: esta es la opción de rechazar un robot mostrado.
-      description: al usuario se le ha mostrado un robot por pantalla y este tiene la opción de rechazarlo, ya que puede ser que esté esperando por otro. En este caso se enviará por el POST el id del robot que se ha rechazado. Al asistente, se le devolverá el resultado del primer endpint ejecutado ya que ese esnpoint es el que localiza robots disponibles para los asistentes
+      description: al usuario se le ha mostrado un robot por pantalla y este tiene la opción de rechazarlo, ya que puede ser que esté esperando por otro. En este caso se enviará por el POST el id del robot que se ha rechazado. Al usuario, se le devolverá el resultado del primer endpint ejecutado ya que ese enpoint es el que localiza robots disponibles para los usuarios. 
       parameters:
         - name: X-CSRFToken
           in: header
-          description: "este endpoint necesita recibir por el heeader el endpoint que recibio en la primera sollcidud  para que de esta forma solamente la API restful haga las acciones de sólo los clientes que ella autoriza"
+          description: Este endpoint necesita recibir por el heeader el CSRF token que recibio en la primera sollcidud, para que de esta forma solamente la API restful haga las acciones de los clientes que sólo ella autoriza. 
           required: true
           schema:
-            type: String
+            type: string
       requestBody:
-        description: se va a enviar a la API un JSON con el código QR, un correo de algún administrador (puede ser NULL) y el idRobot del robot que se quiere manejar. 
+        description: se va a enviar a la API un JSON con el código QR, un correo de algún administrador (puede ser NULL) y el idRobot del robot que se ha rechazado. 
         required: true
-        content:
+        content: 
           'application/json':
             schema:
-              type: object
-                properties:
-                  miParametroCodigoQR:
-                    type: string
-                  miParametroCorreoElectronicoDelAdministrador:
-                    type: string
-                  miParametroIdRobot:
-                    type: int
-                    
-       responses: 
-        description:  Como ya se ha dicho antes, la respueta va a ser la misma que las que genere el endpoint /demostracionesroboticas/<codigoQR>/<correoelectronico>  ya que una vez rechazado un robot, este es el que hace la búsqueda de un nuevo robot disponible. 
+              $ref: '#/components/schemas/mensajeDeClienteAlaAPI'
+      responses:
         '404':
-          description: "Se ha pasado por el POST un determinado códigoQR el cual ningun evento de la base de datos tiene ese coódigoQR"
+          description: "Se ha pasado por parametro un una URL con un determinado códigoQR el cual ningun evento de la base de datos tiene ese coódigoQR"
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  miParametroApodoAsistente:
-                    type: string
-                  miParametroCodigoQR:
-                    type: string
-                  miParametroCorreoElectronicoDelAdministrador:
-                    type: string
-                  miParametroEstado:
-                    type: string
-                  miParametroIdRobot:
-                    type: int
-                  miParametroMac:
-                    type: string
-                  miParametroMiEventoNombreDelEvento:
-                    type: string
-                  miParametroCSRFtoken:
-                    type: string
+                $ref: '#/components/schemas/mensajeDeAPIaCliente'
           
+            
+components:
+  parameters:
+    codigoQR:
+      name: codigoQR
+      in: path
+      description: Este es el string con el que se identifica a un evento.
+      required: true
+      schema:
+        type: string
+    correoelectronico:
+      name: correoelectronico
+      in: path
+      description: "En el caso de que se quiera obtener un robot como administrador, entonces este valor tiene que estar rellenado. "
+      required: true
+      schema:
+        type:  string
+      
+  schemas:
+    mensajeDeAPIaCliente: 
+      type: object
+      description: este JSON siempre lo va a enviar el servidor al cliente siempre, para saber kodular que es lo que pasado en el back - end, deberá leer la clave miParametroEstado, que indica que es lo que ha sucedido en el back - end. 
+      properties:
+        miParametroApodoUsuario:
+          type: string
+        miParametroCodigoQR:
+          type: string
+        miParametroCorreoElectronicoDelAdministrador:
+          type: string
+        miParametroEstado:
+          type: string
+        miParametroIdRobot:
+          type: integer
+        miParametroMac:
+          type: string
+        miParametroMiEventoNombreDelEvento:
+          type: string
+        miParametroCSRFtoken:
+          type: string
+    mensajeDeClienteAlaAPI:
+      type: object
+      description: Se va a enviar a la API un JSON con el código QR, un correo de algún administrador (puede ser NULL) y el idRobot del robot del que se quiere manejar la acción, puede ser manejar o rechazar, ya que son las únicas acciones del cliente. 
+      properties:
+        miParametroCodigoQR:
+          type: string
+        miParametroCorreoElectronicoDelAdministrador:
+          type: string
+        miParametroIdRobot:
+          type: integer
+  securitySchemes:
+    CSRFtoken:
+      type: apiKey
+      in: header
+      name: X-CSRF-Token
