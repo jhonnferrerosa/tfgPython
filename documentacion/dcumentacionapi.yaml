@@ -11,6 +11,8 @@ servers:
 
 security:
   - CSRFtoken: []
+  
+  
 
 paths:
   /demostracionesroboticas/{codigoQR}:
@@ -162,6 +164,8 @@ components:
           type: string
         miParametroCSRFtoken:
           type: string
+        miParametroFotoDelRobot: 
+          type: string
     mensajeDeClienteAlaAPI:
       type: object
       description: Se va a enviar a la API un JSON con el código QR, un correo de algún administrador (puede ser NULL) y el idRobot del robot del que se quiere manejar la acción, puede ser manejar o rechazar, ya que son las únicas acciones del cliente. 
@@ -177,3 +181,4 @@ components:
       type: apiKey
       in: header
       name: X-CSRF-Token
+      description: en el caso de que se quiera poner en la herrammenta postman, en el key se tiene que poner X-CSRF-TOKEN y en value el valor del token se ha obtenido en del JSON
