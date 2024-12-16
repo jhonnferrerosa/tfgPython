@@ -13,7 +13,7 @@ class FormularioAcceder (Form):
     """
         Este formulario lo utilizo para el login y el signup, para el administrador. 
     """
-    correoElectronico = EmailField(validators= [InputRequired("Esta campo es requerido"), Length(min=3, max=50, message="Esciba entre 3 y 50 caracteres.")]); 
+    correoElectronico = EmailField(validators= [InputRequired("Esta campo es requerido"), Length(min=3, max=320, message="Esciba entre 3 y 320 caracteres.")]); 
     contrasena  = PasswordField(validators= [Optional(), Length(min=3, max=50, message="Esciba entre 3 y 50 caracteres.")]);
     confirmarContrasena  = PasswordField(validators= [InputRequired("Esta campo es requerido"), Length(min=3, max=50, message="Esciba entre 3 y 50 caracteres.")]);
     opcionMostrarContrasena = BooleanField('Mostrar contraseña');

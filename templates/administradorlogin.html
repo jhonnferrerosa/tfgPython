@@ -33,7 +33,7 @@
 <form  method="POST"> <!--begin::Body-->
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 <div class="card-body">
-<div class="mb-3"> <label for="exampleInputEmail1" class="form-label">Introduzca su correo electronico:  (max. 50 caracteres)</label> {{ miFormularioParametro.correoElectronico }}
+<div class="mb-3"> <label for="exampleInputEmail1" class="form-label">Introduzca su correo electronico:  </label> {{ miFormularioParametro.correoElectronico }}
 
 </div>
 <div class="mb-3"> <label for="exampleInputPassword1" class="form-label">Introduzca su contrasena: </label> {{ miFormularioParametro.contrasena }} </div>
@@ -43,11 +43,11 @@
 <div class="card-footer"> 
     <button type="submit" name="nameformularioacceder" class="btn btn-primary">Acceder</button> 
     <button type="submit" name="nameformulariorecuperarcontrasena" class="btn btn-danger">Recuperar contraseña</button> 
+    <a href="{{ url_for('funcionAdministradorsignup') }}" class="btn btn-warning" style="float: right;">Crear cuenta</a>
+
 </div> <!--end::Footer-->
 </form> <!--end::Form-->
 </div>                           
-
-
 
 
 

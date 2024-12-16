@@ -7,7 +7,7 @@
     <!-- Aparte del css del admin lte, necesito tambien utilizar los iconos con los que trabaja, por lo tanto tengo que irme a esta pagina web para sacarlos de ahi. Son los iconos de las tarjetas.  -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <!---  estos son los iconos de los botones-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='adminlte/plugins/fontawesome-free/css/all.min.css') }}">
     {% block title %}
     {% endblock %}
 </head>
@@ -20,17 +20,3 @@
     <footer> <small> Trabajo de fin de grado Jhon Ferrerosa</small></footer>
 </body>
 </html>
-
-
-
-
-
-
-
-
-<head>
-    <!-- Otros enlaces de estilo que ya tienes -->
-    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-    <!-- Añade este enlace para Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-</head>

@@ -34,6 +34,11 @@ import re
 # esto me vale para generar los codigos QR. 
 import qrcode
 
+# esta es la librería PILLOW con el que hago la compresión de la imágenes.
+# La calse Image me vale para convertir a Imagen los Bytes que saco de la base de datos. 
+# La clase ImageOps la uso para
+from PIL import Image, ImageOps
+
 # esto es para enviar los correos electrónicos.
 from flask_mail import Mail
 from flask_mail import Message
@@ -290,7 +295,7 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
                 db.session.commit ();
             except Exception as e:
                 db.session.rollback();
-                miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoUsuario":None, "miParametroEstado":"error500","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None, "miParametroFotoDelRobot":None,"miParametroCSRFtoken":generate_csrf()};
+                miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoUsuario":None, "miParametroEstado":"error50, error en la bae de datos","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None, "miParametroFotoDelRobot":None,"miParametroCSRFtoken":generate_csrf()};
                 return jsonify(miRespuestaJson), 500;
                 #return redirect (url_for ('funcionErrorClienteServidor', mensajeerror=e));  
         else: 
@@ -306,7 +311,7 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
                     db.session.commit ();
                 except Exception as e:
                     db.session.rollback();
-                    miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoUsuario":None, "miParametroEstado":"error500","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None,"miParametroFotoDelRobot":None, "miParametroCSRFtoken":generate_csrf()};
+                    miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoUsuario":None, "miParametroEstado":"error500, error en la base de datos","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None,"miParametroFotoDelRobot":None, "miParametroCSRFtoken":generate_csrf()};
                     return jsonify(miRespuestaJson), 500;
                     #return redirect (url_for ('funcionErrorClienteServidor', mensajeerror=e));  
             else: 
@@ -358,11 +363,6 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
 
         # en el caso de que la lista este vacia, es decir que no tenga ningun robot, entonces le devolvere un mensaje de que esta esperando por un robot. 
         if (not miListaDisponibleRobot):
-            miListaRobots = [];
-            miListaDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento==miEventos._nombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento==miEventos._fechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra==miEventos._lugarDondeSeCelebra, DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now()).all();
-            for miDisponibleRobotObjeto in miListaDisponibleRobot: 
-                miRobots = Robots.query.filter_by (_idRobot=miDisponibleRobotObjeto.robots_idRobot).first ();
-                miListaRobots.append (miRobots);
             miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoUsuario":miAsistentes._apodoAsistente, "miParametroEstado":"Esperando por un robot","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR, "miParametroFotoDelRobot":None, "miParametroCSRFtoken":generate_csrf()};
             return jsonify(miRespuestaJson), 200;
             #return (render_template("registrarasistente.html", miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miParametroApodoUsuario=miAsistentes._apodoAsistente, miParametroEstado="Esperando", miParametroIdRobot = None, miParametroMac = None, miParametroCorreoElectronicoDelAdministrador = miVariableCorreoElectronicoAdministrador, miParametroCodigoQR = codigoQR));
@@ -380,12 +380,12 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
                 if (miRobots == None):
                     miDiccionarioGlobalTokensListaDeRobotsRechazados[miVariabletokenDeSesionYeventoQR].clear ();
                     miRobots = Robots.query.filter_by (_idRobot=miListaDisponibleRobot[0].robots_idRobot).first();
-                # esta linea codifica la foto en  bytes formato base64.
                 miFotoDelRobotCodificadaString = None;
                 if (miRobots._fotoDelRobot != None):
                     miFotoDelRobotCodificadaBase64 = base64.b64encode(miRobots._fotoDelRobot);
                     miFotoDelRobotCodificadaString = miFotoDelRobotCodificadaBase64.decode("utf-8"); 
-                miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoUsuario":miAsistentes._apodoAsistente, "miParametroEstado":"Robot Listo","miParametroIdRobot": miRobots._idRobot, "miParametroMac" : miRobots._macAddressDelRobot, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR, "miParametroFotoDelRobot":miFotoDelRobotCodificadaString, "miParametroCSRFtoken":generate_csrf()};
+                miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoUsuario":miAsistentes._apodoAsistente, "miParametroEstado":"Robot Listo","miParametroIdRobot": miRobots._idRobot, "miParametroMac" : miRobots._macAddressDelRobot, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR,
+                                    "miParametroFotoDelRobot":miFotoDelRobotCodificadaString, "miParametroCSRFtoken":generate_csrf()};
                 return jsonify(miRespuestaJson), 200;
                 #return render_template ("robotlisto.html", miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miParametroApodoUsuario=miAsistentes._apodoAsistente, miParametroEstado="Robot Listo", miParametroIdRobot=miRobots._idRobot, miParametroMac = miRobots._macAddressDelRobot, miParametroCorreoElectronicoDelAdministrador = miVariableCorreoElectronicoAdministrador, miParametroCodigoQR=codigoQR);
            # en este caso que ese token con ese evento, no está en el miDiccionarioGlobalTokensListaDeRobotsRechazados  entonces eso significa que ese asistente, nunca ha rechazado un robot, por tanto le propongo el primer robot que encuentre. 
@@ -395,7 +395,8 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
                 if (miRobots._fotoDelRobot != None):
                     miFotoDelRobotCodificadaBase64 = base64.b64encode(miRobots._fotoDelRobot);
                     miFotoDelRobotCodificadaString = miFotoDelRobotCodificadaBase64.decode("utf-8");               
-                miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoUsuario":miAsistentes._apodoAsistente, "miParametroEstado":"Robot Listo","miParametroIdRobot": miRobots._idRobot, "miParametroMac" : miRobots._macAddressDelRobot, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR, "miParametroFotoDelRobot":miFotoDelRobotCodificadaString, "miParametroCSRFtoken":generate_csrf()};
+                miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoUsuario":miAsistentes._apodoAsistente, "miParametroEstado":"Robot Listo","miParametroIdRobot": miRobots._idRobot, "miParametroMac" : miRobots._macAddressDelRobot, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR,
+                                    "miParametroFotoDelRobot":miFotoDelRobotCodificadaString, "miParametroCSRFtoken":generate_csrf()};
                 return jsonify(miRespuestaJson), 200;
                 #return render_template ("robotlisto.html", miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miParametroApodoUsuario=miAsistentes._apodoAsistente, miParametroEstado="Robot Listo", miParametroIdRobot=miRobots._idRobot, miParametroMac = miRobots._macAddressDelRobot, miParametroCorreoElectronicoDelAdministrador = miVariableCorreoElectronicoAdministrador, miParametroCodigoQR=codigoQR);
 
@@ -415,7 +416,7 @@ def funcion_aceptarRobot ():
 
     miEventos = Eventos.query.filter (Eventos._codigoQR == codigoQR).first();
     if (miEventos == None):
-        miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoUsuario":None, "miParametroEstado":"error404","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None, "miParametroFotoDelRobot":None, "miParametroCSRFtoken":generate_csrf()};
+        miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoUsuario":None, "miParametroEstado":"error404, evento no encontrado","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None, "miParametroFotoDelRobot":None, "miParametroCSRFtoken":generate_csrf()};
         return jsonify(miRespuestaJson), 404;
         #return "<p> funcion_registrarAsistente () --- error, el evento que se ha pasado por parametro, no existe. </p>";
     else:
@@ -448,7 +449,12 @@ def funcion_aceptarRobot ():
             # en este caso solicito el objeto Asistentes, ya que el es el que tiene los métodos para consultar eventos y consultar robots. 
             miRobots = miAsistentes.funcion_consultaRobot (miControla.robots_idRobot); 
             miEventos = miAsistentes.funcion_consultaEvento (miControla.robots_idRobot);
-            miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoUsuario":miAsistentes._apodoAsistente, "miParametroEstado":"Robot manejando","miParametroIdRobot": miRobots._idRobot, "miParametroMac" : miRobots._macAddressDelRobot, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR, "miParametroFotoDelRobot":None, "miParametroCSRFtoken":generate_csrf()};
+            miFotoDelRobotCodificadaString = None;
+            if (miRobots._fotoDelRobot != None):    
+                miFotoDelRobotCodificadaBase64 = base64.b64encode(miRobots._fotoDelRobot);
+                miFotoDelRobotCodificadaString = miFotoDelRobotCodificadaBase64.decode("utf-8"); 
+            miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoUsuario":miAsistentes._apodoAsistente, "miParametroEstado":"Robot manejando","miParametroIdRobot": miRobots._idRobot, "miParametroMac" : miRobots._macAddressDelRobot, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR,
+                                "miParametroFotoDelRobot":miFotoDelRobotCodificadaString, "miParametroCSRFtoken":generate_csrf()};
             return jsonify(miRespuestaJson), 200;
             #return render_template ("robotmanejando.html",  miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miParametroApodoUsuario=miAsistentes._apodoAsistente, miParametroEstado="Robot manejando", miParametroIdRobot=miRobots._idRobot, miParametroMac = miRobots._macAddressDelRobot, miParametroCorreoElectronicoDelAdministrador = miVariableCorreoElectronicoAdministrador, miParametroCodigoQR=codigoQR);
         else:
@@ -483,7 +489,12 @@ def funcion_aceptarRobot ():
                                 # este if lo tengo porque unas veces el asistente no rechaza un robot, por lo tanto nunca se mete en este diccionario, entonces lo que estoy haciendo es ver primero si esta.
                                 if (miVariabletokenDeSesionYeventoQR in miDiccionarioGlobalTokensListaDeRobotsRechazados):
                                     miDiccionarioGlobalTokensListaDeRobotsRechazados[miVariabletokenDeSesionYeventoQR].clear (); 
-                                miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoUsuario":miAsistentes._apodoAsistente, "miParametroEstado":"Robot manejando","miParametroIdRobot": miRobots._idRobot, "miParametroMac" : miRobots._macAddressDelRobot, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR, "miParametroFotoDelRobot":None,"miParametroCSRFtoken":generate_csrf()};
+                                miFotoDelRobotCodificadaString = None;
+                                if (miRobots._fotoDelRobot != None): 
+                                    miFotoDelRobotCodificadaBase64 = base64.b64encode(miRobots._fotoDelRobot);
+                                    miFotoDelRobotCodificadaString = miFotoDelRobotCodificadaBase64.decode("utf-8"); 
+                                miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoUsuario":miAsistentes._apodoAsistente, "miParametroEstado":"Robot manejando","miParametroIdRobot": miRobots._idRobot, "miParametroMac" : miRobots._macAddressDelRobot, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR,
+                                                    "miParametroFotoDelRobot":miFotoDelRobotCodificadaString,"miParametroCSRFtoken":generate_csrf()};
                                 return jsonify(miRespuestaJson), 200;
                                 #return render_template ("robotmanejando.html",  miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miParametroApodoUsuario=miAsistentes._apodoAsistente, miParametroEstado="Robot manejando", miParametroIdRobot=miRobots._idRobot, miParametroMac = miRobots._macAddressDelRobot, miParametroCorreoElectronicoDelAdministrador = miVariableCorreoElectronicoAdministrador, miParametroCodigoQR=codigoQR);
 
@@ -500,7 +511,7 @@ def funcion_rechazarRobot ():
 
     miEventos = Eventos.query.filter (Eventos._codigoQR == codigoQR).first();
     if (miEventos == None):
-        miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoUsuario":None, "miParametroEstado":"error404","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None, "miParametroFotoDelRobot":None, "miParametroCSRFtoken":generate_csrf()};
+        miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoUsuario":None, "miParametroEstado":"error404, evento no encontrado","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None, "miParametroFotoDelRobot":None, "miParametroCSRFtoken":generate_csrf()};
         return jsonify(miRespuestaJson), 404;   
         #return "<p> funcion_registrarAsistente () --- error, el evento que se ha pasado por parametro, no existe. </p>";
     else:
@@ -714,8 +725,8 @@ def funcionAdministradorCrearRobot ():
             binarioDeFoto = None;
         else:
             # en el caso de que la foto pesa más de 5MB, devuelvo un error. 
-            if ((len(binarioDeFoto)/1024) > 5120):
-                return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorcrearrobot.html --- Error400 ---el archivo dede de pesar como máximo 5MB. "));  
+            if ((len(binarioDeFoto)/1024) > 10240):
+                return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorcrearrobot.html --- Error400 ---el archivo dede de pesar como máximo 10MB. "));  
             else:
                 #En esta parte voy a poner la validación del documento que se sube a la página web, la foto debe de pesar como maximo 10MB, ademas los formatos validdos son 
                 #Jpg, jpeg y png. 
@@ -727,8 +738,16 @@ def funcionAdministradorCrearRobot ():
                 miVerdadEsPNG = bool(re.match (miExpresionRegularParaPNG, fotoRecibidaDelFormulario.filename));
                 if (miVerdadEsJPG == False) and (miVerdadEsJPEG == False) and (miVerdadEsPNG == False):
                     return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorcrearrobot.html --- Error400 ---la extesión del archivo no es valida, las extensiones permitidas son .jpg .jpeg y .png"));  
-        
-        miAdministradores.funcion_crearRobot (miFormulario.macAddressDelRobot.data, miFormulario.nombreDelRobot.data, binarioDeFoto, miFormulario.descripcionDelRobot.data);
+            miFotoDelFormulario = Image.open (BytesIO (binarioDeFoto));
+            try:
+                miFotoDelFormulario = ImageOps.exif_transpose(miFotoDelFormulario);
+            except Exception as e:
+                return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorcrearrobot.html  --- Error500 --- Esa foto no se puede procesar, hay error en los metadatos EXIF. ")); 
+            miFotoDelFormulario.thumbnail ((300,300), Image.Resampling.LANCZOS);
+            miByte_io = BytesIO();
+            miFotoDelFormulario.save (miByte_io, 'jpeg');
+            binarioDeFoto = miByte_io.getvalue();
+            miAdministradores.funcion_crearRobot (miFormulario.macAddressDelRobot.data, miFormulario.nombreDelRobot.data, binarioDeFoto, miFormulario.descripcionDelRobot.data);
         return redirect(url_for('funcionAdministradorPanelRobot'));
 
     return render_template ('administradorcrearrobot.html', miFormularioParametro = miFormulario, miParametroAccionHtml = "crear", miParametroNombreDelEvento=nombreDelEvento, miParametroFechaDeCreacionDelEvento= fechaDeCreacionDelEvento, miParametroLugarDondeSeCelebra= lugarDondeSeCelebra, parametroMACaddressDelRobot=None);
@@ -753,8 +772,8 @@ def funcionAdministradorPanelRobotModificar (idRobot, nombreDelEvento = None, fe
             if (len(binarioDeFoto) == 0):
                 binarioDeFoto = None;
             else:
-                if ((len(binarioDeFoto)/1024) > 5120):
-                    return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorcrearrobot.html --- Error400 ---el archivo dede de pesar como máximo 5MB. "));  
+                if ((len(binarioDeFoto)/1024) > 10240):
+                    return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="adminstradorpanelrobotmodificar.html --- Error400 ---el archivo dede de pesar como máximo 10MB. "));  
                 else:
                     miExpresionRegularParaJPG = r".+\.jpg$";
                     miExpresionRegularParaJPEG = r".+\.jpeg$";
@@ -763,8 +782,19 @@ def funcionAdministradorPanelRobotModificar (idRobot, nombreDelEvento = None, fe
                     miVerdadEsJPEG = bool(re.match (miExpresionRegularParaJPEG, fotoRecibidaDelFormulario.filename));
                     miVerdadEsPNG = bool(re.match (miExpresionRegularParaPNG, fotoRecibidaDelFormulario.filename));
                     if (miVerdadEsJPG == False) and (miVerdadEsJPEG == False) and (miVerdadEsPNG == False):
-                        return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorcrearrobot.html --- Error400 ---la extesión del archivo no es valida, las extensiones permitidas son .jpg .jpeg y .png")); 
-
+                        return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="adminstradorpanelrobotmodificar.html --- Error400 ---la extesión del archivo no es valida, las extensiones permitidas son .jpg .jpeg y .png")); 
+                miFotoDelFormulario = Image.open (BytesIO (binarioDeFoto));
+                try:
+                    miFotoDelFormulario = ImageOps.exif_transpose(miFotoDelFormulario);
+                except Exception as e:
+                    return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="adminstradorpanelrobotmodificar.html  --- Error500 --- Esa foto no se puede procesar, hay error en los metadatos EXIF. ")); 
+                miFotoDelFormulario.thumbnail ((300,300), Image.Resampling.LANCZOS);
+                miByte_io = BytesIO();  
+                if (miVerdadEsJPG) or (miVerdadEsJPEG):
+                    miFotoDelFormulario.save (miByte_io, 'jpeg');
+                else:
+                    miFotoDelFormulario.save (miByte_io, 'png');                
+                binarioDeFoto = miByte_io.getvalue();
             miAdministradores.funcion_modificarRobot (idRobot, miFormulario.macAddressDelRobot.data, miFormulario.nombreDelRobot.data, binarioDeFoto, miFormulario.descripcionDelRobot.data);
 
             if ((nombreDelEvento == None) and (fechaDeCreacionDelEvento == None) and (lugarDondeSeCelebra == None)):
