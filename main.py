@@ -6,9 +6,8 @@ from flask import Flask, request, render_template, redirect, url_for, session
 from flask_wtf import CSRFProtect
 # esta librería me vale para generar u CSRF tokem que le enviaré a los cliete de la API, para que posteriormente ellos me lo devuelva y de esta forma se pueda llevar a cabo la comunicación entre Androir y la API. 
 from flask_wtf.csrf import generate_csrf
-from models import db
-#Desde mi archivo config.py importo esta clase. 
-from config import DevelopmentConfig  
+from models import db, app
+
 from models import Administradores, Robots, Eventos, Asistentes, Vincula, DisponibleRobot, Controla
 from datetime import datetime, timedelta 
 import formulario
@@ -43,9 +42,6 @@ from PIL import Image, ImageOps
 from flask_mail import Mail
 from flask_mail import Message
 
-
-app = Flask(__name__)
-app.config.from_object (DevelopmentConfig);
 csrf = CSRFProtect ();
 mail = Mail (app);
 

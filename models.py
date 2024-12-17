@@ -1,3 +1,5 @@
+from flask import Flask
+
 from flask_sqlalchemy import SQLAlchemy
 # event, me vale para los trigger. 
 from sqlalchemy import event
@@ -12,9 +14,14 @@ from sqlalchemy import event, DDL, func, CheckConstraint
 from sqlalchemy.orm import  aliased
 from werkzeug.security import check_password_hash
 
+#Desde mi archivo config.py importo esta clase. 
+from config import DevelopmentConfig  
 
+app = Flask(__name__)
+app.config.from_object (DevelopmentConfig);
 
 db = SQLAlchemy();
+# db = SQLAlchemy(app);  esta es la linea que tiene que ir cuando se está desplegando la aplicación en Gunicorn. 
 
 class Administradores(db.Model):
     """
