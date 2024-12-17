@@ -747,8 +747,11 @@ def funcionAdministradorCrearRobot ():
                 return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorcrearrobot.html  --- Error500 --- Esa foto no se puede procesar, hay error en los metadatos EXIF. ")); 
             miFotoDelFormulario.thumbnail ((300,300), Image.Resampling.LANCZOS);
             miByte_io = BytesIO();
-            miFotoDelFormulario.save (miByte_io, 'jpeg');
-            binarioDeFoto = miByte_io.getvalue();
+            if (miVerdadEsJPG) or (miVerdadEsJPEG):
+                miFotoDelFormulario.save (miByte_io, 'jpeg');
+            else:
+                miFotoDelFormulario.save (miByte_io, 'png');
+            binarioDeFoto = miByte_io.getvalue();  
             miAdministradores.funcion_crearRobot (miFormulario.macAddressDelRobot.data, miFormulario.nombreDelRobot.data, binarioDeFoto, miFormulario.descripcionDelRobot.data);
         return redirect(url_for('funcionAdministradorPanelRobot'));
 

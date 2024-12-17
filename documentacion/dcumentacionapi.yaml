@@ -18,7 +18,7 @@ paths:
   /demostracionesroboticas/{codigoQR}:
     get:
       summary: Primer acceso de los asistentespara manejar un robot
-      description: En este endpoint los asistentes se registran dentro de las demostraciones roboticas, ademas se busca un robot para ese asistente, puede ser que devuelva un JSON con un robot que ha encontrado o que  devuelva un JSON con un aviso de que está esperando por un robot, aparte de los errores. 
+      description: En este endpoint los asistentes se registran dentro de las demostraciones roboticas, ademas se busca un robot para ese asistente, puede ser que devuelva un JSON con un robot que ha encontrado o que  devuelva un JSON con un aviso de que está esperando por un robot junto con el tiempo de espera, aparte de los errores. 
       parameters:
       - $ref: '#/components/parameters/codigoQR'
       responses:
