@@ -43,6 +43,9 @@ from flask_mail import Mail
 from flask_mail import Message
 
 csrf = CSRFProtect ();
+#csrf = CSRFProtect (app);  #esta es la linea que tiene que ir cuando se está desplegando la aplicación en Gunicorn. 
+
+
 mail = Mail (app);
 
 # este diccionario lo voy a utilizar para almacenar como clave al identificadorUnicoAsistente y como valor, un bool el cual determina si ese asistente esta manejando o no un robot.  

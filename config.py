@@ -1,6 +1,10 @@
 
 import os
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 # esta es la clase en la que vamos a hacer la configuracion para todo nuestro entorno de desarrollo. 
 class DevelopmentConfig ():
     DEBUG = True;
