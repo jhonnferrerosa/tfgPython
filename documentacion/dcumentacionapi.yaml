@@ -45,7 +45,7 @@ paths:
     get: 
       summary: Primer acceso de los administradores para manejar un robot
       description: En este endpoint los administradores se registran dentro de las demostraciones roboticas, ademas se busca un robot para ese administrador, puede ser que devuelva un JSON con un robot que ha encontrado o que devuelva un
-       JSON con un aviso de que está esperando por un robot, aparte de los errores. En el caso de que haya encontrado un robot, este es el momento en el que Kodular debe de quedarse con la foto, ya que cuando se realize el sondeo a 
+       JSON con un aviso de que está esperando por un robot junto con el tiempo de espera para el proximo, a parte de los errores. En el caso de que haya encontrado un robot, este es el momento en el que Kodular debe de quedarse con la foto, ya que cuando se realize el sondeo a 
        la aplicación el cual averigua si Kodular este permitido o no manejar un robot, no se va a mandar la foto, esto se debe a que se quere ahorrar ancho de banda y no mandar una foto cada vez que se quiere averiguar si se puede o no 
        manejar un robot. 
       parameters:

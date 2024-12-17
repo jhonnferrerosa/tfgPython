@@ -295,7 +295,7 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
                 db.session.commit ();
             except Exception as e:
                 db.session.rollback();
-                miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoUsuario":None, "miParametroEstado":"error50, error en la bae de datos","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None, "miParametroFotoDelRobot":None,"miParametroCSRFtoken":generate_csrf()};
+                miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoUsuario":None, "miParametroEstado":"error500, error en la bae de datos","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None, "miParametroFotoDelRobot":None,"miParametroCSRFtoken":generate_csrf()};
                 return jsonify(miRespuestaJson), 500;
                 #return redirect (url_for ('funcionErrorClienteServidor', mensajeerror=e));  
         else: 
@@ -352,21 +352,28 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
         else:
             miListaDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento==miEventos._nombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento==miEventos._fechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra==miEventos._lugarDondeSeCelebra, 
                                                                DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= (datetime.now()+timedelta(minutes=5)), DisponibleRobot.disponible == True).all();
-    
-  
-        # de todos los robots que he conseguido de la tabla disponibleRobot, voy a eliminar los que ya esten siendo usados. 
-        for i in miListaDisponibleRobot[:]:
-            miControla = Controla.query.filter (Controla.robots_idRobot == i.robots_idRobot, Controla.fechaTomaDelRobot < datetime.now(), Controla.fechaAbandonoDelRobot > datetime.now()).first ();
-            # si este if se cumple, significa que  el robot está siendo utilizado. 
-            if (miControla):
-                miListaDisponibleRobot.remove (i); 
-                #jhonjames, aqui deberia de quedarme con el tiempo que va desde la fecha actual hasta la saida del robot,  y addemas almecenar la en variable para que despues en la siguiente iteracion, la compare y siempre me quede con la mas pequeña... de esta foma tengo el tiempo que tengo que 
-                # esperar para el proximo robot.  y esto lo mando como valor, siendo la clave  "miParametroTiempoProximoRobot".  Aclarar que para los casos que este valor sí que se obtenga, habría que devolver None, ya que ese asistente no esta esperando por un robot, si no que ya lo esta manejando
-                # o se lo acaban de proponer. 
+        # este valor lo establezcoon en 5 minutos ya que este es el tiempo máximo que se va a esperar por el prócimo robot. En el caso de que el tiempo máxmo de espera por un robot sea más de 5 minutos, eso significa que no hay robots disponibles para 
+        # eese asistente y por lo tanto no debería esperar por un robot, si no que se le debería avisar que no hay robots disponibles para asistentes. 
+        miVariableTiempoParaElProximoRobot = timedelta (minutes=5);
+        # este es el caso en el que en la aplicación no hay robots en los que pasar a controlar, no porque estén todos ocupados, si no porque el administrador no ha puesto ninguno disponible para los asistentes. 
+        if (len (miListaDisponibleRobot) == 0):
+            miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoUsuario":miAsistentes._apodoAsistente, "miParametroEstado":"Las demostraciones robóticas no están disponibles, no hay robots para manejar","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR, "miParametroFotoDelRobot":None, "miParametroCSRFtoken":generate_csrf()};
+            return jsonify(miRespuestaJson), 200;
+        else:
+            # de todos los robots que he conseguido de la tabla disponibleRobot, voy a eliminar los que ya esten siendo usados. 
+            for i in miListaDisponibleRobot[:]:
+                miControla = Controla.query.filter (Controla.robots_idRobot == i.robots_idRobot, Controla.fechaTomaDelRobot < datetime.now(), Controla.fechaAbandonoDelRobot > datetime.now()).first ();
+                # si este if se cumple, significa que  el robot está siendo utilizado. 
+                if (miControla):
+                    miListaDisponibleRobot.remove (i); 
+                    miVariableAuxiliarTiempoParaElProximoRobot =  miControla.fechaAbandonoDelRobot - datetime.now();
+                    if (miVariableTiempoParaElProximoRobot > miVariableAuxiliarTiempoParaElProximoRobot):
+                        miVariableTiempoParaElProximoRobot = miVariableAuxiliarTiempoParaElProximoRobot;
+                    
 
         # en el caso de que la lista este vacia, es decir que no tenga ningun robot, entonces le devolvere un mensaje de que esta esperando por un robot. 
         if (not miListaDisponibleRobot):
-            miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoUsuario":miAsistentes._apodoAsistente, "miParametroEstado":"Esperando por un robot","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR, "miParametroFotoDelRobot":None, "miParametroCSRFtoken":generate_csrf()};
+            miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoUsuario":miAsistentes._apodoAsistente, "miParametroEstado":"Esperando por un robot, tiempo de espera para el proximo: "+str(miVariableTiempoParaElProximoRobot),"miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR, "miParametroFotoDelRobot":None, "miParametroCSRFtoken":generate_csrf()};
             return jsonify(miRespuestaJson), 200;
             #return (render_template("registrarasistente.html", miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miParametroApodoUsuario=miAsistentes._apodoAsistente, miParametroEstado="Esperando", miParametroIdRobot = None, miParametroMac = None, miParametroCorreoElectronicoDelAdministrador = miVariableCorreoElectronicoAdministrador, miParametroCodigoQR = codigoQR));
         else:
