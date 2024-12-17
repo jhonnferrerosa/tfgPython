@@ -44,7 +44,10 @@ paths:
   /demostracionesroboticas/{codigoQR}/{correoelectronico}:
     get: 
       summary: Primer acceso de los administradores para manejar un robot
-      description: En este endpoint los administradores se registran dentro de las demostraciones roboticas, ademas se busca un robot para ese administrador, puede ser que devuelva un JSON con un robot que ha encontrado o que  devuelva un JSON con un aviso de que está esperando por un robot, aparte de los errores. 
+      description: En este endpoint los administradores se registran dentro de las demostraciones roboticas, ademas se busca un robot para ese administrador, puede ser que devuelva un JSON con un robot que ha encontrado o que devuelva un
+       JSON con un aviso de que está esperando por un robot, aparte de los errores. En el caso de que haya encontrado un robot, este es el momento en el que Kodular debe de quedarse con la foto, ya que cuando se realize el sondeo a 
+       la aplicación el cual averigua si Kodular este permitido o no manejar un robot, no se va a mandar la foto, esto se debe a que se quere ahorrar ancho de banda y no mandar una foto cada vez que se quiere averiguar si se puede o no 
+       manejar un robot. 
       parameters:
       - $ref: '#/components/parameters/codigoQR'
       - $ref: '#/components/parameters/correoelectronico'
@@ -70,7 +73,10 @@ paths:
   /aceptarrobot: 
     post:
       summary: opción de empezar a manejar un robot por parte del asistentes 
-      description: en el caso de que un usuario acepte el robot que se le ha mostrado, pulsará aceptar en la aplcación de Kodular y entonces enviará un JSON con  el robot al que quiera manejar. Sólo puede de volver un JSON que dice que se está manajando un robot, en el caso de que se robot ya no esté disponible, le devilverá un JSON con un nuevo robot propuesto o un mensaje de aviso que está esperando por un robot. 
+      description: en el caso de que un usuario acepte el robot que se le ha mostrado, pulsará aceptar en la aplcación de Kodular y entonces enviará un JSON con  el robot al que quiera manejar. Sólo puede devolver un JSON que dice que se 
+      está manejando un robot, en el caso de que se robot ya no esté disponible, le devilverá un JSON con un nuevo robot propuesto o un mensaje de aviso que está esperando por un robot.  En este caso ya la foto del robot se devolverá
+      None ya que Kodular debió almacenar la foto cuando se le propuso ese robot, esto es debido a la necesidad de ahorrar ancho de banda, ya que si en cada sondeo que determina si la aplicación de Kodular puede o no menajar el robot
+      se tiene que enviar la foto, lo que puede pasar es que todo el sistema se realentize.  
       parameters:
         - name: X-CSRFToken
           in: header

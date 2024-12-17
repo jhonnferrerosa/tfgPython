@@ -344,22 +344,25 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
             if (miAdministradores):
                 miVariableCorreoElectronicoAdministrador = miAdministradores._correoElectronico;
                 miListaDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento==miEventos._nombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento==miEventos._fechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra==miEventos._lugarDondeSeCelebra, 
-                                                                       DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now()).all();
+                                                                       DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= (datetime.now()+timedelta(minutes=5))).all();
             else:
+                # esto es para el caso de que en la URL se haya pasado un correoElectronico inventado y no exista en la base de datos. 
                 miListaDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento==miEventos._nombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento==miEventos._fechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra==miEventos._lugarDondeSeCelebra, 
-                                                                       DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now(), DisponibleRobot.disponible == True).all();
+                                                                       DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= (datetime.now()+timedelta(minutes=5)), DisponibleRobot.disponible == True).all();
         else:
             miListaDisponibleRobot = DisponibleRobot.query.filter (DisponibleRobot.eventos_nombreDelEvento==miEventos._nombreDelEvento, DisponibleRobot.eventos_fechaDeCreacionDelEvento==miEventos._fechaDeCreacionDelEvento, DisponibleRobot.eventos_lugarDondeSeCelebra==miEventos._lugarDondeSeCelebra, 
-                                                               DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= datetime.now(), DisponibleRobot.disponible == True).all();
+                                                               DisponibleRobot.fechaComienzoEnEvento <= datetime.now(), DisponibleRobot.fechaFinEnEvento >= (datetime.now()+timedelta(minutes=5)), DisponibleRobot.disponible == True).all();
     
   
-
         # de todos los robots que he conseguido de la tabla disponibleRobot, voy a eliminar los que ya esten siendo usados. 
         for i in miListaDisponibleRobot[:]:
             miControla = Controla.query.filter (Controla.robots_idRobot == i.robots_idRobot, Controla.fechaTomaDelRobot < datetime.now(), Controla.fechaAbandonoDelRobot > datetime.now()).first ();
             # si este if se cumple, significa que  el robot está siendo utilizado. 
             if (miControla):
                 miListaDisponibleRobot.remove (i); 
+                #jhonjames, aqui deberia de quedarme con el tiempo que va desde la fecha actual hasta la saida del robot,  y addemas almecenar la en variable para que despues en la siguiente iteracion, la compare y siempre me quede con la mas pequeña... de esta foma tengo el tiempo que tengo que 
+                # esperar para el proximo robot.  y esto lo mando como valor, siendo la clave  "miParametroTiempoProximoRobot".  Aclarar que para los casos que este valor sí que se obtenga, habría que devolver None, ya que ese asistente no esta esperando por un robot, si no que ya lo esta manejando
+                # o se lo acaban de proponer. 
 
         # en el caso de que la lista este vacia, es decir que no tenga ningun robot, entonces le devolvere un mensaje de que esta esperando por un robot. 
         if (not miListaDisponibleRobot):
@@ -449,12 +452,8 @@ def funcion_aceptarRobot ():
             # en este caso solicito el objeto Asistentes, ya que el es el que tiene los métodos para consultar eventos y consultar robots. 
             miRobots = miAsistentes.funcion_consultaRobot (miControla.robots_idRobot); 
             miEventos = miAsistentes.funcion_consultaEvento (miControla.robots_idRobot);
-            miFotoDelRobotCodificadaString = None;
-            if (miRobots._fotoDelRobot != None):    
-                miFotoDelRobotCodificadaBase64 = base64.b64encode(miRobots._fotoDelRobot);
-                miFotoDelRobotCodificadaString = miFotoDelRobotCodificadaBase64.decode("utf-8"); 
             miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoUsuario":miAsistentes._apodoAsistente, "miParametroEstado":"Robot manejando","miParametroIdRobot": miRobots._idRobot, "miParametroMac" : miRobots._macAddressDelRobot, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR,
-                                "miParametroFotoDelRobot":miFotoDelRobotCodificadaString, "miParametroCSRFtoken":generate_csrf()};
+                                "miParametroFotoDelRobot":None, "miParametroCSRFtoken":generate_csrf()};
             return jsonify(miRespuestaJson), 200;
             #return render_template ("robotmanejando.html",  miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miParametroApodoUsuario=miAsistentes._apodoAsistente, miParametroEstado="Robot manejando", miParametroIdRobot=miRobots._idRobot, miParametroMac = miRobots._macAddressDelRobot, miParametroCorreoElectronicoDelAdministrador = miVariableCorreoElectronicoAdministrador, miParametroCodigoQR=codigoQR);
         else:
@@ -489,12 +488,8 @@ def funcion_aceptarRobot ():
                                 # este if lo tengo porque unas veces el asistente no rechaza un robot, por lo tanto nunca se mete en este diccionario, entonces lo que estoy haciendo es ver primero si esta.
                                 if (miVariabletokenDeSesionYeventoQR in miDiccionarioGlobalTokensListaDeRobotsRechazados):
                                     miDiccionarioGlobalTokensListaDeRobotsRechazados[miVariabletokenDeSesionYeventoQR].clear (); 
-                                miFotoDelRobotCodificadaString = None;
-                                if (miRobots._fotoDelRobot != None): 
-                                    miFotoDelRobotCodificadaBase64 = base64.b64encode(miRobots._fotoDelRobot);
-                                    miFotoDelRobotCodificadaString = miFotoDelRobotCodificadaBase64.decode("utf-8"); 
                                 miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoUsuario":miAsistentes._apodoAsistente, "miParametroEstado":"Robot manejando","miParametroIdRobot": miRobots._idRobot, "miParametroMac" : miRobots._macAddressDelRobot, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR,
-                                                    "miParametroFotoDelRobot":miFotoDelRobotCodificadaString,"miParametroCSRFtoken":generate_csrf()};
+                                                    "miParametroFotoDelRobot":None,"miParametroCSRFtoken":generate_csrf()};
                                 return jsonify(miRespuestaJson), 200;
                                 #return render_template ("robotmanejando.html",  miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miParametroApodoUsuario=miAsistentes._apodoAsistente, miParametroEstado="Robot manejando", miParametroIdRobot=miRobots._idRobot, miParametroMac = miRobots._macAddressDelRobot, miParametroCorreoElectronicoDelAdministrador = miVariableCorreoElectronicoAdministrador, miParametroCodigoQR=codigoQR);
 
