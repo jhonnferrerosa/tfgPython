@@ -7,7 +7,7 @@ from wtforms.fields import EmailField
 import re
 
 
-from wtforms.validators import Length, InputRequired, NumberRange, MacAddress, URL, Optional
+from wtforms.validators import Length, InputRequired, MacAddress, Optional
 
 class FormularioAcceder (Form):
     """
