@@ -21,5 +21,3 @@ class DevelopmentConfig ():
     #  https://www.google.com/account/about/?hl=es-419&utm_source=google-account&utm_medium=web
     MAIL_PASSWORD = "unag cpvo rcxt ifst";
 
-
-    
