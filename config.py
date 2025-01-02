@@ -11,7 +11,7 @@ class DevelopmentConfig ():
     PORT=5000;
     #SECRET_KEY = 'miPalabraSecreta';  # esto hasta que no use un formulario con csrf token, no lo puedo usar.  Mirar si esto se puede sacar del sistema operativo ya que es una clave que tiene que estar segura.
     SECRET_KEY = os.getenv ('SECRET_KEY');
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:Grandesvirus2!@localhost/z';  
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:Grandesvirus2!@localhost/basedatosdemostracionesroboticas';  
     MAIL_SERVER = 'smtp.gmail.com';
     MAIL_PORT = 587;
     MAIL_USE_SSL = False;
