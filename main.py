@@ -188,7 +188,6 @@ def index2 ():
     miDisponibleRobot20 = DisponibleRobot (eventos_nombreDelEvento="eurobot2042", eventos_fechaDeCreacionDelEvento="2024-11-27 11:19:48", eventos_lugarDondeSeCelebra="ifema2042", robots_idRobot=113 , fechaComienzoEnEvento="2024-12-01", fechaFinEnEvento="2024-12-30 23:23:23", disponible=True);
     miDisponibleRobot20 = DisponibleRobot (eventos_nombreDelEvento="mobile week 2025", eventos_fechaDeCreacionDelEvento="2024-10-01", eventos_lugarDondeSeCelebra="torrejon", robots_idRobot=113 , fechaComienzoEnEvento="2025-03-01", fechaFinEnEvento="2025-12-30 23:23:23", disponible=True);
 
-
     db.session.add (miDisponibleRobot1);
     db.session.add (miDisponibleRobot2);
     db.session.add (miDisponibleRobot3);
@@ -548,7 +547,6 @@ def funcion_rechazarRobot ():
     miDiccionarioGlobalTokensListaDeRobotsRechazados[miVariabletokenDeSesionYeventoQR].append (idRobot);
     return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR, correoelectronico = miVariableCorreoElectronicoAdministrador)); 
 
-
 ########################### endpoints Administrador con el robot. #####################################################################################################################################################################################
 @app.route ("/administradorsignup", methods = ['GET', 'POST'])
 @app.route ("/administradorsignup/<tokenrestablecercontrasena>", methods = ['GET', 'POST'])
@@ -839,8 +837,11 @@ def funcionAdministradorPanelEventoBorrar (nombreDelEvento, fechaDeCreacionDelEv
     if (miEventos == None):
         return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorpaneleventoborrar.html ---  error404--- No se puede borrar el evento, ya que no existe en la BBDD.")); 
     
+    miVariableMensajeDeError = None;
     if (miAdministradores.funcion_verSiEseEventoEsDeEseAdministrador  (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra)):
-        miAdministradores.funcion_borrarEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra);
+        miVariableMensajeDeError = miAdministradores.funcion_borrarEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra);
+        if (miVariableMensajeDeError != None):
+            return redirect (url_for ('funcionErrorClienteServidor', mensajeerror=miVariableMensajeDeError)); 
         return redirect (url_for ('funcionAdministradorPanelEvento'));
     else:
         return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorpaneleventoborrar.html --- error404  --- para ese adminstrador, ese evento no existe")); 
@@ -891,8 +892,8 @@ def funcionAdministradorModificarRobotsEvento (nombreDelEvento, fechaDeCreacionD
     miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
 
     if (request.method == 'POST'):
+        miVariableMensajeDeError = None;
         if ('nameformulariomodificar' in request.form):
-            miVariableMensajeDeError = None;
             miVariableMensajeDeError = miAdministradores.funcion_modificarRobotDelEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra, request.form.get('robots_idRobot'), request.form.get('fechaComienzoEnEventoAntigua'), request.form.get('fechaFinEnEventoAntigua'), 
                                                                request.form.get('fechaComienzoEnEvento'), request.form.get('fechaFinEnEvento'), request.form.get ('disponible'));
             if (miVariableMensajeDeError != None):
@@ -913,10 +914,11 @@ def funcionAdministradorModificarRobotsEvento (nombreDelEvento, fechaDeCreacionD
                 if (miFechaFinEnEventoRecibido != "" and miHoraFinEnEventoRecibido != ""):
                     miFechaFinEnEventoRecibido += " ";
                     miFechaFinEnEventoRecibido += miHoraFinEnEventoRecibido;
-                miAdministradores.funcion_sumarRobotAlEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra, miIdRobotRecibido, miFechaComienzoEnEventoRecibido, miFechaFinEnEventoRecibido, miDisponibleRecibido);
+                miVariableMensajeDeError = miAdministradores.funcion_sumarRobotAlEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra, miIdRobotRecibido, miFechaComienzoEnEventoRecibido, miFechaFinEnEventoRecibido, miDisponibleRecibido);
+                if (miVariableMensajeDeError != None):
+                    return redirect (url_for ('funcionErrorClienteServidor', mensajeerror=miVariableMensajeDeError)); 
             else:
                 if ("nameformularioeliminar" in request.form):
-                    miVariableMensajeDeError = None;
                     miVariableMensajeDeError = miAdministradores.funcion_eliminarRobotDelEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra, request.form.get('robots_idRobot'), request.form.get('fechaComienzoEnEventoAntigua'), request.form.get('fechaFinEnEventoAntigua'));
                     if (miVariableMensajeDeError != None):
                         return redirect (url_for ('funcionErrorClienteServidor', mensajeerror=miVariableMensajeDeError)); 
@@ -978,8 +980,6 @@ def funcionAdministradorPanelRobotPonerServicio (idRobot, robotEnServicio, nombr
     return redirect (url_for ('funcionAdministradorModificarRobotsEvento', nombreDelEvento=nombreDelEvento, fechaDeCreacionDelEvento=fechaDeCreacionDelEvento, lugarDondeSeCelebra=lugarDondeSeCelebra));
 
 
-
-
 ########################### endpoints Administrador con las cuentas #####################################################################################################################################################################################
 @app.route ('/administradorpaneladministradorgestioncuentas')
 def funcionAdministradorGestioncuentas ():
@@ -1007,5 +1007,5 @@ def funcionAdministradorBorrarCuentaAdministrador (correoelectronico):
 with app.app_context ():
     db.create_all (); #esto se encarga de crear las tablas que no esten creadas en el modelo. 
 
-        
+
 

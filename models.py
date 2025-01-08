@@ -67,8 +67,6 @@ class Administradores(db.Model):
         
         db.session.commit ();
 
-    
-
     def funcion_borrarRobot (self, parametroIdRobot):
         miRobots = Robots.query.filter_by (_idRobot=parametroIdRobot).first ();
         db.session.delete (miRobots);
@@ -179,8 +177,6 @@ class Administradores(db.Model):
     def funcion_conseguirTodosLosRobotsPorNombreDelRobot (self, parametroNombreDelRobot):
         return Robots.query.filter (Robots._nombreDelRobot.like(f"{parametroNombreDelRobot}%")).all();
 
-
-
 ##### funciones que menejan el evento  ######################################################################################################################################################################################################################
     def funcion_conseguirEventoPorClavePrimaria (self, parametroNombreDelEvento, parametroFechaDeCreacionDelEvento, parametroLugarDondeSeCelebra):
         return Eventos.query.filter (Eventos._nombreDelEvento == parametroNombreDelEvento, Eventos._fechaDeCreacionDelEvento == parametroFechaDeCreacionDelEvento, Eventos._lugarDondeSeCelebra == parametroLugarDondeSeCelebra).first ();
@@ -237,7 +233,6 @@ class Administradores(db.Model):
     def funcion_conseguirDisponibleRobotPorIdRobotYporEstarContempladaLaFechaDelSistema (self, parametroIdRobot):
         return DisponibleRobot.query.filter (DisponibleRobot.fechaComienzoEnEvento <= datetime.now (), DisponibleRobot.fechaFinEnEvento >= datetime.now(), DisponibleRobot.robots_idRobot == parametroIdRobot).first ();
 
-
     def funcion_modificarDatosDelEvento (self, parametroAntiguoNombreDelEvento, parametroAntiguoFechaDeCreacionDelEvento, parametroAntiguoLugarDondeSeCelebra, parametroNombreDelEvento, parametroLugarDondeSeCelebra, parametroCodigoQR=None):
         miEventos = Eventos.query.filter (Eventos._nombreDelEvento == parametroAntiguoNombreDelEvento, Eventos._fechaDeCreacionDelEvento == parametroAntiguoFechaDeCreacionDelEvento, Eventos._lugarDondeSeCelebra == parametroAntiguoLugarDondeSeCelebra).first ();
         miVariableMensajeDeError = None;
@@ -284,13 +279,12 @@ class Administradores(db.Model):
         return miVariableMensajeDeError;
         
 
-    
     def funcion_sumarRobotAlEvento (self, parametroNombreDelEvento, parametroFechaDeCreacionDelEvento, parametroLugarDondeSeCelebra, parametroRobot_idRobot, parametroFechaComienzoEnEvento, parametroFechaFinEnEvento, parametroEnServicio=None):
         miVariableMensajeDeError = None;
 
         # en el caso de que se sume un robot en el día enterior, entonces no dejo que se meta ese robot en el evento. 
         if (parametroFechaComienzoEnEvento < (datetime.now().strftime ("%Y-%m-%d"))): 
-            miVariableMensajeDeError = ("exception. No se puede sumar ese robot al evento, está simando ese robot al evento en un día pasado.  ");
+            miVariableMensajeDeError = ("exception. No se puede sumar ese robot al evento, está sumando ese robot al evento en un día pasado.  ");
             return miVariableMensajeDeError;
     
         miVariableDisponible = False;
@@ -316,9 +310,30 @@ class Administradores(db.Model):
             return miVariableMensajeDeError;
     
     def funcion_borrarEvento (self, parametroNombreDelEvento, parametroFechaDeCreacionDelEvento, parametroLugarDondeSeCelebra):
-        miEventos = Eventos.query.filter (Eventos._nombreDelEvento==parametroNombreDelEvento, Eventos._fechaDeCreacionDelEvento==parametroFechaDeCreacionDelEvento, Eventos._lugarDondeSeCelebra==parametroLugarDondeSeCelebra).first ();
-        db.session.delete (miEventos);
-        db.session.commit();
+        miVariableMensajeDeError = None;
+        try:
+            # primero obtengo la lista de asistentes que no están vinculados al evento. 
+            miListaVinculaQueNoSonDeEseEvento = Vincula.query.filter((Vincula.eventos_nombreDelEvento != parametroNombreDelEvento) | (Vincula.eventos_fechaDeCreacionDelEvento != parametroFechaDeCreacionDelEvento) | (Vincula.eventos_lugarDondeSeCelebra != parametroLugarDondeSeCelebra)).all()
+            miListaAsistentesQueNoSonDeEseEvento = [i.asistentes_identificadorUnicoAsistente for i in miListaVinculaQueNoSonDeEseEvento];
+
+            # aqui obtengo todos los asistentes que estén vinculados al evento, para que después los compare con los que no lo están y así a los que están solamente en este evento, son los que voy a borrar. 
+            miListaVinculaQueSiSonDeEseEvento = Vincula.query.filter (Vincula.eventos_nombreDelEvento == parametroNombreDelEvento, Vincula.eventos_fechaDeCreacionDelEvento == parametroFechaDeCreacionDelEvento, Vincula.eventos_lugarDondeSeCelebra == parametroLugarDondeSeCelebra).all();
+            miListaAsistentesQueSiSonDeEseEvento = [i.asistentes_identificadorUnicoAsistente for i in miListaVinculaQueSiSonDeEseEvento];
+            
+            for i in miListaAsistentesQueSiSonDeEseEvento:
+                if i not in miListaAsistentesQueNoSonDeEseEvento:
+                    miAsistentes = Asistentes.query.filter_by (_identificadorUnicoAsistente = i).first ();
+                    db.session.delete (miAsistentes);
+            
+            # aquí finalmente voy a borrar el evento. 
+            miEventos = Eventos.query.filter (Eventos._nombreDelEvento==parametroNombreDelEvento, Eventos._fechaDeCreacionDelEvento==parametroFechaDeCreacionDelEvento, Eventos._lugarDondeSeCelebra==parametroLugarDondeSeCelebra).first ();
+            db.session.delete (miEventos);
+            db.session.commit();
+        except Exception as e:
+            db.session.rollback(); 
+            miVariableMensajeDeError = "Error al borrar ese evento en la base de datos. ";
+        
+        return miVariableMensajeDeError;
 
     # con esta funcion lo que hago es comprobar si el administrdor que ha pulsado en el evento, es o no el administrador, lo que pasa es que a un administrador nunca se le van a mostrar los eventos que no son suyos, pero en el caso de que 
     #conozca el nombre, la fecha y el lugar de un evento que no es suyo, lo que va a pasar es que si el lo pone en la URL, va a poder hacer modificaciones sobre este evento, y eso es algo que yo no quiero, por lo tanto cada vez que se vaya  a conseguir un 
@@ -338,9 +353,6 @@ class Administradores(db.Model):
             if miEventos not in miListaEventos:
                 miListaEventos.append (miEventos);
         return  miListaEventos;
-
-
-
 
 ##### funciones que menejan las cuentas de los administradores  ##############################################################################################################################################################################################
     
