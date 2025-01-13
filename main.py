@@ -1007,19 +1007,7 @@ def funcionAdministradorBorrarCuentaAdministrador (correoelectronico):
 
 
 
-# este if es algo clásico de python, y es que en el caso de que se importe este main, no se van a ejecutar las lineas que están arriba en el momento de hacer ei import, gracias 
-# a este if. De esta manera tengo más control sobre la ejecución y es que a esas funcones de arriba las puedo llamar en cualquier momento.  
-if __name__ == '__main__':
-    # a la hora de poner los formularios, necesito que tengan un token para verrificar que el me envia los datos de nuevo al servidor, que sea el cliente correcto.  
-    csrf.init_app(app);
-
-
-    # esto lo que hace es aplicar la configuracion de la base datos hecha en el archivo condig.py 
-    db.init_app (app);
-
     # esto es para explicar bajo que contexto,  vamos a crear la DDBB, es decir que vamos a aplicar la configuración que tenemos en el app, el cual hemos configurado en el 
     # archivo config.py con la clase: DevelopmentConfig. De manera que este with es necesario para que se tenga en cuenta la configuración. 
-    with app.app_context ():
-        db.create_all (); #esto se encarga de crear las tablas que no esten creadas en el modelo. 
-        
-    app.run(debug=app.config['DEBUG'], port=app.config['PORT']);
+with app.app_context ():
+    db.create_all (); #esto se encarga de crear las tablas que no esten creadas en el modelo. 
