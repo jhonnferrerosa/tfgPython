@@ -42,8 +42,8 @@ from PIL import Image, ImageOps
 from flask_mail import Mail
 from flask_mail import Message
 
-csrf = CSRFProtect ();
-#csrf = CSRFProtect (app);  #esta es la linea que tiene que ir cuando se está desplegando la aplicación en Gunicorn. 
+#csrf = CSRFProtect ();
+csrf = CSRFProtect (app);  #esta es la linea que tiene que ir cuando se está desplegando la aplicación en Gunicorn. 
 
 
 mail = Mail (app);
