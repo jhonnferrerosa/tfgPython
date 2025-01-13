@@ -1001,11 +1001,14 @@ def funcionAdministradorBorrarCuentaAdministrador (correoelectronico):
 
 ######## Configuración de Flask.  ##################################################################################################################################################################################################################
 
+#with app.app_context ():
+#    db.create_all (); #esto se encarga de crear las tablas que no esten creadas en el modelo. 
 
-# esto es para explicar bajo que contexto,  vamos a crear la DDBB, es decir que vamos a aplicar la configuración que tenemos en el app, el cual hemos configurado en el 
-# archivo config.py con la clase: DevelopmentConfig. De manera que este with es necesario para que se tenga en cuenta la configuración. 
+
+
+
+
+    # esto es para explicar bajo que contexto,  vamos a crear la DDBB, es decir que vamos a aplicar la configuración que tenemos en el app, el cual hemos configurado en el 
+    # archivo config.py con la clase: DevelopmentConfig. De manera que este with es necesario para que se tenga en cuenta la configuración. 
 with app.app_context ():
-    db.create_all (); #esto se encarga de crear las tablas que no esten creadas en el modelo. 
-
-
-
+    db.create_all (); #esto se encarga de crear las tablas que no esten creadas en el modelo.     
