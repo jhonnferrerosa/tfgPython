@@ -20,8 +20,8 @@ from config import DevelopmentConfig
 app = Flask(__name__)
 app.config.from_object (DevelopmentConfig);
 
-#db = SQLAlchemy();
-db = SQLAlchemy(app);  #esta es la linea que tiene que ir cuando se está desplegando la aplicación en Gunicorn. 
+db = SQLAlchemy();
+#db = SQLAlchemy(app);  #esta es la linea que tiene que ir cuando se está desplegando la aplicación en Gunicorn. 
 
 class Administradores(db.Model):
     """
@@ -270,7 +270,8 @@ class Administradores(db.Model):
                 else:
                     miDisponibleRobot.fechaFinEnEvento = parametroFechaFinEnEvento;
         else:
-            if (parametroNuevaFechaFinEnEvento != "") or (parametroNuevaFechaFinEnEvento != None):
+            # en el caso de que la fecha de Fin no este vacia. 
+            if (parametroNuevaFechaFinEnEvento != "") and (parametroNuevaFechaFinEnEvento != None):
                 miDisponibleRobot.fechaComienzoEnEvento = parametroFechaComienzoEnEvento;
                 miDisponibleRobot.fechaFinEnEvento = parametroNuevaFechaFinEnEvento;
         
