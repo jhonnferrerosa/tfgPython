@@ -44,7 +44,7 @@ from flask_mail import Message
 
 import logging
 
-logging.basicConfig(filename='logDemmostracionesRoboticas.log',level=logging.DEBUG,format='%(asctime)s - %(levelname)s - %(message)s',datefmt='%d-%b-%y %H:%M:%S');
+logging.basicConfig(filename='logDemostracionesRoboticas.log',level=logging.DEBUG,format='%(asctime)s - %(levelname)s - %(message)s',datefmt='%d-%b-%y %H:%M:%S');
 
 #csrf = CSRFProtect ();
 csrf = CSRFProtect (app);  #esta es la linea que tiene que ir cuando se está desplegando la aplicación en Gunicorn. 
