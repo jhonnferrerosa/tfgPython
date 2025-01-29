@@ -42,6 +42,10 @@ from PIL import Image, ImageOps
 from flask_mail import Mail
 from flask_mail import Message
 
+import logging
+
+logging.basicConfig(filename='logDemmostracionesRoboticas.log',level=logging.DEBUG,format='%(asctime)s - %(levelname)s - %(message)s',datefmt='%d-%b-%y %H:%M:%S');
+
 #csrf = CSRFProtect ();
 csrf = CSRFProtect (app);  #esta es la linea que tiene que ir cuando se está desplegando la aplicación en Gunicorn. 
 
@@ -217,7 +221,8 @@ def index2 ():
 ######## endpoints funcionales. ######################################################################################################################################################################################################################
 @app.before_request
 def miFuncionAntesDeLaPeticion ():
-    print  ("miFuncionAntesDeLaPeticion() --- este es el endpoint: ", request.endpoint); 
+    miMensajeLOG = ("miFuncionAntesDeLaPeticion() --- este es el endpoint: ", request.endpoint);
+    logging.info (miMensajeLOG);
     miVariablePermitirAccesoSinCorreoElectronico = True;
 
     if (request.endpoint == 'index2') or (request.endpoint == None) or (request.endpoint == 'funcionAdministradorsignup') or (request.endpoint == 'funcion_aceptarRobot') or (request.endpoint == 'funcion_rechazarRobot') or (request.endpoint == 'funcion_registrarAsistente') or (request.endpoint ==
@@ -281,6 +286,8 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
     if (miEventos == None):
         miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoUsuario":None, "miParametroEstado":"error404, evento no encontrado","miParametroIdRobot": None, "miParametroMac" : None,
                             "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None, "miParametroFotoDelRobot":None, "miParametroCSRFtoken":generate_csrf()};
+        miMensajeLOG = ("error404, evento no encontrado");
+        logging.info (miMensajeLOG);
         return jsonify(miRespuestaJson), 404;
     else:
         if (('token' in session) == False):
@@ -294,6 +301,8 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
             except Exception as e:
                 db.session.rollback();
                 miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoUsuario":None, "miParametroEstado":"error500, error en la bae de datos","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None, "miParametroFotoDelRobot":None,"miParametroCSRFtoken":generate_csrf()};
+                miMensajeLOG = ("funcion_registrarAsistente ()---  error500, error en la bae de datos");
+                logging.info (miMensajeLOG);
                 return jsonify(miRespuestaJson), 500;
                 #return redirect (url_for ('funcionErrorClienteServidor', mensajeerror=e));  
         else: 
@@ -310,6 +319,8 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
                 except Exception as e:
                     db.session.rollback();
                     miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoUsuario":None, "miParametroEstado":"error500, error en la base de datos","miParametroIdRobot": None, "miParametroMac" : None, "miParametroCorreoElectronicoDelAdministrador" : None, "miParametroCodigoQR": None,"miParametroFotoDelRobot":None, "miParametroCSRFtoken":generate_csrf()};
+                    miMensajeLOG = ("funcion_registrarAsistente ()---  error500, error en la bae de datos");
+                    logging.info (miMensajeLOG);
                     return jsonify(miRespuestaJson), 500;
                     #return redirect (url_for ('funcionErrorClienteServidor', mensajeerror=e));  
             else: 
@@ -564,10 +575,14 @@ def funcionAdministradorsignup (tokenrestablecercontrasena = None):
                     fechaDeCreacionDelTokenRestablecerContrasena = miDiccionarioCorreoElectroncoYtokenRestablecerContrasena[clave][1];
                     break;
             if (miVariableCorreoAdministrador == None) or ((datetime.now() - fechaDeCreacionDelTokenRestablecerContrasena) >= timedelta (minutes=10)):
+                miMensajeLOG = ("funcionAdministradorsignup() --- administradorsignup.html --- Error401 --- El token de para cambiar la contrsaeña, no identifica a nungun administrador en el sistema o ha caducado. ");
+                logging.info (miMensajeLOG);
                 return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorsignup.html --- Error401 --- El token de para cambiar la contrsaeña, no identifica a nungun administrador en el sistema o ha caducado. "));  
             else:
                 miAdministradores = Administradores.query.filter_by (_correoElectronico = miVariableCorreoAdministrador).first ();
                 if (miAdministradores == None):
+                    miMensajeLOG = ("funcionAdministradorsignup()--- administradorsignup.html --- Error404  ----  El token sí aparece en el sistema, pero ese administrador no esta en la base de datos. ");
+                    logging.info (miMensajeLOG);
                     return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorsignup.html --- Error404  ----  El token sí aparece en el sistema, pero ese administrador no esta en la base de datos. "));  
                 else:
                     if (miFormulario.contrasena.data != miFormulario.confirmarContrasena.data):
@@ -619,8 +634,12 @@ def funcionAdministradorLogin ():
                         mail.send (miMensaje);
                         miVariableRecuperarCorreo = True;
                     except Exception as e:
+                        miMensajeLOG = ("funcionAdministradorLogin()--- administradorlogin.html ---Error500  --- error al enviar el correo electrónico");
+                        logging.info (miMensajeLOG);
                         return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorlogin.html ---Error500  --- error al enviar el correo electrónico"));  
                 else:
+                    miMensajeLOG = ("funcionAdministradorLogin()--- administradorlogin.html --- Error500 --- formulario inválido");
+                    logging.info (miMensajeLOG);
                     return redirect (url_for ('funcionErrorClienteServidor', mensajeerror = "administradorlogin.html --- Error500 --- formulario inválido"));
         else:
             #en este caso ni si quiera se ha encontrado a ese correo de administrador en la BBDD. 
@@ -692,9 +711,13 @@ def funcionAdministradorPanelRobotBorrar (idRobot, nombreDelEvento=None, fechaDe
     miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
     miRobots = miAdministradores.funcion_conseguirRobotPorIdRobot (idRobot);
     if (miRobots == None):
+        miMensajeLOG = ("funcionAdministradorPanelRobotBorrar()--- adminstradorpanelrobotborrar.html  --- Error404 --- No se puede modificar el robot, ya que el robot que has puesto no existe en la BBDD");
+        logging.info (miMensajeLOG);
         return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="adminstradorpanelrobotborrar.html  --- Error404 --- No se puede modificar el robot, ya que el robot que has puesto no existe en la BBDD ")); 
     else: 
         if (miAdministradores.funcion_verSiPuedoBorrarRobot (idRobot) == False):
+            miMensajeLOG = ("funcionAdministradorPanelRobotBorrar()--- administradorpaneleventoborrar.html --- Error403--- ese administrador, no puede eliminar ese robot.");
+            logging.info (miMensajeLOG);
             return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorpaneleventoborrar.html --- Error403--- ese administrador, no puede eliminar ese robot."));  
 
     miAdministradores.funcion_borrarRobot (idRobot);
@@ -725,6 +748,8 @@ def funcionAdministradorCrearRobot ():
         else:
             # en el caso de que la foto pesa más de 5MB, devuelvo un error. 
             if ((len(binarioDeFoto)/1024) > 10240):
+                miMensajeLOG = ("funcionAdministradorCrearRobot()--- administradorcrearrobot.html --- Error400 ---el archivo dede de pesar como máximo 10MB. ");
+                logging.info (miMensajeLOG);
                 return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorcrearrobot.html --- Error400 ---el archivo dede de pesar como máximo 10MB. "));  
             else:
                 #En esta parte voy a poner la validación del documento que se sube a la página web, la foto debe de pesar como maximo 10MB, ademas los formatos validdos son 
@@ -736,11 +761,15 @@ def funcionAdministradorCrearRobot ():
                 miVerdadEsJPEG = bool(re.match (miExpresionRegularParaJPEG, fotoRecibidaDelFormulario.filename));
                 miVerdadEsPNG = bool(re.match (miExpresionRegularParaPNG, fotoRecibidaDelFormulario.filename));
                 if (miVerdadEsJPG == False) and (miVerdadEsJPEG == False) and (miVerdadEsPNG == False):
+                    miMensajeLOG = ("funcionAdministradorCrearRobot()--- administradorcrearrobot.html --- Error400 ---la extesión del archivo no es valida, las extensiones permitidas son .jpg .jpeg y .png");
+                    logging.info (miMensajeLOG);
                     return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorcrearrobot.html --- Error400 ---la extesión del archivo no es valida, las extensiones permitidas son .jpg .jpeg y .png"));  
             miFotoDelFormulario = Image.open (BytesIO (binarioDeFoto));
             try:
                 miFotoDelFormulario = ImageOps.exif_transpose(miFotoDelFormulario);
             except Exception as e:
+                miMensajeLOG = ("funcionAdministradorCrearRobot()--- administradorcrearrobot.html  --- Error500 --- Esa foto no se puede procesar, hay error en los metadatos EXIF. ");
+                logging.info (miMensajeLOG);
                 return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorcrearrobot.html  --- Error500 --- Esa foto no se puede procesar, hay error en los metadatos EXIF. ")); 
             miFotoDelFormulario.thumbnail ((300,300), Image.Resampling.LANCZOS);
             miByte_io = BytesIO();
@@ -766,6 +795,8 @@ def funcionAdministradorPanelRobotModificar (idRobot, nombreDelEvento = None, fe
 
     miRobots = miAdministradores.funcion_conseguirRobotPorIdRobot (idRobot);
     if (miRobots == None):
+        miMensajeLOG = ("funcionAdministradorPanelRobotModificar()--- adminstradorpanelrobotmodificar.html --- Error404 --- No se puede modificar el robot, ya que el robot que has puesto no existe en la BBDD ");
+        logging.info (miMensajeLOG);
         return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="adminstradorpanelrobotmodificar.html --- Error404 --- No se puede modificar el robot, ya que el robot que has puesto no existe en la BBDD ")); 
     if (request.method == 'POST'):
         if (miFormulario.validate()):
@@ -775,6 +806,8 @@ def funcionAdministradorPanelRobotModificar (idRobot, nombreDelEvento = None, fe
                 binarioDeFoto = None;
             else:
                 if ((len(binarioDeFoto)/1024) > 10240):
+                    miMensajeLOG = ("funcionAdministradorPanelRobotModificar()--- adminstradorpanelrobotmodificar.html --- Error400 ---el archivo dede de pesar como máximo 10MB.  ");
+                    logging.info (miMensajeLOG);
                     return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="adminstradorpanelrobotmodificar.html --- Error400 ---el archivo dede de pesar como máximo 10MB. "));  
                 else:
                     miExpresionRegularParaJPG = r".+\.jpg$";
@@ -784,11 +817,15 @@ def funcionAdministradorPanelRobotModificar (idRobot, nombreDelEvento = None, fe
                     miVerdadEsJPEG = bool(re.match (miExpresionRegularParaJPEG, fotoRecibidaDelFormulario.filename));
                     miVerdadEsPNG = bool(re.match (miExpresionRegularParaPNG, fotoRecibidaDelFormulario.filename));
                     if (miVerdadEsJPG == False) and (miVerdadEsJPEG == False) and (miVerdadEsPNG == False):
+                        miMensajeLOG = ("funcionAdministradorPanelRobotModificar()--- adminstradorpanelrobotmodificar.html --- Error400 ---la extesión del archivo no es valida, las extensiones permitidas son .jpg .jpeg y .png");
+                        logging.info (miMensajeLOG);
                         return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="adminstradorpanelrobotmodificar.html --- Error400 ---la extesión del archivo no es valida, las extensiones permitidas son .jpg .jpeg y .png")); 
                 miFotoDelFormulario = Image.open (BytesIO (binarioDeFoto));
                 try:
                     miFotoDelFormulario = ImageOps.exif_transpose(miFotoDelFormulario);
                 except Exception as e:
+                    miMensajeLOG = ("funcionAdministradorPanelRobotModificar()--- adminstradorpanelrobotmodificar.html  --- Error500 --- Esa foto no se puede procesar, hay error en los metadatos EXIF. ");
+                    logging.info (miMensajeLOG);
                     return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="adminstradorpanelrobotmodificar.html  --- Error500 --- Esa foto no se puede procesar, hay error en los metadatos EXIF. ")); 
                 miFotoDelFormulario.thumbnail ((300,300), Image.Resampling.LANCZOS);
                 miByte_io = BytesIO();  
@@ -811,6 +848,8 @@ def funcionAdministradorPanelRobotModificar (idRobot, nombreDelEvento = None, fe
         #en el caso de que un administrador vea un robot, sabiendo que esta en la tabla de disponible, pero que ademas ese robot lo estan utilizando actualmente, entonces no se le va a mostrar la opcion de modificar, pero lo que pasa es que si el pone en la URL
         # a este robot, entonecs sí que lo puede modificar, por lo tanto hago este if que vuelve a comprobar si ese administrador lo puede o no modificar, en el caso de que no pueda, le mando un error. 
         if (miAdministradores.funcion_verSiPuedoModificarRobot (idRobot) == False):
+            miMensajeLOG = ("funcionAdministradorPanelRobotModificar()---  administradorpaneleventoborrar.html --- error403 --- ese administrador, no puede modificcar ese robot, ya que otro adminsitrador lo esta usando actualmente.");
+            logging.info (miMensajeLOG);
             return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorpaneleventoborrar.html --- error403 --- ese administrador, no puede modificcar ese robot, ya que otro adminsitrador lo esta usando actualmente. ")); 
         else:
             miFormulario.macAddressDelRobot.data = miRobots._macAddressDelRobot; 
@@ -835,15 +874,21 @@ def funcionAdministradorPanelEventoBorrar (nombreDelEvento, fechaDeCreacionDelEv
     miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
     miEventos = miAdministradores.funcion_conseguirEventoPorClavePrimaria (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra);
     if (miEventos == None):
+        miMensajeLOG = ("funcionAdministradorPanelEventoBorrar()--- administradorpaneleventoborrar.html ---  error404--- No se puede borrar el evento, ya que no existe en la BBDD.");
+        logging.info (miMensajeLOG);
         return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorpaneleventoborrar.html ---  error404--- No se puede borrar el evento, ya que no existe en la BBDD.")); 
     
     miVariableMensajeDeError = None;
     if (miAdministradores.funcion_verSiEseEventoEsDeEseAdministrador  (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra)):
         miVariableMensajeDeError = miAdministradores.funcion_borrarEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra);
         if (miVariableMensajeDeError != None):
+            miMensajeLOG = ("funcionAdministradorPanelEventoBorrar()---", miVariableMensajeDeError);
+            logging.info (miMensajeLOG);
             return redirect (url_for ('funcionErrorClienteServidor', mensajeerror=miVariableMensajeDeError)); 
         return redirect (url_for ('funcionAdministradorPanelEvento'));
     else:
+        miMensajeLOG = ("funcionAdministradorPanelEventoBorrar()--- administradorpaneleventoborrar.html --- error404  --- para ese adminstrador, ese evento no existe");
+        logging.info (miMensajeLOG);
         return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradorpaneleventoborrar.html --- error404  --- para ese adminstrador, ese evento no existe")); 
 
 
@@ -863,6 +908,8 @@ def funcionAdministradorModificarDatosEvento (nombreDelEvento, fechaDeCreacionDe
     miAdministradores = Administradores.query.filter_by (_correoElectronico=session['correoElectronico']).first ();
     miEventos = miAdministradores.funcion_conseguirEventoPorClavePrimaria (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra);
     if (miEventos == None):
+        miMensajeLOG = ("funcionAdministradorModificarDatosEvento()--- administradormodificardatosevento.html --- error404 ---  No se puede modificar el evento ya que ese evento no existe");
+        logging.info (miMensajeLOG);
         return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradormodificardatosevento.html --- error404 ---  No se puede modificar el evento ya que ese evento no existe")); 
 
     miFormulario = formulario.FormularioCrearEvento (request.form);
@@ -872,6 +919,8 @@ def funcionAdministradorModificarDatosEvento (nombreDelEvento, fechaDeCreacionDe
             miVariableMensajeDeError = None;
             miVariableMensajeDeError = miAdministradores.funcion_modificarDatosDelEvento (nombreDelEvento, miFormulario.fechaDeCreacionDelEvento.data, lugarDondeSeCelebra, miFormulario.nombreDelEvento.data,  miFormulario.lugarDondeSeCelebra.data, miFormulario.codigoQR.data);
             if (miVariableMensajeDeError != None):
+                miMensajeLOG = ("funcionAdministradorModificarDatosEvento()---", miVariableMensajeDeError);
+                logging.info (miMensajeLOG);
                 return redirect (url_for ('funcionErrorClienteServidor', mensajeerror=miVariableMensajeDeError)); 
             return redirect(url_for('funcionAdministradorPanelEvento'));
         else:
@@ -897,6 +946,8 @@ def funcionAdministradorModificarRobotsEvento (nombreDelEvento, fechaDeCreacionD
             miVariableMensajeDeError = miAdministradores.funcion_modificarRobotDelEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra, request.form.get('robots_idRobot'), request.form.get('fechaComienzoEnEventoAntigua'), request.form.get('fechaFinEnEventoAntigua'), 
                                                                request.form.get('fechaComienzoEnEvento'), request.form.get('fechaFinEnEvento'), request.form.get ('disponible'));
             if (miVariableMensajeDeError != None):
+                miMensajeLOG = ("funcionAdministradorModificarRobotsEvento()---", miVariableMensajeDeError);
+                logging.info (miMensajeLOG);
                 return redirect (url_for ('funcionErrorClienteServidor', mensajeerror=miVariableMensajeDeError)); 
         else:
             if ("nameformulariosumarrobot" in request.form):
@@ -916,13 +967,19 @@ def funcionAdministradorModificarRobotsEvento (nombreDelEvento, fechaDeCreacionD
                     miFechaFinEnEventoRecibido += miHoraFinEnEventoRecibido;
                 miVariableMensajeDeError = miAdministradores.funcion_sumarRobotAlEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra, miIdRobotRecibido, miFechaComienzoEnEventoRecibido, miFechaFinEnEventoRecibido, miDisponibleRecibido);
                 if (miVariableMensajeDeError != None):
+                    miMensajeLOG = ("funcionAdministradorModificarRobotsEvento()---", miVariableMensajeDeError);
+                    logging.info (miMensajeLOG);
                     return redirect (url_for ('funcionErrorClienteServidor', mensajeerror=miVariableMensajeDeError)); 
             else:
                 if ("nameformularioeliminar" in request.form):
                     miVariableMensajeDeError = miAdministradores.funcion_eliminarRobotDelEvento (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra, request.form.get('robots_idRobot'), request.form.get('fechaComienzoEnEventoAntigua'), request.form.get('fechaFinEnEventoAntigua'));
                     if (miVariableMensajeDeError != None):
+                        miMensajeLOG = ("funcionAdministradorModificarRobotsEvento()---", miVariableMensajeDeError);
+                        logging.info (miMensajeLOG);
                         return redirect (url_for ('funcionErrorClienteServidor', mensajeerror=miVariableMensajeDeError)); 
                 else:
+                    miMensajeLOG = ("funcionAdministradorModificarRobotsEvento()--- administradormodificarrobotsevento.htmml --- Error500 --- formulario invalido.");
+                    logging.info (miMensajeLOG);
                     return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="administradormodificarrobotsevento.htmml --- Error500 --- formulario invalido.")); 
     
     if (miAdministradores.funcion_verSiEseEventoEsDeEseAdministrador (nombreDelEvento, fechaDeCreacionDelEvento, lugarDondeSeCelebra)):
@@ -975,6 +1032,8 @@ def funcionAdministradorPanelRobotPonerServicio (idRobot, robotEnServicio, nombr
     # este if lo pongo, ya que en el caso de que otro administrador conozca el idRoot y el evento en el que etá, puede modificar el servicio del robot, por lo tanto para evitar eseo, copruebo que es el dueño del robot
     #el que esta modificando el servicio del robot. 
     if (miAdministradores.funcion_verSiPuedoModificarRobot (idRobot) == False):
+        miMensajeLOG = ("funcionAdministradorPanelRobotPonerServicio()---adminstradorpanelrobotponerservicio  --- Error403---  ese administrador no puede modificar el servicio de ese robot, ya que actualmente la hora de trabajo de este robot no se corresponde con ningun evento de este administrador. ");
+        logging.info (miMensajeLOG);
         return redirect (url_for ('funcionErrorClienteServidor', mensajeerror="adminstradorpanelrobotponerservicio  --- Error403---  ese administrador no puede modificar el servicio de ese robot, ya que actualmente la hora de trabajo de este robot no se corresponde con ningun evento de este administrador. ")); 
     miAdministradores.funcion_activarOdesactivarRobot (idRobot, robotEnServicio);
     return redirect (url_for ('funcionAdministradorModificarRobotsEvento', nombreDelEvento=nombreDelEvento, fechaDeCreacionDelEvento=fechaDeCreacionDelEvento, lugarDondeSeCelebra=lugarDondeSeCelebra));
