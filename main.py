@@ -223,6 +223,7 @@ def index2 ():
 def miFuncionAntesDeLaPeticion ():
     miMensajeLOG = ("miFuncionAntesDeLaPeticion() --- este es el endpoint: ", request.endpoint);
     logging.info (miMensajeLOG);
+    print (miMensajeLOG);
     miVariablePermitirAccesoSinCorreoElectronico = True;
 
     if (request.endpoint == 'index2') or (request.endpoint == None) or (request.endpoint == 'funcionAdministradorsignup') or (request.endpoint == 'funcion_aceptarRobot') or (request.endpoint == 'funcion_rechazarRobot') or (request.endpoint == 'funcion_registrarAsistente') or (request.endpoint ==
