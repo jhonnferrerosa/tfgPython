@@ -31,7 +31,6 @@ function comenzar() {
             alert ("Las contrseñas deben de coincidir. ");
             event.preventDefault ();
         }
-
     });
 
 }

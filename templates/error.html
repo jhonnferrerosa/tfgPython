@@ -1,0 +1,22 @@
+
+
+
+
+
+{% extends "baseadministrador.html" %}
+
+
+{% block title %}
+{% endblock %}
+
+
+{% block content %}
+    <h1>  Error de aplicación.</h1>
+    {% if parametroMensajeError != None %}
+        <h3> {{ parametroMensajeError }}</h3>
+    {% endif %}
+{% endblock %}
+
+
+
+
