@@ -50,6 +50,8 @@ logging.basicConfig(filename='logDemostracionesRoboticas.log',level=logging.DEBU
 csrf = CSRFProtect (app);  #esta es la linea que tiene que ir cuando se está desplegando la aplicación en Gunicorn. 
 
 
+from flask import  make_response
+
 mail = Mail (app);
 
 # este diccionario lo voy a utilizar para almacenar como clave al identificadorUnicoAsistente y como valor, un bool el cual determina si ese asistente esta manejando o no un robot.  
@@ -66,7 +68,7 @@ miDiccionarioGlobalTokensListaDeRobotsRechazados = {}
 # que solicitó cambiar la contraseña, para que cuando el admininstrador acceda a su correo, que haga clic en la url que envía 
 miDiccionarioCorreoElectroncoYtokenRestablecerContrasena = {};
 
-miVariableGlobalURL = "http://localhost:5000/demostracionesroboticas/"; 
+miVariableGlobalURL = "http://192.168.144.64:5000/demostracionesroboticas/"; 
 
 
 
@@ -227,12 +229,29 @@ def miFuncionAntesDeLaPeticion ():
     miVariablePermitirAccesoSinCorreoElectronico = True;
 
     if (request.endpoint == 'index2') or (request.endpoint == None) or (request.endpoint == 'funcionAdministradorsignup') or (request.endpoint == 'funcion_aceptarRobot') or (request.endpoint == 'funcion_rechazarRobot') or (request.endpoint == 'funcion_registrarAsistente') or (request.endpoint ==
-         'static') or (request.endpoint == 'funcionAdministradorLogin') or (request.endpoint == 'funcionErrorClienteServidor') or (request.endpoint == 'demostracionesroboticas'):
+         'static') or (request.endpoint == 'funcionAdministradorLogin') or (request.endpoint == 'funcionErrorClienteServidor') or (request.endpoint == 'demostracionesroboticas') or (request.endpoint == 'pruebapost'):
         miVariablePermitirAccesoSinCorreoElectronico = False;
 
     # en el caso de que el correoElectronico no este en la sesion y ademas la URL que yo he puesto no sea de las permitidas, me voy al loggin.  
     if ('correoElectronico' not in session) and (miVariablePermitirAccesoSinCorreoElectronico == True):
         return redirect (url_for ('funcionAdministradorLogin'));
+
+    if (request.method == 'POST') or (request.method == 'GET'):
+        print ("miFuncionAntesDeLaPeticion() --- el metodo ha sido POST o GET");
+
+        csrf_token = request.headers;
+        if (csrf_token):
+            print ("miFuncionAntesDeLaPeticion() ---  este es el tipo de dato: ", type(csrf_token));
+            print ("miFuncionAntesDeLaPeticion() --- Sí se ha recibido el CSRF:  ", csrf_token.get('X-CSRF-Token'));
+            print ("miFuncionAntesDeLaPeticion() --- este es el header: :  ", request.headers.get('X-CSRF-Token'));
+            print ("miFuncionAntesDeLaPeticion() --- esto es lo que contiene el formulario: :  ", request.form.get('csrf_token'));
+        
+        
+        else:
+            print ("miFuncionAntesDeLaPeticion() --- no se ha recibido el csrf_token");
+    else:
+        print ("miFuncionAntesDeLaPeticion() --- el metodo ha sigo GET");
+    
 
 
 
@@ -280,9 +299,14 @@ def funcionGenerarCodigoQR (url, correoelectronico = None):
 
 
 ######## endpoints Asistente. ########################################################################################################################################################################################################################
+
+
+
+
 @app.route ("/demostracionesroboticas/<codigoQR>") 
 @app.route ("/demostracionesroboticas/<codigoQR>/<correoelectronico>") 
 def funcion_registrarAsistente (codigoQR, correoelectronico = None):
+    print ("funcion_registrarAsistente()--- se ejecuta")
     miEventos = Eventos.query.filter (Eventos._codigoQR == codigoQR).first();
     if (miEventos == None):
         miRespuestaJson = {"miParametroMiEventoNombreDelEvento":None, "miParametroApodoUsuario":None, "miParametroEstado":"error404, evento no encontrado","miParametroIdRobot": None, "miParametroMac" : None,
@@ -406,6 +430,7 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
                     miFotoDelRobotCodificadaString = miFotoDelRobotCodificadaBase64.decode("utf-8"); 
                 miRespuestaJson = {"miParametroMiEventoNombreDelEvento":miEventos._nombreDelEvento, "miParametroApodoUsuario":miAsistentes._apodoAsistente, "miParametroEstado":"Robot Listo","miParametroIdRobot": miRobots._idRobot, "miParametroMac" : miRobots._macAddressDelRobot, "miParametroCorreoElectronicoDelAdministrador" : miVariableCorreoElectronicoAdministrador, "miParametroCodigoQR": codigoQR,
                                     "miParametroFotoDelRobot":miFotoDelRobotCodificadaString, "miParametroCSRFtoken":generate_csrf()};
+                print ("funcion_registrarAsistente()---", make_response(miRespuestaJson).set_cookie);
                 return jsonify(miRespuestaJson), 200;
                 #return render_template ("robotlisto.html", miParametroMiEventoNombreDelEvento=miEventos._nombreDelEvento, miParametroApodoUsuario=miAsistentes._apodoAsistente, miParametroEstado="Robot Listo", miParametroIdRobot=miRobots._idRobot, miParametroMac = miRobots._macAddressDelRobot, miParametroCorreoElectronicoDelAdministrador = miVariableCorreoElectronicoAdministrador, miParametroCodigoQR=codigoQR);
            # en este caso que ese token con ese evento, no está en el miDiccionarioGlobalTokensListaDeRobotsRechazados  entonces eso significa que ese asistente, nunca ha rechazado un robot, por tanto le propongo el primer robot que encuentre. 
@@ -429,6 +454,7 @@ def funcion_registrarAsistente (codigoQR, correoelectronico = None):
 # de esta forma sólo se reciben mensajes por el POST. 
 @app.route ('/aceptarrobot', methods = ['POST'])
 def funcion_aceptarRobot ():
+    print ("funcion_aceptarRobot()--- se ejecuta. ");
     miJsonRecibido = request.get_json ();
     codigoQR = miJsonRecibido['miParametroCodigoQR'];
     correoelectronico = miJsonRecibido ['miParametroCorreoElectronicoDelAdministrador'];
@@ -448,8 +474,10 @@ def funcion_aceptarRobot ():
                 miVariableCorreoElectronicoAdministrador = miAdministradores._correoElectronico;
                 
         if (('token' in session) == False):
+            print ("funcion_aceptarRobot()--- debido a que no hay token en la sesion, lo que se va a hacer es salatar al código en el que se registra de nuevo a ese asistente.  ");
             return redirect (url_for ('funcion_registrarAsistente', codigoQR=codigoQR, correoelectronico = miVariableCorreoElectronicoAdministrador)); 
         else:
+            print ("funcion_aceptarRobot()--- hablando de que si el token está o no en la sesion, en este caso sí que está por lo tanto, le voy a dar un robot para controlar ");
             #en el caso de que no ese asistente no exista en la BBDD, lo delvuelvo a funcion_registrarAsistente. 
             miAsistentes = Asistentes.query.filter_by (_identificadorUnicoAsistente = session['token']).first ();
             if (miAsistentes == None):
@@ -630,7 +658,7 @@ def funcionAdministradorLogin ():
                 if ("nameformulariorecuperarcontrasena" in request.form):
                     try:
                         miDiccionarioCorreoElectroncoYtokenRestablecerContrasena[miAdministradores._correoElectronico] = [os.urandom(12).hex(), datetime.now()]; 
-                        miMensaje = Message (subject="Demostraciones robóticas, solicitud de cambio de contraseña.", body="Buenas se ha solicitado un cambio de contraseña en el página web de demostracione robóticas, sí desea cambiarla acceda aquí: http://localhost:5000/administradorsignup/" +miDiccionarioCorreoElectroncoYtokenRestablecerContrasena[miAdministradores._correoElectronico][0],
+                        miMensaje = Message (subject="Demostraciones robóticas, solicitud de cambio de contraseña.", body="Buenas se ha solicitado un cambio de contraseña en el página web de demostracione robóticas, sí desea cambiarla acceda aquí: http://192.168.144.64:5000/administradorsignup/" +miDiccionarioCorreoElectroncoYtokenRestablecerContrasena[miAdministradores._correoElectronico][0],
                                           sender= app.config['MAIL_USERNAME'], recipients=[miAdministradores._correoElectronico]);
                         mail.send (miMensaje);
                         miVariableRecuperarCorreo = True;

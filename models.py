@@ -20,7 +20,7 @@ from config import DevelopmentConfig
 app = Flask(__name__)
 app.config.from_object (DevelopmentConfig);
 
-#db = SQLAlchemy();
+db = SQLAlchemy();
 db = SQLAlchemy(app);  #esta es la linea que tiene que ir cuando se está desplegando la aplicación en Gunicorn. 
 
 class Administradores(db.Model):
